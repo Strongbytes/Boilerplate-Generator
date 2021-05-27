@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<Extern href="stdidcmd.h"/>
+	<Extern href="vsshlids.h"/>
+	<Include href="KnownImageIds.vsct" />
+
+	<Commands package="guidBoilerplateGeneratorPackage">
+		<Buttons>
+			<Button guid="guidBoilerplateGeneratorPackageCmdSet" id="GenerateCRUDId" priority="0x0100" type="Button">
+				<Parent guid="guidSHLMainMenu" id="IDG_VS_CTXT_ITEM_INCLUDEEXCLUDE" />
+				<Icon guid="ImageCatalogGuid" id="DomainController"/>
+				<CommandFlag>IconIsMoniker</CommandFlag>
+				<Strings>
+					<ButtonText>Generate Mediator CRUD...</ButtonText>
+				</Strings>
+			</Button>
+		</Buttons>
+	</Commands>
+
+	<Symbols>
+		<GuidSymbol name="guidBoilerplateGeneratorPackage" value="{d74b9a01-22ed-41e2-a6e2-244021bc59c1}" />
+
+		<GuidSymbol name="guidBoilerplateGeneratorPackageCmdSet" value="{09f3f347-dea0-420f-a993-74a311698f7b}">
+			<IDSymbol name="GenerateCRUDId" value="0x0100" />
+		</GuidSymbol>
+	</Symbols>
+</CommandTable>

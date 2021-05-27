@@ -1,0 +1,66 @@
+﻿<Window x:Class="BoilerplateGenerator.Controls.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+        xmlns:converters="clr-namespace:BoilerplateGenerator.Converters"
+        mc:Ignorable="d"
+        WindowState="Normal"
+        Title="CRUD Generator"
+        Height="450"
+        Width="800">
+    <Window.Resources>
+        <CollectionViewSource Source="{Binding AvailableFiles}"
+                              x:Key="GridItems">
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="Match"
+                                     Direction="Descending" />
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+
+        <converters:BooleanToInverseVisibilityConverter x:Key="BoolToInverseVisibilityConverter" />
+
+        <converters:InverseVisibilityConverter x:Key="InverseVisibilityConverter" />
+    </Window.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Height="50">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid Margin="10,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Selected Entity"
+                           FontWeight="Bold"
+                           VerticalAlignment="Center" />
+
+                <TextBox Grid.Column="1"
+                         VerticalAlignment="Center"
+                         Margin="10,1,0,0"
+                         IsReadOnly="True"
+                         Text="{Binding ReferencedEntityName}" />
+            </Grid>
+
+            <Button Grid.Column="1"
+                    VerticalAlignment="Center"
+                    Margin="10,0"
+                    Content="Validate"
+                    Command="{Binding BrowseForFileCommand}" />
+        </Grid>
+    </Grid>
+</Window>
