@@ -1,4 +1,5 @@
 ﻿using BoilerplateGenerator.Domain;
+using BoilerplateGenerator.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,15 +15,44 @@ namespace BoilerplateGenerator.ViewModels
 {
     public class ViewModelBase : IViewModelBase
     {
-        private readonly IFileManagerService _fileManagerService;
+        private readonly IEntityManagerService _fileManagerService;
 
-        public ViewModelBase(IFileManagerService fileManagerService)
+        public ViewModelBase(IEntityManagerService fileManagerService)
         {
             _fileManagerService = fileManagerService;
         }
 
         #region Collections
 
+        #endregion
+
+        #region Commands
+        private ICommand _validateSelectedFileCommand;
+        public ICommand ValidateSelectedFileCommand
+        {
+            get
+            {
+                if (_validateSelectedFileCommand != null)
+                {
+                    return _validateSelectedFileCommand;
+                }
+
+                _validateSelectedFileCommand = new CommandHandler(async (parameter) =>
+                {
+                    await _fileManagerService.FindSelectedFileClassType().ConfigureAwait(false);
+
+                    if (!_fileManagerService.IsEntityClassTypeValid)
+                    {
+                        // TODO: Show validation error
+                        return;
+                    }
+
+                    await _fileManagerService.GetValidEntityProperties();
+                });
+
+                return _validateSelectedFileCommand;
+            }
+        }
         #endregion
 
         #region Business

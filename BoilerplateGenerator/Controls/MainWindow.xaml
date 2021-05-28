@@ -59,8 +59,12 @@
             <Button Grid.Column="1"
                     VerticalAlignment="Center"
                     Margin="10,0"
-                    Content="Validate"
-                    Command="{Binding BrowseForFileCommand}" />
+                    Content="Validate Entity"
+                    Command="{Binding ValidateSelectedFileCommand}" />
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <TreeView />
         </Grid>
     </Grid>
 </Window>

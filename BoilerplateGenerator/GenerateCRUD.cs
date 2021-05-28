@@ -1,11 +1,13 @@
 ﻿using BoilerplateGenerator.Controls;
 using BoilerplateGenerator.Domain;
+using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Services;
 using BoilerplateGenerator.ViewModels;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Design;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Utilities;
 using System;
@@ -56,8 +58,10 @@ namespace BoilerplateGenerator
             ServiceCollection services = new ServiceCollection();
 
             services.AddSingleton(typeof(IViewModelBase), typeof(ViewModelBase));
-            services.AddSingleton(typeof(DTE2), _package.GetServiceAsync(typeof(DTE)).Result as DTE2);
-            services.AddSingleton(typeof(IFileManagerService), typeof(FileManagerService));
+            services.AddSingleton(typeof(DTE2), _package.GetService<DTE>() as DTE2);
+            services.AddSingleton(typeof(IEntityManagerService), typeof(EntityManagerService));
+            services.AddSingleton(typeof(ITypeResolutionService), _package.GetTypeResolutionService());
+            services.AddSingleton(typeof(ITypeDiscoveryService), _package.GetTypeDiscoveryService());
             services.AddSingleton<MainWindow>();
 
             _serviceProvider = services.BuildServiceProvider();
