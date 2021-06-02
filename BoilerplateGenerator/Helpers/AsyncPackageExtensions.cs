@@ -1,21 +1,25 @@
 ﻿using EnvDTE;
 using EnvDTE80;
+using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.ComponentModelHost;
+using Microsoft.VisualStudio.LanguageServices;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Design;
 using Microsoft.VisualStudio.Shell.Interop;
+using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.Linq;
 
 namespace BoilerplateGenerator.Helpers
 {
     public static class AsyncPackageExtensions
     {
-        //public static void GetVisualStudioWorkspace(this AsyncPackage package)
-        //{
-        //    var componentModel = (IComponentModel)package.GetService<SComponentModel>();
-        //    var workspace = componentModel.GetService<VisualStudioWorkspace>();
-        //}
+        public static VisualStudioWorkspace GetVisualStudioWorkspace(this AsyncPackage package)
+        {
+            var componentModel = (IComponentModel)package.GetService<SComponentModel>();
+            return componentModel.GetService<VisualStudioWorkspace>();
+        }
 
         public static ITypeDiscoveryService GetTypeDiscoveryService(this AsyncPackage package)
         {
@@ -39,7 +43,7 @@ namespace BoilerplateGenerator.Helpers
             return hier;
         }
 
-        private static Project RetrieveProjectBasedOnSelectedItem(AsyncPackage package)
+        private static EnvDTE.Project RetrieveProjectBasedOnSelectedItem(AsyncPackage package)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
             return (package.GetService<DTE>() as DTE2).SelectedItems.Item(1).ProjectItem.ContainingProject;

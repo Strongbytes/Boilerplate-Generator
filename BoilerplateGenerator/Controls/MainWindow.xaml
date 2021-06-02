@@ -5,8 +5,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         xmlns:converters="clr-namespace:BoilerplateGenerator.Converters"
+        xmlns:templates="clr-namespace:BoilerplateGenerator.Templates"
+        xmlns:viewModels="clr-namespace:BoilerplateGenerator.ViewModels"
         mc:Ignorable="d"
-        WindowState="Normal"
+        d:DataContext="{d:DesignInstance Type=viewModels:ViewModelBase, IsDesignTimeCreatable=False}"
+        WindowState="Maximized"
         Title="CRUD Generator"
         Height="450"
         Width="800">
@@ -24,8 +27,10 @@
         <converters:BooleanToInverseVisibilityConverter x:Key="BoolToInverseVisibilityConverter" />
 
         <converters:InverseVisibilityConverter x:Key="InverseVisibilityConverter" />
+
+        <templates:EntityViewTemplateSelector x:Key="EntityViewTemplateSelector" />
     </Window.Resources>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -35,7 +40,6 @@
         <Grid Height="50">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*" />
-                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
@@ -64,7 +68,38 @@
         </Grid>
 
         <Grid Grid.Row="1">
-            <TreeView />
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+                <TreeView Grid.Row="1"
+                          ItemsSource="{Binding EntityTree}"
+                          ItemTemplateSelector="{StaticResource EntityViewTemplateSelector}">
+                    <TreeView.Resources>
+                        <HierarchicalDataTemplate x:Key="ClassSelector"
+                                                  ItemsSource="{Binding Path=Children}">
+                            <CheckBox IsChecked="{Binding Current.IsChecked, Mode=TwoWay}"
+                                      IsThreeState="True"
+                                      Content="{Binding Current.Name}" />
+                        </HierarchicalDataTemplate>
+                        <DataTemplate x:Key="PropertySelector">
+                            <CheckBox IsChecked="{Binding Current.IsChecked, Mode=TwoWay}">
+                                <CheckBox.Content>
+                                    <TextBlock>
+                                    <Run Text="{Binding Current.Name}" /><Run Text=" (Type: " /><Run Text="{Binding Current.Type}" /><Run Text=")" />
+                                    </TextBlock>
+                                </CheckBox.Content>
+                            </CheckBox>
+                        </DataTemplate>
+                    </TreeView.Resources>
+                </TreeView>
+
+            <GridSplitter Grid.Column="1"
+                          ResizeDirection="Columns"
+                          HorizontalAlignment="Stretch" />
+
         </Grid>
     </Grid>
 </Window>

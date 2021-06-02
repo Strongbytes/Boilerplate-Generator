@@ -1,19 +1,15 @@
-﻿using BoilerplateGenerator.Domain;
-using BoilerplateGenerator.Helpers;
+﻿using BoilerplateGenerator.Collections;
+using BoilerplateGenerator.Domain;
+using BoilerplateGenerator.Models;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.VisualStudio.LanguageServices;
 using Microsoft.VisualStudio.Shell;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using VSLangProj;
 using Task = System.Threading.Tasks.Task;
 
 namespace BoilerplateGenerator.Services
@@ -23,15 +19,13 @@ namespace BoilerplateGenerator.Services
         #region Definition
         private readonly DTE2 _packageAutomation;
 
-        private readonly ITypeResolutionService _typeResolutionService;
-
-        private readonly ITypeDiscoveryService _typeDiscoveryService;
+        private readonly VisualStudioWorkspace _visualStudioWorkspace;
 
         private SelectedItem _selectedItem;
 
-        private Project _parentProject;
+        private string _parentProjectName;
 
-        private Type _entityClassType;
+        private INamedTypeSymbol _entityClassType;
         #endregion
 
         #region Properties
@@ -39,9 +33,10 @@ namespace BoilerplateGenerator.Services
 
         #endregion
 
-        public EntityManagerService(DTE2 packageAutomation)
+        public EntityManagerService(DTE2 packageAutomation, VisualStudioWorkspace visualStudioWorkspace)
         {
             _packageAutomation = packageAutomation;
+            _visualStudioWorkspace = visualStudioWorkspace;
         }
 
         public async Task<string> LoadSelectedEntityDetails()
@@ -49,7 +44,7 @@ namespace BoilerplateGenerator.Services
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
             _selectedItem = _packageAutomation.SelectedItems.Item(1);
-            _parentProject = _selectedItem.ProjectItem.ContainingProject;
+            _parentProjectName = _selectedItem.ProjectItem.ContainingProject.Name;
 
             return _selectedItem.Name;
         }
@@ -59,31 +54,83 @@ namespace BoilerplateGenerator.Services
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             string selectedEntityPath = _selectedItem.ProjectItem.FileNames[1];
 
-            string className = await DynamicClassHelper.ExtractClassNameFromFile(selectedEntityPath);
-
-            if (string.IsNullOrEmpty(className))
+            await Task.Run(async () =>
             {
-                return;
-            }
+                var project = _visualStudioWorkspace.CurrentSolution.Projects.First(x => x.Name.Equals(_parentProjectName));
+                if (project == null)
+                {
+                    return;
+                }
 
+                var compilation = await project.GetCompilationAsync();
+                if (compilation == null)
+                {
+                    return;
+                }
 
+                var selectedFileSyntaxTree = compilation.SyntaxTrees.FirstOrDefault(x => x.FilePath.Equals(selectedEntityPath));
+                if (selectedFileSyntaxTree == null)
+                {
+                    return;
+                }
 
-
-            _typeResolutionService.GetTypeFromClassName();
-
-            // (new System.Collections.Generic.Mscorlib_DictionaryDebugView<System.Reflection.Assembly, Microsoft.VisualStudio.Design.VSTypeResolutionService.AssemblyEntry>(((Microsoft.VisualStudio.Design.VSTypeResolutionService)_typeResolutionService).LoadedEntries).Items[0]).Value.Assembly
-
-            className = "LearningSystem.Module.Data.Models." + className;
-
-            var x = _typeResolutionService.GetType(className);
+                var classSyntax = (await selectedFileSyntaxTree.GetRootAsync()).DescendantNodes().OfType<ClassDeclarationSyntax>().First();
+                _entityClassType = compilation.GetSemanticModel(selectedFileSyntaxTree).GetDeclaredSymbol(classSyntax) as INamedTypeSymbol;
+            });
         }
 
-        public async Task GetValidEntityProperties()
+        public async Task<ITreeNode<IBaseSymbolWrapper>> PopulateClassHierarchy()
         {
-            IDictionary<Type, List<PropertyInfo>> props = new Dictionary<Type, List<PropertyInfo>>();
-            DynamicClassHelper.GetAllProperties(_entityClassType, props);
+            return await Task.Run(() =>
+            {
+                ITreeNode<IBaseSymbolWrapper> rootNode = new TreeNode<IBaseSymbolWrapper>()
+                {
+                    Current = new EntityClassWrapper(_entityClassType),
+                };
 
-            await Task.CompletedTask;
+                PopulateClassProperties(_entityClassType, rootNode);
+                PopulateParentClasses(rootNode);
+
+                return rootNode;
+            });
+        }
+
+        private void PopulateParentClasses(ITreeNode<IBaseSymbolWrapper> rootNode)
+        {
+            while (!_entityClassType.BaseType.Name.Equals(nameof(Object)))
+            {
+                TreeNode<IBaseSymbolWrapper> childNode = new TreeNode<IBaseSymbolWrapper>()
+                {
+                    Current = new EntityClassWrapper(_entityClassType.BaseType),
+                    Parent = rootNode
+                };
+
+                PopulateClassProperties(_entityClassType.BaseType, childNode);
+                rootNode.Children.Add(childNode);
+
+                rootNode = childNode;
+                _entityClassType = _entityClassType.BaseType;
+            }
+        }
+
+        public void PopulateClassProperties(INamedTypeSymbol referencedClass, ITreeNode<IBaseSymbolWrapper> parent)
+        {
+            try
+            {
+                foreach (TreeNode<IBaseSymbolWrapper> child in from ISymbol property in referencedClass.GetMembers().Where(x => x.Kind == SymbolKind.Property)
+                                                               select new TreeNode<IBaseSymbolWrapper>()
+                                                               {
+                                                                   Current = new EntityPropertyWrapper(property as IPropertySymbol),
+                                                                   Parent = parent
+                                                               })
+                {
+                    parent.Children.Add(child);
+                }
+            }
+            catch(Exception ex)
+            {
+
+            }
         }
     }
 }

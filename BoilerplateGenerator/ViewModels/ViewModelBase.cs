@@ -1,5 +1,9 @@
-﻿using BoilerplateGenerator.Domain;
+﻿using BoilerplateGenerator.Collections;
+using BoilerplateGenerator.Domain;
+using BoilerplateGenerator.Models;
 using BoilerplateGenerator.Services;
+using Microsoft.CodeAnalysis;
+using Microsoft.VisualStudio.Shell;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,6 +14,8 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
+using Task = System.Threading.Tasks.Task;
 
 namespace BoilerplateGenerator.ViewModels
 {
@@ -47,7 +53,9 @@ namespace BoilerplateGenerator.ViewModels
                         return;
                     }
 
-                    await _fileManagerService.GetValidEntityProperties();
+                    var rootNode = await _fileManagerService.PopulateClassHierarchy();
+                    await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                    EntityTree.Add(rootNode);
                 });
 
                 return _validateSelectedFileCommand;
@@ -64,6 +72,8 @@ namespace BoilerplateGenerator.ViewModels
         #endregion
 
         #region Properties
+        public ObservableCollection<ITreeNode<IBaseSymbolWrapper>> EntityTree { get; set; } = new ObservableCollection<ITreeNode<IBaseSymbolWrapper>>();
+
         private Visibility _loaderVisibility = Visibility.Collapsed;
         public Visibility LoaderVisibility
         {

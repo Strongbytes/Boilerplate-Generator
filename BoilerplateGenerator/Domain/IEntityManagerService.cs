@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using BoilerplateGenerator.Collections;
+using BoilerplateGenerator.Models;
+using System.Threading.Tasks;
 
 namespace BoilerplateGenerator.Domain
 {
@@ -10,6 +12,6 @@ namespace BoilerplateGenerator.Domain
 
         Task FindSelectedFileClassType();
 
-        Task GetValidEntityProperties();
+        Task<ITreeNode<IBaseSymbolWrapper>> PopulateClassHierarchy();
     }
 }
