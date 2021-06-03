@@ -1,6 +1,7 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using BoilerplateGenerator.Models.Contracts;
+using Microsoft.CodeAnalysis;
 
-namespace BoilerplateGenerator.Models
+namespace BoilerplateGenerator.Models.RoslynWrappers
 {
     public class BaseSymbolWrapper<T> : IBaseSymbolWrapper where T : ISymbol
     {
@@ -9,7 +10,7 @@ namespace BoilerplateGenerator.Models
         public bool IsChecked { get; set; }
 
         private readonly T _symbol;
-        
+
         public BaseSymbolWrapper(T symbol)
         {
             _symbol = symbol;

@@ -3,10 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         xmlns:converters="clr-namespace:BoilerplateGenerator.Converters"
         xmlns:templates="clr-namespace:BoilerplateGenerator.Templates"
         xmlns:viewModels="clr-namespace:BoilerplateGenerator.ViewModels"
+        xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=viewModels:ViewModelBase, IsDesignTimeCreatable=False}"
         WindowState="Maximized"
@@ -14,14 +15,6 @@
         Height="450"
         Width="800">
     <Window.Resources>
-        <CollectionViewSource Source="{Binding AvailableFiles}"
-                              x:Key="GridItems">
-            <CollectionViewSource.SortDescriptions>
-                <scm:SortDescription PropertyName="Match"
-                                     Direction="Descending" />
-            </CollectionViewSource.SortDescriptions>
-        </CollectionViewSource>
-
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
         <converters:BooleanToInverseVisibilityConverter x:Key="BoolToInverseVisibilityConverter" />
@@ -49,7 +42,7 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <Label Content="Selected Entity"
+                <Label Content="Selected File"
                        Target="{Binding ElementName=TextEntity}"
                        VerticalContentAlignment="Center"
                        HorizontalContentAlignment="Center" />
@@ -65,7 +58,7 @@
             <Button Grid.Column="1"
                     VerticalAlignment="Center"
                     Margin="10,0"
-                    Content="Validate Entity"
+                    Content="Load Entity from File"
                     Command="{Binding ValidateSelectedFileCommand}" />
         </Grid>
 
@@ -73,69 +66,61 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="5" />
-                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="5" />
-                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <TreeView Grid.Row="1"
-                      ItemsSource="{Binding EntityTree}"
-                      ItemTemplateSelector="{StaticResource EntityViewTemplateSelector}">
-                <TreeView.Resources>
-                    <HierarchicalDataTemplate x:Key="ClassSelector"
-                                              ItemsSource="{Binding Path=Children}">
-                        <CheckBox IsChecked="{Binding Current.IsChecked, Mode=TwoWay}"
-                                  IsThreeState="True"
-                                  Content="{Binding Current.Name}" />
-                    </HierarchicalDataTemplate>
-                    <DataTemplate x:Key="PropertySelector">
-                        <CheckBox IsChecked="{Binding Current.IsChecked, Mode=TwoWay}">
-                            <CheckBox.Content>
-                                <TextBlock>
-                                    <Run Text="{Binding Current.Name}" /><Run Text=" (Type: " /><Run Text="{Binding Current.Type}" /><Run Text=")" />
-                                </TextBlock>
-                            </CheckBox.Content>
-                        </CheckBox>
-                    </DataTemplate>
-                </TreeView.Resources>
-            </TreeView>
-
-            <GridSplitter Grid.Column="1"
-                          ResizeDirection="Columns"
-                          HorizontalAlignment="Stretch" />
-
-            <Grid Grid.Column="2">
+            <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <Grid Margin="0,0,0,10">
+                <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
                     <Separator VerticalAlignment="Top"
-                               Margin="0"
-                               Height="0.5" />
+                               Margin="0" />
 
-                    <Label Content="Containing Module"
-                           Target="{Binding ElementName=ComboModule}"
+                    <Label Content="Entity Hierarchy"
+                           Target="{Binding ElementName=TreeEntity}"
                            VerticalContentAlignment="Center"
                            HorizontalContentAlignment="Left" />
 
-                    <ComboBox x:Name="ComboModule"
-                              Margin="5,0"
-                              ItemsSource="{Binding AvailableModules}"
-                              Grid.Row="1">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Name}" />
+                    <TreeView x:Name="TreeEntity"
+                              Grid.Row="1"
+                              ItemsSource="{Binding EntityTree}"
+                              ItemTemplateSelector="{StaticResource EntityViewTemplateSelector}">
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="{x:Type TreeViewItem}">
+                                <Setter Property="IsExpanded"
+                                        Value="True" />
+                            </Style>
+                        </TreeView.ItemContainerStyle>
+                        <TreeView.Resources>
+                            <HierarchicalDataTemplate x:Key="ClassSelector"
+                                                      ItemsSource="{Binding Path=Children}">
+                                <CheckBox IsChecked="{Binding Current.IsChecked, Mode=TwoWay}"
+                                          IsThreeState="True"
+                                          Content="{Binding Current.Name}" />
+                            </HierarchicalDataTemplate>
+                            <DataTemplate x:Key="PropertySelector">
+                                <CheckBox IsChecked="{Binding Current.IsChecked, Mode=TwoWay}">
+                                    <CheckBox.Content>
+                                        <TextBlock>
+                                    <Run Text="{Binding Current.Name}" /><Run Text=" (Type: " /><Run Text="{Binding Current.Type}" /><Run Text=")" />
+                                        </TextBlock>
+                                    </CheckBox.Content>
+                                </CheckBox>
                             </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
+                        </TreeView.Resources>
+                    </TreeView>
                 </Grid>
 
                 <Grid Grid.Row="1"
@@ -145,16 +130,41 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <Separator VerticalAlignment="Top"
-                               Margin="0"
-                               Height="0.5" />
-
-                    <Label Content="Operations"
+                    <Label Content="Target Module"
                            Target="{Binding ElementName=ComboModule}"
                            VerticalContentAlignment="Center"
                            HorizontalContentAlignment="Left" />
 
-                    <Grid Grid.Row="1"
+                    <ComboBox x:Name="ComboModule"
+                              Margin="5,0"
+                              ItemsSource="{Binding AvailableModules}"
+                              SelectedItem="{Binding SelectedProject, Mode=TwoWay}"
+                              Grid.Row="1">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </Grid>
+
+                <Grid Grid.Row="2"
+                      Margin="0,0,0,10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Separator VerticalAlignment="Top"
+                               Margin="0" />
+
+                    <Label Content="Operations"
+                           Target="{Binding ElementName=GridOperations}"
+                           VerticalContentAlignment="Center"
+                           HorizontalContentAlignment="Left" />
+
+                    <Grid x:Name="GridOperations"
+                          Grid.Row="1"
                           Margin="5,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -174,24 +184,60 @@
                         <CheckBox Grid.Column="3"
                                   Content="DELETE" />
                     </Grid>
+
                 </Grid>
 
-                <Grid Grid.Row="2"
-                      Margin="0,0,0,10">
+                <Grid Grid.Row="3">
+                    <Separator VerticalAlignment="Top"
+                               Margin="0" />
+
+                    <Button Content="Generate Code"
+                            Margin="5,10"
+                            Command="{Binding GenerateCodeCommand}" />
+                </Grid>
+            </Grid>
+
+            <GridSplitter Grid.Column="1"
+                          ResizeDirection="Columns"
+                          HorizontalAlignment="Stretch" />
+
+            <Grid Grid.Column="2">
+                <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
                     <Separator VerticalAlignment="Top"
-                               Margin="0"
-                               Height="0.5" />
+                               Margin="0" />
 
                     <Label Content="Directory Structure"
-                           Target="{Binding ElementName=ComboModule}"
+                           Target="{Binding ElementName=TreeDirectory}"
                            VerticalContentAlignment="Center"
                            HorizontalContentAlignment="Left" />
 
+                    <TreeView x:Name="TreeDirectory"
+                              Grid.Row="1"
+                              ItemsSource="{Binding DirectoriesTree}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectedItemChanged">
+                                <i:InvokeCommandAction x:Name="SelectionCommand"
+                                                       Command="{Binding ShowCodeFileOnItemSelected}"
+                                                       CommandParameter="{Binding ElementName=TreeDirectory, Path=SelectedItem}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="{x:Type TreeViewItem}">
+                                <Setter Property="IsExpanded"
+                                        Value="True" />
+                            </Style>
+                        </TreeView.ItemContainerStyle>
+                        <TreeView.ItemTemplate>
+                            <HierarchicalDataTemplate ItemsSource="{Binding Path=Children}">
+                                <TextBlock Text="{Binding Current.AssetName}" />
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
+                    </TreeView>
                 </Grid>
             </Grid>
 
@@ -199,6 +245,14 @@
                           ResizeDirection="Columns"
                           HorizontalAlignment="Stretch" />
 
+            <Grid Grid.Column="4">
+                <avalonEdit:TextEditor x:Name="SyntaxHighliter"
+                                       Document="{Binding HighlitedGeneratedCode}"
+                                       WordWrap="True"
+                                       ShowLineNumbers="True"
+                                       FontFamily="Consolas"
+                                       SyntaxHighlighting="C#" />
+            </Grid>
 
         </Grid>
     </Grid>

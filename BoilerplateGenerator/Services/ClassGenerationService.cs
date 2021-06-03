@@ -1,10 +1,13 @@
 ﻿using BoilerplateGenerator.ClassGeneratorModels;
 using BoilerplateGenerator.Domain;
+using BoilerplateGenerator.Models.ClassGeneratorModels;
+using BoilerplateGenerator.Models.Contracts;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BoilerplateGenerator.Services
 {
@@ -17,11 +20,14 @@ namespace BoilerplateGenerator.Services
             _genericGeneratorModel = genericGeneratorModel;
         }
 
-        public string GeneratedClass => SyntaxFactory.CompilationUnit()
+        public async Task<IGeneratedClass> GetGeneratedClass()
+        {
+            return new GeneratedClass(_genericGeneratorModel, await Task.Run(() => SyntaxFactory.CompilationUnit()
                                                      .AddUsings(GenerateUsings())
                                                      .AddMembers(GenerateNamespace())
                                                      .NormalizeWhitespace()
-                                                     .ToFullString();
+                                                     .ToFullString()).ConfigureAwait(false));
+        }
 
         private UsingDirectiveSyntax[] GenerateUsings()
         {

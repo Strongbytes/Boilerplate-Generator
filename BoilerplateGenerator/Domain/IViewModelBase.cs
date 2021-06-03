@@ -1,6 +1,6 @@
 ﻿using BoilerplateGenerator.Collections;
-using BoilerplateGenerator.Models;
-using System.Collections.Generic;
+using BoilerplateGenerator.Models.Contracts;
+using BoilerplateGenerator.Models.RoslynWrappers;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -12,6 +12,8 @@ namespace BoilerplateGenerator.Domain
     public interface IViewModelBase : INotifyPropertyChanged
     {
         Visibility LoaderVisibility { get; set; }
+
+        ProjectWrapper SelectedProject { get; set; }
 
         ObservableCollection<ITreeNode<IBaseSymbolWrapper>> EntityTree { get; set; }
 

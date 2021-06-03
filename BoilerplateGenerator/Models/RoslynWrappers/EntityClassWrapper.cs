@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BoilerplateGenerator.Models
+namespace BoilerplateGenerator.Models.RoslynWrappers
 {
     public class EntityClassWrapper : BaseSymbolWrapper<INamedTypeSymbol>
     {

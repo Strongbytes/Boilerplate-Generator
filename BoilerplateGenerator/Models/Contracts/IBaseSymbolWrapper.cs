@@ -1,4 +1,4 @@
-﻿namespace BoilerplateGenerator.Models
+﻿namespace BoilerplateGenerator.Models.Contracts
 {
     public interface IBaseSymbolWrapper
     {

@@ -1,4 +1,5 @@
-﻿using BoilerplateGenerator.Models;
+﻿using BoilerplateGenerator.Models.ClassGeneratorModels;
+using BoilerplateGenerator.Models.RoslynWrappers;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Collections.Generic;
 
@@ -12,7 +13,11 @@ namespace BoilerplateGenerator.ClassGeneratorModels
 
         string Namespace { get; }
 
+        string TargetProjectName { get; }
+
         SyntaxKind RootClassModifier { get; }
+
+        AssetKind AssetKind { get; }
 
         IEnumerable<string> BaseTypes { get; }
 

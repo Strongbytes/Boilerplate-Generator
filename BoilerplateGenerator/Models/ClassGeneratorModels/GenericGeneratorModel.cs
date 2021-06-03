@@ -1,19 +1,18 @@
-﻿using BoilerplateGenerator.Collections;
+﻿using BoilerplateGenerator.ClassGeneratorModels;
+using BoilerplateGenerator.Collections;
 using BoilerplateGenerator.Domain;
-using BoilerplateGenerator.Models;
+using BoilerplateGenerator.Models.Contracts;
+using BoilerplateGenerator.Models.RoslynWrappers;
 using Microsoft.CodeAnalysis.CSharp;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BoilerplateGenerator.ClassGeneratorModels
+namespace BoilerplateGenerator.Models.ClassGeneratorModels
 {
     public abstract class GenericGeneratorModel : IGenericGeneratorModel
     {
         private readonly IViewModelBase _viewModelBase;
-      
+
         public virtual IEnumerable<string> Usings => new List<string>
         {
             nameof(System)
@@ -29,7 +28,11 @@ namespace BoilerplateGenerator.ClassGeneratorModels
 
         public virtual SyntaxKind RootClassModifier => SyntaxKind.PublicKeyword;
 
-        public string Namespace => "Test";
+        public string TargetProjectName => _viewModelBase.SelectedProject.Name;
+
+        public virtual string Namespace => _viewModelBase.SelectedProject.Namespace;
+
+        public abstract AssetKind AssetKind { get; }
 
         protected GenericGeneratorModel(IViewModelBase viewModelBase)
         {

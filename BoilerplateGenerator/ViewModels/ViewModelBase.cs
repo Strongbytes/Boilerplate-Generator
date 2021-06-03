@@ -1,7 +1,9 @@
 ﻿using BoilerplateGenerator.ClassGeneratorModels;
 using BoilerplateGenerator.Collections;
 using BoilerplateGenerator.Domain;
-using BoilerplateGenerator.Models;
+using BoilerplateGenerator.Models.ClassGeneratorModels;
+using BoilerplateGenerator.Models.Contracts;
+using BoilerplateGenerator.Models.RoslynWrappers;
 using BoilerplateGenerator.Services;
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.Shell;
@@ -52,31 +54,73 @@ namespace BoilerplateGenerator.ViewModels
             }
         }
 
-        private string _ReferencedEntityName;
+        private string _referencedEntityName;
         public string ReferencedEntityName
         {
             get
             {
-                return _ReferencedEntityName;
+                return _referencedEntityName;
             }
 
             set
             {
-                if (value == _ReferencedEntityName)
+                if (value == _referencedEntityName)
                 {
                     return;
                 }
 
-                _ReferencedEntityName = value;
+                _referencedEntityName = value;
                 NotifyPropertyChanged();
             }
         }
+
+        private ProjectWrapper _selectedProject;
+        public ProjectWrapper SelectedProject
+        {
+            get
+            {
+                return _selectedProject;
+            }
+
+            set
+            {
+                if (value == _selectedProject)
+                {
+                    return;
+                }
+
+                _selectedProject = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private ICSharpCode.AvalonEdit.Document.TextDocument _highlitedGeneratedCode = new ICSharpCode.AvalonEdit.Document.TextDocument();
+        public ICSharpCode.AvalonEdit.Document.TextDocument HighlitedGeneratedCode
+        {
+            get
+            {
+                return _highlitedGeneratedCode;
+            }
+            set
+            {
+                _highlitedGeneratedCode = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         #endregion
 
         #region Collections
         public ObservableCollection<ITreeNode<IBaseSymbolWrapper>> EntityTree { get; set; } = new ObservableCollection<ITreeNode<IBaseSymbolWrapper>>();
 
         public ObservableCollection<ProjectWrapper> AvailableModules { get; set; } = new ObservableCollection<ProjectWrapper>();
+
+        private List<IGenericGeneratorModel> ClassGeneratorModels => new List<IGenericGeneratorModel>
+        {
+            new DomainEntityGeneratorModel(this)
+        };
+
+        public ObservableCollection<ITreeNode<IBaseGeneratedAsset>> DirectoriesTree { get; set; } = new ObservableCollection<ITreeNode<IBaseGeneratedAsset>>();
         #endregion
 
         #region Commands
@@ -102,15 +146,105 @@ namespace BoilerplateGenerator.ViewModels
 
                     var rootNode = await _fileManagerService.PopulateClassHierarchy();
                     await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-                    
+
                     EntityTree.Clear();
                     EntityTree.Add(rootNode);
-
-                    var y = new ClassGenerationService(new DomainEntityGeneratorModel(this));
-                    var z = y.GeneratedClass;
                 });
 
                 return _validateSelectedFileCommand;
+            }
+        }
+
+        private ICommand _generateCodeCommand;
+        public ICommand GenerateCodeCommand
+        {
+            get
+            {
+                if (_generateCodeCommand != null)
+                {
+                    return _generateCodeCommand;
+                }
+
+                _generateCodeCommand = new CommandHandler(async (parameter) =>
+                {
+                    ITreeNode<IBaseGeneratedAsset> rootNode = new TreeNode<IBaseGeneratedAsset>
+                    {
+                        Current = new GeneratedDirectory(SelectedProject.Name),
+                    };
+
+                    foreach (IGenericGeneratorModel availableModels in ClassGeneratorModels)
+                    {
+                        var generatedClass = await new ClassGenerationService(availableModels).GetGeneratedClass().ConfigureAwait(false);
+
+                        foreach(string directory in generatedClass.ParentDirectoryHierarchy)
+                        {
+                            if (rootNode.Current is GeneratedDirectory generatedDirectory && generatedDirectory.AssetName.Equals(directory))
+                            {
+                                continue;
+                            }
+
+                            ITreeNode<IBaseGeneratedAsset> directoryNode = new TreeNode<IBaseGeneratedAsset>
+                            {
+                                Current = new GeneratedDirectory(directory),
+                                Parent = rootNode
+                            };
+
+                            rootNode.Children.Add(directoryNode);
+                            rootNode = directoryNode;
+                        }
+
+                        ITreeNode<IBaseGeneratedAsset> childNode = new TreeNode<IBaseGeneratedAsset>
+                        {
+                            Current = generatedClass,
+                            Parent = rootNode
+                        };
+
+                        rootNode.Children.Add(childNode);
+                    }
+
+                    while (rootNode.Parent != null)
+                    {
+                        rootNode = rootNode.Parent;
+                    }
+
+                    await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+                    DirectoriesTree.Clear();
+                    DirectoriesTree.Add(rootNode);
+                });
+
+                return _generateCodeCommand;
+            }
+        }
+
+        private ICommand _showCodeFileOnItemSelected;
+        public ICommand ShowCodeFileOnItemSelected
+        {
+            get
+            {
+                if (_showCodeFileOnItemSelected != null)
+                {
+                    return _showCodeFileOnItemSelected;
+                }
+
+                _showCodeFileOnItemSelected = new CommandHandler((parameter) =>
+                {
+                    HighlitedGeneratedCode.Text = string.Empty;
+
+                    if (!(parameter is ITreeNode<IBaseGeneratedAsset> treeNode))
+                    {
+                        return;
+                    }
+
+                    if (!(treeNode.Current is IGeneratedClass generatedClass))
+                    {
+                        return;
+                    }
+
+                    HighlitedGeneratedCode.Text = generatedClass.Code;
+                });
+
+                return _showCodeFileOnItemSelected;
             }
         }
         #endregion
@@ -121,7 +255,7 @@ namespace BoilerplateGenerator.ViewModels
         {
             ReferencedEntityName = await _fileManagerService.LoadSelectedEntityDetails();
 
-            foreach(ProjectWrapper item in _fileManagerService.RetrieveAllModules())
+            foreach (ProjectWrapper item in _fileManagerService.RetrieveAllModules())
             {
                 AvailableModules.Add(item);
             }
