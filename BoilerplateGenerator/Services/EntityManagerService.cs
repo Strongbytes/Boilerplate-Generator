@@ -9,6 +9,7 @@ using Microsoft.VisualStudio.LanguageServices;
 using Microsoft.VisualStudio.Shell;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
@@ -50,6 +51,13 @@ namespace BoilerplateGenerator.Services
             return _selectedItem.Name;
         }
 
+        public IEnumerable<ProjectWrapper> RetrieveAllModules()
+        {
+            return from project in _visualStudioWorkspace.CurrentSolution.Projects
+                   where !project.Name.Equals(_parentProjectName)
+                   select new ProjectWrapper(project);
+        }
+
         public async Task FindSelectedFileClassType()
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
@@ -77,7 +85,7 @@ namespace BoilerplateGenerator.Services
 
                 var classSyntax = (await selectedFileSyntaxTree.GetRootAsync()).DescendantNodes().OfType<ClassDeclarationSyntax>().First();
                 _entityClassType = compilation.GetSemanticModel(selectedFileSyntaxTree).GetDeclaredSymbol(classSyntax) as INamedTypeSymbol;
-            });
+            }).ConfigureAwait(false);
         }
 
         public async Task<ITreeNode<IBaseSymbolWrapper>> PopulateClassHierarchy()
@@ -93,7 +101,7 @@ namespace BoilerplateGenerator.Services
                 PopulateParentClasses(rootNode);
 
                 return rootNode;
-            });
+            }).ConfigureAwait(false);
         }
 
         private void PopulateParentClasses(ITreeNode<IBaseSymbolWrapper> rootNode)

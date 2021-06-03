@@ -1,5 +1,6 @@
 ﻿using BoilerplateGenerator.Collections;
 using BoilerplateGenerator.Models;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BoilerplateGenerator.Domain
@@ -9,6 +10,8 @@ namespace BoilerplateGenerator.Domain
         bool IsEntityClassTypeValid { get; }
 
         Task<string> LoadSelectedEntityDetails();
+
+        IEnumerable<ProjectWrapper> RetrieveAllModules();
 
         Task FindSelectedFileClassType();
 

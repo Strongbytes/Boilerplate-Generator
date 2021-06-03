@@ -13,6 +13,8 @@ namespace BoilerplateGenerator.Domain
     {
         Visibility LoaderVisibility { get; set; }
 
+        ObservableCollection<ITreeNode<IBaseSymbolWrapper>> EntityTree { get; set; }
+
         string ReferencedEntityName { get; set; }
 
         void ResetInterface();

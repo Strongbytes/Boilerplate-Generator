@@ -46,6 +46,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ClassGeneratorModels\ClassGeneratorType.cs" />
+    <Compile Include="ClassGeneratorModels\DomainEntityGeneratorModel.cs" />
+    <Compile Include="ClassGeneratorModels\IGenericGeneratorModel.cs" />
+    <Compile Include="ClassGeneratorModels\GenericGeneratorModel.cs" />
+    <Compile Include="ClassGenerator\EntityDomainModelGenerator.cs" />
     <Compile Include="Collections\ITreeNode.cs" />
     <Compile Include="Collections\TreeNode.cs" />
     <Compile Include="Controls\MainWindow.xaml.cs">
@@ -53,6 +58,7 @@
     </Compile>
     <Compile Include="Converters\BooleanToInverseVisibilityConverter.cs" />
     <Compile Include="Converters\InverseVisibilityConverter.cs" />
+    <Compile Include="Domain\IClassGenerationService.cs" />
     <Compile Include="Domain\IEntityManagerService.cs" />
     <Compile Include="Domain\IViewModelBase.cs" />
     <Compile Include="GenerateCRUD.cs" />
@@ -62,8 +68,10 @@
     <Compile Include="Models\BaseSymbolWrapper.cs" />
     <Compile Include="Models\EntityClassWrapper.cs" />
     <Compile Include="Models\EntityPropertyWrapper.cs" />
+    <Compile Include="Models\ProjectWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BoilerplateGeneratorPackage.cs" />
+    <Compile Include="Services\ClassGenerationService.cs" />
     <Compile Include="Services\CommandHandler.cs" />
     <Compile Include="Services\EntityManagerService.cs" />
     <Compile Include="Templates\EntityViewTemplateSelector.cs" />

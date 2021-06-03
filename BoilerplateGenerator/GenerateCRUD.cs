@@ -1,4 +1,5 @@
-﻿using BoilerplateGenerator.Controls;
+﻿using BoilerplateGenerator.ClassGeneratorModels;
+using BoilerplateGenerator.Controls;
 using BoilerplateGenerator.Domain;
 using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Services;

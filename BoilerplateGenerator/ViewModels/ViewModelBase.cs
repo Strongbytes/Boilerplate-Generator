@@ -1,4 +1,5 @@
-﻿using BoilerplateGenerator.Collections;
+﻿using BoilerplateGenerator.ClassGeneratorModels;
+using BoilerplateGenerator.Collections;
 using BoilerplateGenerator.Domain;
 using BoilerplateGenerator.Models;
 using BoilerplateGenerator.Services;
@@ -28,51 +29,8 @@ namespace BoilerplateGenerator.ViewModels
             _fileManagerService = fileManagerService;
         }
 
-        #region Collections
-
-        #endregion
-
-        #region Commands
-        private ICommand _validateSelectedFileCommand;
-        public ICommand ValidateSelectedFileCommand
-        {
-            get
-            {
-                if (_validateSelectedFileCommand != null)
-                {
-                    return _validateSelectedFileCommand;
-                }
-
-                _validateSelectedFileCommand = new CommandHandler(async (parameter) =>
-                {
-                    await _fileManagerService.FindSelectedFileClassType().ConfigureAwait(false);
-
-                    if (!_fileManagerService.IsEntityClassTypeValid)
-                    {
-                        // TODO: Show validation error
-                        return;
-                    }
-
-                    var rootNode = await _fileManagerService.PopulateClassHierarchy();
-                    await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-                    EntityTree.Add(rootNode);
-                });
-
-                return _validateSelectedFileCommand;
-            }
-        }
-        #endregion
-
-        #region Business
-
-        public async Task PopulateSolutionProjects()
-        {
-            ReferencedEntityName = await _fileManagerService.LoadSelectedEntityDetails();
-        }
-        #endregion
 
         #region Properties
-        public ObservableCollection<ITreeNode<IBaseSymbolWrapper>> EntityTree { get; set; } = new ObservableCollection<ITreeNode<IBaseSymbolWrapper>>();
 
         private Visibility _loaderVisibility = Visibility.Collapsed;
         public Visibility LoaderVisibility
@@ -114,6 +72,62 @@ namespace BoilerplateGenerator.ViewModels
             }
         }
         #endregion
+
+        #region Collections
+        public ObservableCollection<ITreeNode<IBaseSymbolWrapper>> EntityTree { get; set; } = new ObservableCollection<ITreeNode<IBaseSymbolWrapper>>();
+
+        public ObservableCollection<ProjectWrapper> AvailableModules { get; set; } = new ObservableCollection<ProjectWrapper>();
+        #endregion
+
+        #region Commands
+        private ICommand _validateSelectedFileCommand;
+        public ICommand ValidateSelectedFileCommand
+        {
+            get
+            {
+                if (_validateSelectedFileCommand != null)
+                {
+                    return _validateSelectedFileCommand;
+                }
+
+                _validateSelectedFileCommand = new CommandHandler(async (parameter) =>
+                {
+                    await _fileManagerService.FindSelectedFileClassType().ConfigureAwait(false);
+
+                    if (!_fileManagerService.IsEntityClassTypeValid)
+                    {
+                        // TODO: Show validation error
+                        return;
+                    }
+
+                    var rootNode = await _fileManagerService.PopulateClassHierarchy();
+                    await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                    
+                    EntityTree.Clear();
+                    EntityTree.Add(rootNode);
+
+                    var y = new ClassGenerationService(new DomainEntityGeneratorModel(this));
+                    var z = y.GeneratedClass;
+                });
+
+                return _validateSelectedFileCommand;
+            }
+        }
+        #endregion
+
+        #region Business
+
+        public async Task PopulateSolutionProjects()
+        {
+            ReferencedEntityName = await _fileManagerService.LoadSelectedEntityDetails();
+
+            foreach(ProjectWrapper item in _fileManagerService.RetrieveAllModules())
+            {
+                AvailableModules.Add(item);
+            }
+        }
+        #endregion
+
 
         #region Event Handlers
         public void ResetInterface()

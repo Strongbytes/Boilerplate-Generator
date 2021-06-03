@@ -43,17 +43,19 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Grid Margin="10,0">
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Text="Selected Entity"
-                           FontWeight="Bold"
-                           VerticalAlignment="Center" />
+                <Label Content="Selected Entity"
+                       Target="{Binding ElementName=TextEntity}"
+                       VerticalContentAlignment="Center"
+                       HorizontalContentAlignment="Center" />
 
-                <TextBox Grid.Column="1"
+                <TextBox x:Name="TextEntity"
+                         Grid.Column="1"
                          VerticalAlignment="Center"
                          Margin="10,1,0,0"
                          IsReadOnly="True"
@@ -71,8 +73,9 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="5" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="3*" />
             </Grid.ColumnDefinitions>
 
             <TreeView Grid.Row="1"
@@ -104,26 +107,99 @@
             <Grid Grid.Column="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
 
-                    <Label Content="Parent Module"
-                           Target="{Binding ComboModule}"
+                <Grid Margin="0,0,0,10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Separator VerticalAlignment="Top"
+                               Margin="0"
+                               Height="0.5" />
+
+                    <Label Content="Containing Module"
+                           Target="{Binding ElementName=ComboModule}"
                            VerticalContentAlignment="Center"
-                           HorizontalContentAlignment="Center" />
+                           HorizontalContentAlignment="Left" />
 
                     <ComboBox x:Name="ComboModule"
-                              Grid.Column="1" />
+                              Margin="5,0"
+                              ItemsSource="{Binding AvailableModules}"
+                              Grid.Row="1">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </Grid>
+
+                <Grid Grid.Row="1"
+                      Margin="0,0,0,10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Separator VerticalAlignment="Top"
+                               Margin="0"
+                               Height="0.5" />
+
+                    <Label Content="Operations"
+                           Target="{Binding ElementName=ComboModule}"
+                           VerticalContentAlignment="Center"
+                           HorizontalContentAlignment="Left" />
+
+                    <Grid Grid.Row="1"
+                          Margin="5,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <CheckBox Content="GET" />
+
+                        <CheckBox Grid.Column="1"
+                                  Content="POST" />
+
+                        <CheckBox Grid.Column="2"
+                                  Content="PUT" />
+
+                        <CheckBox Grid.Column="3"
+                                  Content="DELETE" />
+                    </Grid>
+                </Grid>
+
+                <Grid Grid.Row="2"
+                      Margin="0,0,0,10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Separator VerticalAlignment="Top"
+                               Margin="0"
+                               Height="0.5" />
+
+                    <Label Content="Directory Structure"
+                           Target="{Binding ElementName=ComboModule}"
+                           VerticalContentAlignment="Center"
+                           HorizontalContentAlignment="Left" />
+
                 </Grid>
             </Grid>
 
-            
+            <GridSplitter Grid.Column="3"
+                          ResizeDirection="Columns"
+                          HorizontalAlignment="Stretch" />
+
+
         </Grid>
     </Grid>
 </Window>

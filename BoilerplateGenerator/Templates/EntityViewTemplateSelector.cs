@@ -10,7 +10,7 @@ namespace BoilerplateGenerator.Templates
     {
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
-            FrameworkElement elemnt = container as FrameworkElement;
+            FrameworkElement element = container as FrameworkElement;
 
             if (!(item is ITreeNode<IBaseSymbolWrapper> treeNode))
             {
@@ -20,10 +20,10 @@ namespace BoilerplateGenerator.Templates
             switch (treeNode.Current.GetType().Name)
             {
                 case nameof(EntityClassWrapper):
-                    return elemnt.FindResource("ClassSelector") as DataTemplate;
+                    return element.FindResource("ClassSelector") as DataTemplate;
 
                 default:
-                    return elemnt.FindResource("PropertySelector") as DataTemplate;
+                    return element.FindResource("PropertySelector") as DataTemplate;
             }
         }
     }
