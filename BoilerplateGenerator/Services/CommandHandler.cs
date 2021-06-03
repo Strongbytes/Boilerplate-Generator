@@ -16,7 +16,7 @@ namespace BoilerplateGenerator.Services
         public CommandHandler(Action<object> action, Func<bool> canExecute = null)
         {
             _action = action;
-            _canExecute = canExecute == null ? () => true : canExecute;
+            _canExecute = canExecute ?? (() => true);
         }
 
         /// <summary>

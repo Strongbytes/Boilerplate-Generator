@@ -14,6 +14,7 @@ namespace BoilerplateGenerator.Models
         {
             _symbol = symbol;
             Name = symbol.Name;
+            IsChecked = true;
         }
     }
 }

@@ -72,34 +72,58 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="5" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-                <TreeView Grid.Row="1"
-                          ItemsSource="{Binding EntityTree}"
-                          ItemTemplateSelector="{StaticResource EntityViewTemplateSelector}">
-                    <TreeView.Resources>
-                        <HierarchicalDataTemplate x:Key="ClassSelector"
-                                                  ItemsSource="{Binding Path=Children}">
-                            <CheckBox IsChecked="{Binding Current.IsChecked, Mode=TwoWay}"
-                                      IsThreeState="True"
-                                      Content="{Binding Current.Name}" />
-                        </HierarchicalDataTemplate>
-                        <DataTemplate x:Key="PropertySelector">
-                            <CheckBox IsChecked="{Binding Current.IsChecked, Mode=TwoWay}">
-                                <CheckBox.Content>
-                                    <TextBlock>
+            <TreeView Grid.Row="1"
+                      ItemsSource="{Binding EntityTree}"
+                      ItemTemplateSelector="{StaticResource EntityViewTemplateSelector}">
+                <TreeView.Resources>
+                    <HierarchicalDataTemplate x:Key="ClassSelector"
+                                              ItemsSource="{Binding Path=Children}">
+                        <CheckBox IsChecked="{Binding Current.IsChecked, Mode=TwoWay}"
+                                  IsThreeState="True"
+                                  Content="{Binding Current.Name}" />
+                    </HierarchicalDataTemplate>
+                    <DataTemplate x:Key="PropertySelector">
+                        <CheckBox IsChecked="{Binding Current.IsChecked, Mode=TwoWay}">
+                            <CheckBox.Content>
+                                <TextBlock>
                                     <Run Text="{Binding Current.Name}" /><Run Text=" (Type: " /><Run Text="{Binding Current.Type}" /><Run Text=")" />
-                                    </TextBlock>
-                                </CheckBox.Content>
-                            </CheckBox>
-                        </DataTemplate>
-                    </TreeView.Resources>
-                </TreeView>
+                                </TextBlock>
+                            </CheckBox.Content>
+                        </CheckBox>
+                    </DataTemplate>
+                </TreeView.Resources>
+            </TreeView>
 
             <GridSplitter Grid.Column="1"
                           ResizeDirection="Columns"
                           HorizontalAlignment="Stretch" />
 
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Content="Parent Module"
+                           Target="{Binding ComboModule}"
+                           VerticalContentAlignment="Center"
+                           HorizontalContentAlignment="Center" />
+
+                    <ComboBox x:Name="ComboModule"
+                              Grid.Column="1" />
+                </Grid>
+            </Grid>
+
+            
         </Grid>
     </Grid>
 </Window>

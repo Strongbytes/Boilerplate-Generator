@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.VisualStudio.LanguageServices;
 using Microsoft.VisualStudio.Shell;
 using System;
+using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
@@ -97,19 +98,26 @@ namespace BoilerplateGenerator.Services
 
         private void PopulateParentClasses(ITreeNode<IBaseSymbolWrapper> rootNode)
         {
-            while (!_entityClassType.BaseType.Name.Equals(nameof(Object)))
+            try
             {
-                TreeNode<IBaseSymbolWrapper> childNode = new TreeNode<IBaseSymbolWrapper>()
+                while (_entityClassType.BaseType != null && !_entityClassType.BaseType.Name.Equals(nameof(Object)))
                 {
-                    Current = new EntityClassWrapper(_entityClassType.BaseType),
-                    Parent = rootNode
-                };
+                    TreeNode<IBaseSymbolWrapper> childNode = new TreeNode<IBaseSymbolWrapper>()
+                    {
+                        Current = new EntityClassWrapper(_entityClassType.BaseType),
+                        Parent = rootNode
+                    };
 
-                PopulateClassProperties(_entityClassType.BaseType, childNode);
-                rootNode.Children.Add(childNode);
+                    PopulateClassProperties(_entityClassType.BaseType, childNode);
+                    rootNode.Children.Add(childNode);
 
-                rootNode = childNode;
-                _entityClassType = _entityClassType.BaseType;
+                    rootNode = childNode;
+                    _entityClassType = _entityClassType.BaseType;
+                }
+            }
+            catch (Exception ex)
+            {
+
             }
         }
 
@@ -117,17 +125,20 @@ namespace BoilerplateGenerator.Services
         {
             try
             {
-                foreach (TreeNode<IBaseSymbolWrapper> child in from ISymbol property in referencedClass.GetMembers().Where(x => x.Kind == SymbolKind.Property)
+                foreach (TreeNode<IBaseSymbolWrapper> child in from ISymbol member in referencedClass.GetMembers()
+                                                               where member.Kind == SymbolKind.Property
+                                                               let property = member as IPropertySymbol
+                                                               where property.Type.Name != nameof(ICollection)
                                                                select new TreeNode<IBaseSymbolWrapper>()
                                                                {
-                                                                   Current = new EntityPropertyWrapper(property as IPropertySymbol),
+                                                                   Current = new EntityPropertyWrapper(property),
                                                                    Parent = parent
                                                                })
                 {
                     parent.Children.Add(child);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
 
             }
