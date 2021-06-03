@@ -9,35 +9,35 @@ namespace BoilerplateGenerator.Helpers
             switch (dotNetTypeName.Name)
             {
                 case "Boolean":
-                    return typeof(bool).Name;
+                    return "bool";
                 case "Byte":
-                    return typeof(byte).Name;
+                    return "byte";
                 case "SByte":
-                    return typeof(sbyte).Name;
+                    return "sbyte";
                 case "Char":
-                    return typeof(char).Name;
+                    return "char";
                 case "Decimal":
-                    return typeof(decimal).Name;
+                    return "decimal";
                 case "Double":
-                    return typeof(double).Name;
+                    return "double";
                 case "Single":
-                    return typeof(float).Name;
+                    return "float";
                 case "Int32":
-                    return typeof(int).Name;
+                    return "int";
                 case "UInt32":
-                    return typeof(uint).Name;
+                    return "uint";
                 case "Int64":
-                    return typeof(long).Name;
+                    return "long";
                 case "UInt64":
-                    return typeof(ulong).Name;
+                    return "ulong";
                 case "Object":
-                    return typeof(object).Name;
+                    return "object";
                 case "Int16":
-                    return typeof(short).Name;
+                    return "short";
                 case "UInt16":
-                    return typeof(ushort).Name;
+                    return "ushort";
                 case "String":
-                    return typeof(string).Name;
+                    return "string";
 
                 default: return dotNetTypeName.Name;
             }
