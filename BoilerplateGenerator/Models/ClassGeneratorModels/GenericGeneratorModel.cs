@@ -3,6 +3,7 @@ using BoilerplateGenerator.Collections;
 using BoilerplateGenerator.Domain;
 using BoilerplateGenerator.Models.Contracts;
 using BoilerplateGenerator.Models.RoslynWrappers;
+using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
 
         public virtual IEnumerable<string> BaseTypes { get; } = new string[] { };
 
-        public virtual IEnumerable<EntityPropertyWrapper> AvailableProperties => GetNodeChildren(_viewModelBase.EntityTree.First());
+        public virtual IEnumerable<EntityPropertyWrapper> AvailableProperties => GetPropertiesFromTree(_viewModelBase.EntityTree.First());
 
         protected EntityClassWrapper RootClass => _viewModelBase.EntityTree.First().Current as EntityClassWrapper;
 
@@ -34,12 +35,16 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
 
         public abstract AssetKind AssetKind { get; }
 
+        public virtual KeyValuePair<string, string>[] ConstructorParameters { get; } = new KeyValuePair<string, string>[] { };
+
+        public virtual IEnumerable<MethodDefinitionModel> AvailableMethods { get; } = new MethodDefinitionModel[] { };
+
         protected GenericGeneratorModel(IViewModelBase viewModelBase)
         {
             _viewModelBase = viewModelBase;
         }
 
-        private IEnumerable<EntityPropertyWrapper> GetNodeChildren(ITreeNode<IBaseSymbolWrapper> rootNode)
+        private IEnumerable<EntityPropertyWrapper> GetPropertiesFromTree(ITreeNode<IBaseSymbolWrapper> rootNode)
         {
             List<EntityPropertyWrapper> symbols = new List<EntityPropertyWrapper>();
 
@@ -48,7 +53,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
                 switch (treeNode.Current.GetType().Name)
                 {
                     case nameof(EntityClassWrapper):
-                        symbols.AddRange(GetNodeChildren(treeNode));
+                        symbols.AddRange(GetPropertiesFromTree(treeNode));
                         break;
 
                     default:

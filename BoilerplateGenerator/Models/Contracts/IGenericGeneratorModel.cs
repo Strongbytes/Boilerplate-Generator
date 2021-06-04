@@ -1,5 +1,6 @@
 ﻿using BoilerplateGenerator.Models.ClassGeneratorModels;
 using BoilerplateGenerator.Models.RoslynWrappers;
+using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Collections.Generic;
 
@@ -22,5 +23,9 @@ namespace BoilerplateGenerator.ClassGeneratorModels
         IEnumerable<string> BaseTypes { get; }
 
         IEnumerable<EntityPropertyWrapper> AvailableProperties { get; }
+
+        KeyValuePair<string, string>[] ConstructorParameters { get; }
+
+        IEnumerable<MethodDefinitionModel> AvailableMethods { get; }
     }
 }

@@ -46,10 +46,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Models\ClassGeneratorModels\ControllerGeneratorModel.cs" />
     <Compile Include="Models\ClassGeneratorModels\DomainEntityGeneratorModel.cs" />
     <Compile Include="Models\ClassGeneratorModels\GeneratedDirectory.cs" />
     <Compile Include="Models\ClassGeneratorModels\GeneratedClass.cs" />
     <Compile Include="Models\ClassGeneratorModels\AssetKind.cs" />
+    <Compile Include="Models\SyntaxDefinitionModels\AttributeDefinitionModel.cs" />
+    <Compile Include="Models\SyntaxDefinitionModels\MethodDefinitionModel.cs" />
     <Compile Include="Models\Contracts\IGeneratedClass.cs" />
     <Compile Include="Models\Contracts\IBaseGeneratedAsset.cs" />
     <Compile Include="Models\Contracts\IGenericGeneratorModel.cs" />
@@ -123,6 +126,9 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf">
       <Version>1.1.31</Version>
+    </PackageReference>
+    <PackageReference Include="Pluralize.NET">
+      <Version>1.0.2</Version>
     </PackageReference>
     <PackageReference Include="System.Linq">
       <Version>4.3.0</Version>
