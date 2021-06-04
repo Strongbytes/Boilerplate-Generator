@@ -53,7 +53,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
                             new AttributeDefinitionModel
                             {
                                 Name = "ProducesResponseType",
-                                Values = new string[] { "typeof(List<LearningPathDomainModel>)", "StatusCodes.Status200OK" }
+                                Values = new string[] { $"typeof(List<{RootClass.Name}{DomainEntityGeneratorModel.DomainEntitySuffix}>)", "StatusCodes.Status200OK" }
                             }
                         }
                     }
