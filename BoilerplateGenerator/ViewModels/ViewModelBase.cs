@@ -117,8 +117,10 @@ namespace BoilerplateGenerator.ViewModels
 
         private List<IGenericGeneratorModel> ClassGeneratorModels => new List<IGenericGeneratorModel>
         {
-            new DomainEntityGeneratorModel(this),
-            new ControllerGeneratorModel(this)
+            new ResponseEntityDomainModelGeneratorModel(this),
+            new ControllerGeneratorModel(this),
+            new CreateRequestDomainEntityGeneratorModel(this),
+            new UpdateRequestDomainEntityGeneratorModel(this)
         };
 
         public ObservableCollection<ITreeNode<IBaseGeneratedAsset>> DirectoriesTree { get; set; } = new ObservableCollection<ITreeNode<IBaseGeneratedAsset>>();
@@ -176,7 +178,7 @@ namespace BoilerplateGenerator.ViewModels
                     foreach (IGenericGeneratorModel availableModels in ClassGeneratorModels)
                     {
                         var generatedClass = await new ClassGenerationService(availableModels).GetGeneratedClass().ConfigureAwait(false);
-                        GenerateGeneratedClassTree(rootNode, generatedClass);
+                        GenerateDirectoryClassTree(rootNode, generatedClass);
                     }
 
                     await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
@@ -189,23 +191,30 @@ namespace BoilerplateGenerator.ViewModels
             }
         }
 
-        private static void GenerateGeneratedClassTree(ITreeNode<IBaseGeneratedAsset> rootNode, IGeneratedClass generatedClass)
+        private static ITreeNode<IBaseGeneratedAsset> GenerateParentDirectory(ITreeNode<IBaseGeneratedAsset> rootNode, string directory)
+        {
+            ITreeNode<IBaseGeneratedAsset> directoryNode = rootNode.Children.FirstOrDefault(x => x.Current is GeneratedDirectory childDirectory && childDirectory.AssetName.Equals(directory));
+            if (directoryNode != null)
+            {
+                return directoryNode;
+            }
+
+            directoryNode = new TreeNode<IBaseGeneratedAsset>
+            {
+                Current = new GeneratedDirectory(directory),
+                Parent = rootNode
+            };
+
+            rootNode.Children.Add(directoryNode);
+
+            return directoryNode;
+        }
+
+        private static void GenerateDirectoryClassTree(ITreeNode<IBaseGeneratedAsset> rootNode, IGeneratedClass generatedClass)
         {
             foreach (string directory in generatedClass.ParentDirectoryHierarchy)
             {
-                if (rootNode.Current is GeneratedDirectory generatedDirectory && generatedDirectory.AssetName.Equals(directory))
-                {
-                    continue;
-                }
-
-                ITreeNode<IBaseGeneratedAsset> directoryNode = new TreeNode<IBaseGeneratedAsset>
-                {
-                    Current = new GeneratedDirectory(directory),
-                    Parent = rootNode
-                };
-
-                rootNode.Children.Add(directoryNode);
-                rootNode = directoryNode;
+                rootNode = GenerateParentDirectory(rootNode, directory);
             }
 
             ITreeNode<IBaseGeneratedAsset> childNode = new TreeNode<IBaseGeneratedAsset>

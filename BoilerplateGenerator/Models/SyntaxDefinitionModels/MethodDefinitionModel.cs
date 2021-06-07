@@ -11,8 +11,8 @@ namespace BoilerplateGenerator.Models.SyntaxDefinitionModels
 
         public IEnumerable<AttributeDefinitionModel> Attributes { get; set; } = new AttributeDefinitionModel[] { };
 
-        public string ReturnType { get; set; }
+        public string ReturnType { get; set; } = "Task<IActionResult>";
 
-        public SyntaxKind[] Modifiers { get; set; } = new SyntaxKind[] { };
+        public SyntaxKind[] Modifiers { get; set; } = new SyntaxKind[] { SyntaxKind.PublicKeyword, SyntaxKind.AsyncKeyword };
     }
 }

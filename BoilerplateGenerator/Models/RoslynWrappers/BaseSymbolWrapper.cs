@@ -9,11 +9,8 @@ namespace BoilerplateGenerator.Models.RoslynWrappers
 
         public bool IsChecked { get; set; }
 
-        private readonly T _symbol;
-
         public BaseSymbolWrapper(T symbol)
         {
-            _symbol = symbol;
             Name = symbol.Name;
             IsChecked = true;
         }

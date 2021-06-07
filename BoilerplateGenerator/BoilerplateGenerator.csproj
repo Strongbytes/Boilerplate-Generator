@@ -46,17 +46,22 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Helpers\StatusCodeTokens.cs" />
+    <Compile Include="Models\ClassGeneratorModels\UpdateRequestDomainEntityGeneratorModel.cs" />
+    <Compile Include="Models\ClassGeneratorModels\CreateRequestDomainEntityGeneratorModel.cs" />
     <Compile Include="Models\ClassGeneratorModels\ControllerGeneratorModel.cs" />
-    <Compile Include="Models\ClassGeneratorModels\DomainEntityGeneratorModel.cs" />
+    <Compile Include="Models\ClassGeneratorModels\ResponseEntityDomainModelGeneratorModel.cs" />
     <Compile Include="Models\ClassGeneratorModels\GeneratedDirectory.cs" />
     <Compile Include="Models\ClassGeneratorModels\GeneratedClass.cs" />
-    <Compile Include="Models\ClassGeneratorModels\AssetKind.cs" />
+    <Compile Include="Models\Enums\AssetKind.cs" />
+    <Compile Include="Models\Enums\CommonTokens.cs" />
     <Compile Include="Models\SyntaxDefinitionModels\AttributeDefinitionModel.cs" />
+    <Compile Include="Models\SyntaxDefinitionModels\PropertyDefinitionModel.cs" />
     <Compile Include="Models\SyntaxDefinitionModels\MethodDefinitionModel.cs" />
     <Compile Include="Models\Contracts\IGeneratedClass.cs" />
     <Compile Include="Models\Contracts\IBaseGeneratedAsset.cs" />
     <Compile Include="Models\Contracts\IGenericGeneratorModel.cs" />
-    <Compile Include="Models\ClassGeneratorModels\GenericGeneratorModel.cs" />
+    <Compile Include="Models\ClassGeneratorModels\BaseGenericGeneratorModel.cs" />
     <Compile Include="Collections\ITreeNode.cs" />
     <Compile Include="Collections\TreeNode.cs" />
     <Compile Include="Controls\MainWindow.xaml.cs">

@@ -11,5 +11,10 @@ namespace BoilerplateGenerator.Models.SyntaxDefinitionModels
         public string Name { get; set; }
 
         public string[] Values { get; set; } = new string[] { };
+
+        public AttributeDefinitionModel(string name)
+        {
+            Name = name;
+        }
     }
 }

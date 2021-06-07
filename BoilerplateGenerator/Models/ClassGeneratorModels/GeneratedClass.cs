@@ -1,5 +1,6 @@
 ﻿using BoilerplateGenerator.ClassGeneratorModels;
 using BoilerplateGenerator.Models.Contracts;
+using BoilerplateGenerator.Models.Enums;
 using System;
 
 namespace BoilerplateGenerator.Models.ClassGeneratorModels
@@ -18,7 +19,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
 
         public string Code { get; }
 
-        public string AssetName => $"{_genericGeneratorModel.RootClassName}.cs";
+        public string AssetName => $"{_genericGeneratorModel.GeneratedClassName}.cs";
 
         public string[] ParentDirectoryHierarchy
         {

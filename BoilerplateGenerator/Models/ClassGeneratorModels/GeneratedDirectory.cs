@@ -1,4 +1,5 @@
 ﻿using BoilerplateGenerator.Models.Contracts;
+using BoilerplateGenerator.Models.Enums;
 
 namespace BoilerplateGenerator.Models.ClassGeneratorModels
 {

@@ -47,7 +47,7 @@ namespace BoilerplateGenerator.Services
 
         private ConstructorDeclarationSyntax GenerateConstructor()
         {
-            return SyntaxFactory.ConstructorDeclaration(_genericGeneratorModel.RootClassName)
+            return SyntaxFactory.ConstructorDeclaration(_genericGeneratorModel.GeneratedClassName)
                                 .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
                                 .AddParameterListParameters(GenerateParameters(_genericGeneratorModel.ConstructorParameters))
                                 .WithBody(GenerateConstructorBody(_genericGeneratorModel.ConstructorParameters));
@@ -59,6 +59,7 @@ namespace BoilerplateGenerator.Services
                     select SyntaxFactory.MethodDeclaration(SyntaxFactory.ParseTypeName(methodDeclaration.ReturnType), methodDeclaration.Name)
                                         .AddAttributeLists(CreateAttributeList(methodDeclaration.Attributes))
                                         .AddModifiers(GenerateModifiers(methodDeclaration.Modifiers))
+                                        .AddParameterListParameters(GenerateParameters(methodDeclaration.Parameters))
                                         .WithBody(NotImplementedBody)
                     ).ToArray();
         }
@@ -78,8 +79,8 @@ namespace BoilerplateGenerator.Services
                         (
                             SyntaxFactory.Attribute
                             (
-                                SyntaxFactory.IdentifierName(attributeDefinition.Name),
-                                SyntaxFactory.AttributeArgumentList
+                                SyntaxFactory.IdentifierName(attributeDefinition.Name)
+                            ).WithArgumentList(!attributeDefinition.Values.Any() ? default : SyntaxFactory.AttributeArgumentList
                                 (
                                     SyntaxFactory.SeparatedList
                                     (
@@ -92,8 +93,7 @@ namespace BoilerplateGenerator.Services
                                             )
                                         )
                                     )
-                                )
-                            )
+                                ))
                         )
                     )).ToArray();
         }
@@ -143,7 +143,7 @@ namespace BoilerplateGenerator.Services
 
         private ClassDeclarationSyntax GenerateClassDeclaration()
         {
-            ClassDeclarationSyntax classDeclarationSyntax = SyntaxFactory.ClassDeclaration(_genericGeneratorModel.RootClassName)
+            ClassDeclarationSyntax classDeclarationSyntax = SyntaxFactory.ClassDeclaration(_genericGeneratorModel.GeneratedClassName)
                                                                          .AddModifiers(SyntaxFactory.Token(_genericGeneratorModel.RootClassModifier));
 
             if (_genericGeneratorModel.BaseTypes != null && _genericGeneratorModel.BaseTypes.Any())
@@ -178,9 +178,10 @@ namespace BoilerplateGenerator.Services
 
         private PropertyDeclarationSyntax[] GenerateProperties()
         {
-            return (from entityPropertyWrapper in _genericGeneratorModel.AvailableProperties
-                    select SyntaxFactory.PropertyDeclaration(SyntaxFactory.ParseTypeName(entityPropertyWrapper.Type), entityPropertyWrapper.Name)
-                                        .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
+            return (from propertyDefinition in _genericGeneratorModel.AvailableProperties
+                    select SyntaxFactory.PropertyDeclaration(SyntaxFactory.ParseTypeName(propertyDefinition.ReturnType), propertyDefinition.Name)
+                                        .AddModifiers(GenerateModifiers(propertyDefinition.Modifiers))
+                                        .AddAttributeLists(CreateAttributeList(propertyDefinition.Attributes))
                                         .AddAccessorListAccessors
                                         (
                                             SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)

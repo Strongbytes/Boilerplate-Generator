@@ -1,17 +1,14 @@
 ﻿using BoilerplateGenerator.Domain;
-using BoilerplateGenerator.Models.RoslynWrappers;
+using BoilerplateGenerator.Helpers;
+using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
-using Microsoft.CodeAnalysis.CSharp;
-using Pluralize.NET;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace BoilerplateGenerator.Models.ClassGeneratorModels
 {
-    public class ControllerGeneratorModel : GenericGeneratorModel
+    public class ControllerGeneratorModel : BaseGenericGeneratorModel
     {
-        public override string RootClassName => $"{new Pluralizer().Pluralize(RootClass.Name)}Controller";
-
         public override string Namespace => $"{base.Namespace}.Controllers";
 
         public override IEnumerable<string> Usings => new List<string>
@@ -24,7 +21,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
             "System.Threading.Tasks",
         }.Union(base.Usings);
 
-        public override IEnumerable<EntityPropertyWrapper> AvailableProperties => new EntityPropertyWrapper[] { };
+        public override IEnumerable<PropertyDefinitionModel> AvailableProperties => new PropertyDefinitionModel[] { };
 
         public override AssetKind AssetKind => AssetKind.Controller;
 
@@ -41,20 +38,100 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
                 {
                     new MethodDefinitionModel
                     {
-                        Name = "GetAll",
-                        Modifiers = new SyntaxKind[] { SyntaxKind.PublicKeyword, SyntaxKind.AsyncKeyword },
-                        ReturnType = "Task<IActionResult>",
+                        Name = $"{CommonTokens.GetAll}",
                         Attributes = new List<AttributeDefinitionModel>
                         {
-                            new AttributeDefinitionModel
+                            new AttributeDefinitionModel($"{CommonTokens.HttpGet}"),
+                            new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
                             {
-                                Name = "HttpGet"
-                            },
-                            new AttributeDefinitionModel
-                            {
-                                Name = "ProducesResponseType",
-                                Values = new string[] { $"typeof(List<{RootClass.Name}{DomainEntityGeneratorModel.DomainEntitySuffix}>)", "StatusCodes.Status200OK" }
+                                Values = new string[] { $"typeof(List<{AssetToClassNameMapping[AssetKind.ResponseEntityDomainModel]}>)", StatusCodeTokens.Status200OK }
                             }
+                        }
+                    },
+                    new MethodDefinitionModel
+                    {
+                        Name = $"{CommonTokens.GetById}",
+                        Attributes = new List<AttributeDefinitionModel>
+                        {
+                            new AttributeDefinitionModel($"{CommonTokens.HttpGet}")
+                            {
+                                Values = new string[] { $"\"{BaseEntityPrimaryKey.Name.ToLowerInvariant()}\"" }
+                            },
+                            new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
+                            {
+                                Values = new string[] { StatusCodeTokens.Status404NotFound }
+                            },
+                            new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
+                            {
+                                Values = new string[] { $"typeof({AssetToClassNameMapping[AssetKind.ResponseEntityDomainModel]})", StatusCodeTokens.Status200OK }
+                            }
+                        },
+                        Parameters = new KeyValuePair<string, string>[]
+                        {
+                            new KeyValuePair<string, string>($"{BaseEntityPrimaryKey.ReturnType}", $"{BaseEntityPrimaryKey.Name.ToLowerInvariant()}")
+                        }
+                    },
+                    new MethodDefinitionModel
+                    {
+                        Name = $"{CommonTokens.Create}",
+                        Attributes = new List<AttributeDefinitionModel>
+                        {
+                            new AttributeDefinitionModel($"{CommonTokens.HttpPost}"),
+                            new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
+                            {
+                                Values = new string[] { StatusCodeTokens.Status400BadRequest }
+                            },
+                            new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
+                            {
+                                Values = new string[] { $"typeof({AssetToClassNameMapping[AssetKind.ResponseEntityDomainModel]})", StatusCodeTokens.Status201Created }
+                            }
+                        },
+                        Parameters = new KeyValuePair<string, string>[]
+                        {
+                            new KeyValuePair<string, string>(AssetToClassNameMapping[AssetKind.CreateRequestDomainEntity], "model")
+                        }
+                    },
+                    new MethodDefinitionModel
+                    {
+                        Name = $"{CommonTokens.Update}",
+                        Attributes = new List<AttributeDefinitionModel>
+                        {
+                            new AttributeDefinitionModel($"{CommonTokens.HttpPut}")
+                            {
+                                Values = new string[] { $"\"{BaseEntityPrimaryKey.Name.ToLowerInvariant()}\"" }
+                            },
+                            new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
+                            {
+                                Values = new string[] { StatusCodeTokens.Status404NotFound }
+                            },
+                            new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
+                            {
+                                Values = new string[] { $"typeof({AssetToClassNameMapping[AssetKind.ResponseEntityDomainModel]})", StatusCodeTokens.Status200OK }
+                            }
+                        },
+                        Parameters = new KeyValuePair<string, string>[]
+                        {
+                            new KeyValuePair<string, string>($"{BaseEntityPrimaryKey.ReturnType}", $"{BaseEntityPrimaryKey.Name.ToLowerInvariant()}"),
+                            new KeyValuePair<string, string>(AssetToClassNameMapping[AssetKind.UpdateRequestDomainEntity], "model")
+                        }
+                    },
+                    new MethodDefinitionModel
+                    {
+                        Name = $"{CommonTokens.Delete}",
+                        Attributes = new List<AttributeDefinitionModel>
+                        {
+                            new AttributeDefinitionModel($"{CommonTokens.HttpDelete}")
+                            {
+                                Values = new string[] { $"\"{BaseEntityPrimaryKey.Name.ToLowerInvariant()}\"" }
+                            },
+                            new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
+                            {
+                                Values = new string[] { StatusCodeTokens.Status204NoContent }
+                            }
+                        },
+                        Parameters = new KeyValuePair<string, string>[]
+                        {
+                            new KeyValuePair<string, string>($"{BaseEntityPrimaryKey.ReturnType}", $"{BaseEntityPrimaryKey.Name.ToLowerInvariant()}")
                         }
                     }
                 };
