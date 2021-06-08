@@ -1,5 +1,4 @@
 ﻿using BoilerplateGenerator.Models.Enums;
-using BoilerplateGenerator.Models.RoslynWrappers;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Collections.Generic;
@@ -12,20 +11,22 @@ namespace BoilerplateGenerator.ClassGeneratorModels
 
         string GeneratedClassName { get; }
 
-        string Namespace { get; }
-
         string TargetProjectName { get; }
+
+        string Namespace { get; }
 
         SyntaxKind RootClassModifier { get; }
 
-        AssetKind AssetKind { get; }
+        AssetKind GeneratedClassKind { get; }
 
         IEnumerable<string> BaseTypes { get; }
 
         IEnumerable<PropertyDefinitionModel> AvailableProperties { get; }
 
-        KeyValuePair<string, string>[] ConstructorParameters { get; }
+        IEnumerable<ParameterDefinitionModel> ConstructorParameters { get; }
 
         IEnumerable<MethodDefinitionModel> AvailableMethods { get; }
+
+        IEnumerable<AttributeDefinitionModel> Attributes { get; }
     }
 }

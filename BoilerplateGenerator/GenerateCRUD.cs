@@ -75,7 +75,7 @@ namespace BoilerplateGenerator
 
             using (DpiAwareness.EnterDpiScope(DpiAwarenessContext.SystemAware))
             {
-                _serviceProvider.GetService<MainWindow>().Show();
+                _serviceProvider.GetService<MainWindow>().ShowDialog();
             }
         }
     }

@@ -15,6 +15,10 @@
         Delete,
         Update,
         Create,
-        Id
+        Id,
+        ApiController,
+        Produces,
+        Route,
+        Model
     }
 }

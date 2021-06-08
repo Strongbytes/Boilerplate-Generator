@@ -1,23 +1,22 @@
 ﻿using BoilerplateGenerator.ClassGeneratorModels;
 using BoilerplateGenerator.Collections;
 using BoilerplateGenerator.Domain;
-using BoilerplateGenerator.Models.ClassGeneratorModels;
+using BoilerplateGenerator.Models.ClassGeneratorModels.Application.CommandsInputModels;
+using BoilerplateGenerator.Models.ClassGeneratorModels.Application.QueriesModels;
+using BoilerplateGenerator.Models.ClassGeneratorModels.Controllers;
+using BoilerplateGenerator.Models.ClassGeneratorModels.Domain;
+using BoilerplateGenerator.Models.ClassGeneratorModels.TreeView;
 using BoilerplateGenerator.Models.Contracts;
 using BoilerplateGenerator.Models.RoslynWrappers;
 using BoilerplateGenerator.Services;
-using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.Shell;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 using Task = System.Threading.Tasks.Task;
 
 namespace BoilerplateGenerator.ViewModels
@@ -120,7 +119,11 @@ namespace BoilerplateGenerator.ViewModels
             new ResponseEntityDomainModelGeneratorModel(this),
             new ControllerGeneratorModel(this),
             new CreateRequestDomainEntityGeneratorModel(this),
-            new UpdateRequestDomainEntityGeneratorModel(this)
+            new UpdateRequestDomainEntityGeneratorModel(this),
+            new GetAllQueryGeneratorModel(this),
+            new CreateCommandGeneratorModel(this),
+            new UpdateCommandGeneratorModel(this),
+            new DeleteCommandGeneratorModel(this)
         };
 
         public ObservableCollection<ITreeNode<IBaseGeneratedAsset>> DirectoriesTree { get; set; } = new ObservableCollection<ITreeNode<IBaseGeneratedAsset>>();

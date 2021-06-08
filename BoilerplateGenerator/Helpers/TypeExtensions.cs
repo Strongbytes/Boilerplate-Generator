@@ -1,9 +1,15 @@
 ﻿using Microsoft.CodeAnalysis;
+using System.Globalization;
 
 namespace BoilerplateGenerator.Helpers
 {
     public static class TypeExtensions
     {
+        public static string ToTitleCase(this string text)
+        {
+            return CultureInfo.InvariantCulture.TextInfo.ToTitleCase(text);
+        }
+
         public static string ToTypeAlias(this ITypeSymbol dotNetTypeName)
         {
             switch (dotNetTypeName.Name)

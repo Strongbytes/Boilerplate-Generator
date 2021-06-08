@@ -4,22 +4,20 @@ using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BoilerplateGenerator.Models.ClassGeneratorModels
+namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.CommandsInputModels
 {
-    public class CreateRequestDomainEntityGeneratorModel : BaseGenericGeneratorModel
+    public class UpdateRequestDomainEntityGeneratorModel : BaseGenericGeneratorModel
     {
-        public override string Namespace => $"{base.Namespace}.Application.Commands.{BaseEntityPluralizedName}.Create.Models";
+        public override AssetKind GeneratedClassKind => AssetKind.UpdateRequestDomainEntity;
 
         public override IEnumerable<string> Usings => new List<string>
         {
            nameof(System.ComponentModel.DataAnnotations),
         }.Union(base.Usings);
 
-        public override AssetKind AssetKind => AssetKind.CreateRequestDomainEntity;
-
         public override IEnumerable<PropertyDefinitionModel> AvailableProperties => base.AvailableProperties.Where(x => !x.IsPrimaryKey);
 
-        public CreateRequestDomainEntityGeneratorModel(IViewModelBase viewModelBase) : base(viewModelBase)
+        public UpdateRequestDomainEntityGeneratorModel(IViewModelBase viewModelBase) : base(viewModelBase)
         {
         }
     }

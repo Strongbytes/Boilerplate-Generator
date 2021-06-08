@@ -7,6 +7,8 @@
         xmlns:templates="clr-namespace:BoilerplateGenerator.Templates"
         xmlns:viewModels="clr-namespace:BoilerplateGenerator.ViewModels"
         xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
+        xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
+        xmlns:catalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=viewModels:ViewModelBase, IsDesignTimeCreatable=False}"
@@ -22,6 +24,8 @@
         <converters:InverseVisibilityConverter x:Key="InverseVisibilityConverter" />
 
         <templates:EntityViewTemplateSelector x:Key="EntityViewTemplateSelector" />
+
+        <templates:DirectoryViewTemplateSelector x:Key="DirectoryViewTemplateSelector" />
     </Window.Resources>
 
     <Grid>
@@ -218,7 +222,8 @@
 
                     <TreeView x:Name="TreeDirectory"
                               Grid.Row="1"
-                              ItemsSource="{Binding DirectoriesTree}">
+                              ItemsSource="{Binding DirectoriesTree}"
+                              ItemTemplateSelector="{StaticResource DirectoryViewTemplateSelector}">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectedItemChanged">
                                 <i:InvokeCommandAction x:Name="SelectionCommand"
@@ -232,11 +237,41 @@
                                         Value="True" />
                             </Style>
                         </TreeView.ItemContainerStyle>
-                        <TreeView.ItemTemplate>
-                            <HierarchicalDataTemplate ItemsSource="{Binding Path=Children}">
-                                <TextBlock Text="{Binding Current.AssetName}" />
+                        <TreeView.Resources>
+                            <HierarchicalDataTemplate x:Key="DirectorySelector"
+                                                      ItemsSource="{Binding Path=Children}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <imaging:CrispImage Width="16"
+                                                        Height="16"
+                                                        Moniker="{x:Static catalog:KnownMonikers.FolderOpened}" />
+                                    <TextBlock Grid.Column="1"
+                                               Padding="4,2"
+                                               Text="{Binding Current.AssetName}"
+                                               VerticalAlignment="Center" />
+                                </Grid>
                             </HierarchicalDataTemplate>
-                        </TreeView.ItemTemplate>
+                            <DataTemplate x:Key="FileSelector">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <imaging:CrispImage Width="16"
+                                                        Height="16"
+                                                        Moniker="{x:Static catalog:KnownMonikers.CSFileNode}" />
+                                    <TextBlock Grid.Column="1"
+                                               Padding="4,2"
+                                               Text="{Binding Current.AssetName}"
+                                               VerticalAlignment="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </TreeView.Resources>
                     </TreeView>
                 </Grid>
             </Grid>
@@ -246,12 +281,77 @@
                           HorizontalAlignment="Stretch" />
 
             <Grid Grid.Column="4">
-                <avalonEdit:TextEditor x:Name="SyntaxHighliter"
-                                       Document="{Binding HighlitedGeneratedCode}"
-                                       WordWrap="True"
-                                       ShowLineNumbers="True"
-                                       FontFamily="Consolas"
-                                       SyntaxHighlighting="C#" />
+                <DockPanel>
+                    <ToolBar DockPanel.Dock="Top">
+                        <ToolBar.Resources>
+                            <Style TargetType="{x:Type imaging:CrispImage}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type ButtonBase}, AncestorLevel=1}, Path=IsEnabled}"
+                                                 Value="False">
+                                        <Setter Property="Opacity"
+                                                Value="0.30" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ToolBar.Resources>
+                        <Button Command="Cut">
+                            <imaging:CrispImage Width="16"
+                                                Height="16"
+                                                Moniker="{x:Static catalog:KnownMonikers.Cut}" />
+                        </Button>
+                        <Button Command="Copy">
+                            <imaging:CrispImage Width="16"
+                                                Height="16"
+                                                Moniker="{x:Static catalog:KnownMonikers.Copy}" />
+                        </Button>
+                        <Button Command="Paste">
+                            <imaging:CrispImage Width="16"
+                                                Height="16"
+                                                Moniker="{x:Static catalog:KnownMonikers.Paste}" />
+                        </Button>
+                        <Button Command="Delete">
+                            <imaging:CrispImage Width="16"
+                                                Height="16"
+                                                Moniker="{x:Static catalog:KnownMonikers.TestCoveredFailing}" />
+                        </Button>
+                        <Separator />
+                        <Button Command="Undo">
+                            <imaging:CrispImage Width="16"
+                                                Height="16"
+                                                Moniker="{x:Static catalog:KnownMonikers.Undo}" />
+                        </Button>
+                        <Button Command="Redo">
+                            <imaging:CrispImage Width="16"
+                                                Height="16"
+                                                Moniker="{x:Static catalog:KnownMonikers.Redo}" />
+                        </Button>
+                        <Separator />
+                        <CheckBox IsChecked="{Binding ElementName=SyntaxHighliter, Path=WordWrap}">
+                            <imaging:CrispImage Width="16"
+                                                Height="16"
+                                                Moniker="{x:Static catalog:KnownMonikers.WordWrap}" />
+                        </CheckBox>
+                        <CheckBox IsChecked="{Binding ElementName=SyntaxHighliter, Path=ShowLineNumbers}">
+                            <imaging:CrispImage Width="16"
+                                                Height="16"
+                                                Moniker="{x:Static catalog:KnownMonikers.ThisLine}" />
+                        </CheckBox>
+                        <CheckBox IsChecked="{Binding ElementName=SyntaxHighliter, Path=Options.ShowEndOfLine}">
+                            <imaging:CrispImage Width="16"
+                                                Height="16"
+                                                Moniker="{x:Static catalog:KnownMonikers.DocumentOutline}" />
+                        </CheckBox>
+                    </ToolBar>
+                    <avalonEdit:TextEditor x:Name="SyntaxHighliter"
+                                           Document="{Binding HighlitedGeneratedCode}"
+                                           WordWrap="True"
+                                           ShowLineNumbers="True"
+                                           FontFamily="Consolas"
+                                           Focusable="True"
+                                           ForceCursor="True"
+                                           SyntaxHighlighting="C#">
+                    </avalonEdit:TextEditor>
+                </DockPanel>
             </Grid>
 
         </Grid>

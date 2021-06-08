@@ -3,7 +3,7 @@ using BoilerplateGenerator.Models.Contracts;
 using BoilerplateGenerator.Models.Enums;
 using System;
 
-namespace BoilerplateGenerator.Models.ClassGeneratorModels
+namespace BoilerplateGenerator.Models.ClassGeneratorModels.TreeView
 {
     public class GeneratedClass : IGeneratedClass
     {
@@ -15,7 +15,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
             Code = generatedCode;
         }
 
-        public AssetKind AssetKind => _genericGeneratorModel.AssetKind;
+        public AssetKind AssetKind => _genericGeneratorModel.GeneratedClassKind;
 
         public string Code { get; }
 
