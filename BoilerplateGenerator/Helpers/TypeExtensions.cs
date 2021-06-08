@@ -1,5 +1,9 @@
 ﻿using Microsoft.CodeAnalysis;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Linq;
 
 namespace BoilerplateGenerator.Helpers
 {
@@ -16,6 +20,17 @@ namespace BoilerplateGenerator.Helpers
                 return text;
 
             return char.ToLower(text[0]) + text.Substring(1);
+        }
+
+        public static void Sort<TSource, TKey>(this ObservableCollection<TSource> source, Func<TSource, TKey> keySelector)
+        {
+            IEnumerable<TSource> sortedList = source.OrderBy(keySelector).ToArray();
+            source.Clear();
+
+            foreach (TSource sortedItem in sortedList)
+            {
+                source.Add(sortedItem);
+            }
         }
 
         public static string ToTypeAlias(this ITypeSymbol dotNetTypeName)

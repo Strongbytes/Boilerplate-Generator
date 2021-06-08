@@ -62,7 +62,7 @@
             <Button Grid.Column="1"
                     VerticalAlignment="Center"
                     Margin="10,0"
-                    Content="Load Entity from File"
+                    Content="View Entity Hierarchy"
                     Command="{Binding ValidateSelectedFileCommand}" />
         </Grid>
 

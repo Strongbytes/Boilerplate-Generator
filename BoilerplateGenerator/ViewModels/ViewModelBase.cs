@@ -1,6 +1,7 @@
 ﻿using BoilerplateGenerator.Collections;
 using BoilerplateGenerator.Contracts;
 using BoilerplateGenerator.Domain;
+using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Models.ClassGeneratorModels.TreeView;
 using BoilerplateGenerator.Models.RoslynWrappers;
 using BoilerplateGenerator.Services;
@@ -193,6 +194,7 @@ namespace BoilerplateGenerator.ViewModels
             };
 
             rootNode.Children.Add(directoryNode);
+            rootNode.Children.Sort(x => x.Current.AssetName);
 
             return directoryNode;
         }
@@ -211,6 +213,7 @@ namespace BoilerplateGenerator.ViewModels
             };
 
             rootNode.Children.Add(childNode);
+            rootNode.Children.Sort(x => x.Current.AssetName);
 
             while (rootNode.Parent != null)
             {
