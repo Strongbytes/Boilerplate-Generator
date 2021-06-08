@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BoilerplateGenerator.Contracts
 {
     public interface IGeneratorModelsManagerService
     {
-        IEnumerable<IGenericGeneratorModel> AvailableGeneratorModels { get; }
+        Task<IEnumerable<IGenericGeneratorModel>> RetrieveAvailableGeneratorModels();
     }
 }

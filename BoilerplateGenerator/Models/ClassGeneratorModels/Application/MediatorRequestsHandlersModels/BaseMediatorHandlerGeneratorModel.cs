@@ -6,7 +6,7 @@ using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.QueriesModels
+namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.MediatorRequestsHandlersModels
 {
     public abstract class BaseMediatorHandlerGeneratorModel : BaseGenericGeneratorModel
     {
@@ -23,10 +23,13 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.QueriesMo
         protected IDictionary<AssetKind, AssetKind> AssetToMediatorRequestKind => new Dictionary<AssetKind, AssetKind>
         {
             { AssetKind.GetAllQueryHandler, AssetKind.GetAllQuery },
-            { AssetKind.GetByIdQueryHandler, AssetKind.GetByIdQuery }
+            { AssetKind.GetByIdQueryHandler, AssetKind.GetByIdQuery },
+            { AssetKind.CreateCommandHandler, AssetKind.CreateCommand },
+            { AssetKind.DeleteCommandHandler, AssetKind.DeleteCommand },
+            { AssetKind.UpdateCommandHandler, AssetKind.UpdateCommand },
         };
 
-        protected abstract string HandlerResponseType { get; }
+        protected virtual string HandlerResponseType => $"{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseEntityDomainModel]}";
 
         public override IEnumerable<string> Usings => new List<string>
         {

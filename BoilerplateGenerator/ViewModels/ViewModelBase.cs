@@ -1,15 +1,10 @@
 ﻿using BoilerplateGenerator.Collections;
 using BoilerplateGenerator.Contracts;
 using BoilerplateGenerator.Domain;
-using BoilerplateGenerator.Models.ClassGeneratorModels.Application.CommandsInputModels;
-using BoilerplateGenerator.Models.ClassGeneratorModels.Application.QueriesModels;
-using BoilerplateGenerator.Models.ClassGeneratorModels.Controllers;
-using BoilerplateGenerator.Models.ClassGeneratorModels.Domain;
 using BoilerplateGenerator.Models.ClassGeneratorModels.TreeView;
 using BoilerplateGenerator.Models.RoslynWrappers;
 using BoilerplateGenerator.Services;
 using Microsoft.VisualStudio.Shell;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -167,14 +162,11 @@ namespace BoilerplateGenerator.ViewModels
                         Current = new GeneratedDirectory(SelectedProject.Name),
                     };
 
-                    await Task.Run(async () =>
+                    foreach (IGenericGeneratorModel availableModels in await _generatorModelsManagerService.RetrieveAvailableGeneratorModels().ConfigureAwait(false))
                     {
-                        foreach (IGenericGeneratorModel availableModels in _generatorModelsManagerService.AvailableGeneratorModels)
-                        {
-                            var generatedClass = await new ClassGenerationService(availableModels).GetGeneratedClass().ConfigureAwait(false);
-                            GenerateDirectoryClassTree(rootNode, generatedClass);
-                        }
-                    }).ConfigureAwait(false);
+                        var generatedClass = await new ClassGenerationService(availableModels).GetGeneratedClass().ConfigureAwait(false);
+                        GenerateDirectoryClassTree(rootNode, generatedClass);
+                    }
 
                     await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 

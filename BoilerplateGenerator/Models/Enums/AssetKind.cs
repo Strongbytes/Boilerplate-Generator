@@ -14,5 +14,8 @@
         DeleteCommand,
         GetAllQueryHandler,
         GetByIdQueryHandler,
+        CreateCommandHandler,
+        UpdateCommandHandler,
+        DeleteCommandHandler,
     }
 }

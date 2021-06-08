@@ -54,6 +54,9 @@ namespace BoilerplateGenerator.Services
             { AssetKind.DeleteCommand, $"Delete{BaseEntity.Name}Command" },
             { AssetKind.GetAllQueryHandler, $"GetAll{BaseEntityPluralizedName}QueryHandler" },
             { AssetKind.GetByIdQueryHandler, $"Get{BaseEntity.Name}ByIdQueryHandler" },
+            { AssetKind.CreateCommandHandler, $"Create{BaseEntity.Name}CommandHandler" },
+            { AssetKind.UpdateCommandHandler, $"Update{BaseEntity.Name}CommandHandler" },
+            { AssetKind.DeleteCommandHandler, $"Delete{BaseEntity.Name}CommandHandler" },
         };
 
         public IDictionary<AssetKind, string> AssetToNamespaceMapping => new Dictionary<AssetKind, string>
@@ -69,6 +72,9 @@ namespace BoilerplateGenerator.Services
             { AssetKind.DeleteCommand, $"{TargetModuleNamespace}.Application.Commands.{BaseEntityPluralizedName}.Delete" },
             { AssetKind.GetAllQueryHandler, $"{TargetModuleNamespace}.Application.Queries.GetAll{BaseEntityPluralizedName}" },
             { AssetKind.GetByIdQueryHandler, $"{TargetModuleNamespace}.Application.Queries.Get{BaseEntity.Name}ById" },
+            { AssetKind.CreateCommandHandler, $"{TargetModuleNamespace}.Application.Commands.{BaseEntityPluralizedName}.Create" },
+            { AssetKind.UpdateCommandHandler, $"{TargetModuleNamespace}.Application.Commands.{BaseEntityPluralizedName}.Update" },
+            { AssetKind.DeleteCommandHandler, $"{TargetModuleNamespace}.Application.Commands.{BaseEntityPluralizedName}.Delete" },
         };
     }
 }

@@ -2,7 +2,7 @@
 using BoilerplateGenerator.Domain;
 using BoilerplateGenerator.Models.Enums;
 
-namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.QueriesModels
+namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.MediatorRequestsHandlersModels
 {
     public class GetAllQueryHandlerGeneratorModel : BaseMediatorHandlerGeneratorModel
     {

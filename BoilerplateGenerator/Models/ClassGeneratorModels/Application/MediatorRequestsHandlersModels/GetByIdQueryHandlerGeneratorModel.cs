@@ -2,20 +2,15 @@
 using BoilerplateGenerator.Domain;
 using BoilerplateGenerator.Models.Enums;
 
-namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.QueriesModels
+namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.MediatorRequestsHandlersModels
 {
     public class GetByIdQueryHandlerGeneratorModel : BaseMediatorHandlerGeneratorModel
     {
-        private readonly IMetadataGenerationService _metadataGenerationService;
-
         public GetByIdQueryHandlerGeneratorModel(IViewModelBase viewModelBase, IMetadataGenerationService metadataGenerationService)
             : base(viewModelBase, metadataGenerationService)
         {
-            _metadataGenerationService = metadataGenerationService;
         }
 
         public override AssetKind GeneratedClassKind => AssetKind.GetByIdQueryHandler;
-
-        protected override string HandlerResponseType => $"{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseEntityDomainModel]}";
     }
 }

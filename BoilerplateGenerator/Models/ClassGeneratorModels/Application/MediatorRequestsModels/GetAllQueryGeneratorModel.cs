@@ -6,7 +6,7 @@ using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.QueriesModels
+namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.MediatorRequestsModels
 {
     public class GetAllQueryGeneratorModel : BaseGenericGeneratorModel
     {

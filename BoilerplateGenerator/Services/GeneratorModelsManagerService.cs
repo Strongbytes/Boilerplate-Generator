@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace BoilerplateGenerator.Services
 {
@@ -16,24 +17,18 @@ namespace BoilerplateGenerator.Services
             _serviceProvider = serviceProvider;
         }
 
-        public IEnumerable<IGenericGeneratorModel> AvailableGeneratorModels
+        public async Task<IEnumerable<IGenericGeneratorModel>> RetrieveAvailableGeneratorModels()
         {
-            get
+            return await Task.Run(() =>
             {
-                var generatorModels = Assembly.GetExecutingAssembly()
-                                              .GetTypes()
-                                              .Where(type => type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(BaseGenericGeneratorModel)));
+                IEnumerable<Type> generatorModels = Assembly.GetExecutingAssembly()
+                                                            .GetTypes()
+                                                            .Where(type => type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(BaseGenericGeneratorModel)));
 
-                List<IGenericGeneratorModel> models = new List<IGenericGeneratorModel>();
-
-                foreach (var model in generatorModels)
-                {
-                    object[] args = RetrieveDependencyParameters(model);
-                    models.Add((IGenericGeneratorModel)Activator.CreateInstance(model, args));
-                }
-
-                return models;
-            }
+                return (from model in generatorModels
+                        let args = RetrieveDependencyParameters(model)
+                        select (IGenericGeneratorModel)Activator.CreateInstance(model, args)).ToArray();
+            });
         }
 
         private object[] RetrieveDependencyParameters(Type referencedType)
