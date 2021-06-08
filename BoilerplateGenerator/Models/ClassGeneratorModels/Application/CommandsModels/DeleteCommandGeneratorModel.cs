@@ -1,4 +1,5 @@
-﻿using BoilerplateGenerator.Domain;
+﻿using BoilerplateGenerator.Contracts;
+using BoilerplateGenerator.Domain;
 using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
@@ -10,12 +11,17 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.QueriesMo
 {
     public class DeleteCommandGeneratorModel : BaseGenericGeneratorModel
     {
+        public DeleteCommandGeneratorModel(IViewModelBase viewModelBase, IMetadataGenerationService metadataGenerationService) 
+            : base(viewModelBase, metadataGenerationService)
+        {
+        }
+
         public override AssetKind GeneratedClassKind => AssetKind.DeleteCommand;
 
         public override IEnumerable<string> Usings => new List<string>
         {
            UsingTokens.MediatR,
-        }.Union(base.Usings);
+        }.Union(base.Usings).OrderBy(x => x);
 
         public override IEnumerable<string> BaseTypes => new string[]
         {
@@ -37,13 +43,9 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.QueriesMo
             new ParameterDefinitionModel
             {
                 ReturnType = $"{BaseEntityPrimaryKey.ReturnType}",
-                Name = $"{BaseEntityPrimaryKey.Name.ToLowerInvariant()}",
+                Name = $"{BaseEntityPrimaryKey.Name.ToLowerCamelCase()}",
                 MapToClassProperty = true
             }
         };
-
-        public DeleteCommandGeneratorModel(IViewModelBase viewModelBase) : base(viewModelBase)
-        {
-        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using BoilerplateGenerator.Domain;
+﻿using BoilerplateGenerator.Contracts;
+using BoilerplateGenerator.Domain;
 using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
@@ -10,17 +11,25 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.QueriesMo
 {
     public class GetByIdQueryGeneratorModel : BaseGenericGeneratorModel
     {
+        private readonly IMetadataGenerationService _metadataGenerationService;
+
+        public GetByIdQueryGeneratorModel(IViewModelBase viewModelBase, IMetadataGenerationService metadataGenerationService)
+            : base(viewModelBase, metadataGenerationService)
+        {
+            _metadataGenerationService = metadataGenerationService;
+        }
+
         public override AssetKind GeneratedClassKind => AssetKind.GetByIdQuery;
 
         public override IEnumerable<string> Usings => new List<string>
         {
            UsingTokens.MediatR,
-           AssetToNamespaceMapping[AssetKind.ResponseEntityDomainModel],
-        }.Union(base.Usings);
+           _metadataGenerationService.AssetToNamespaceMapping[AssetKind.ResponseEntityDomainModel],
+        }.Union(base.Usings).OrderBy(x => x);
 
         public override IEnumerable<string> BaseTypes => new string[]
         {
-            $"IRequest<{AssetToClassNameMapping[AssetKind.ResponseEntityDomainModel]}>"
+            $"IRequest<{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseEntityDomainModel]}>"
         };
 
         public override IEnumerable<PropertyDefinitionModel> AvailableProperties => new PropertyDefinitionModel[]
@@ -38,13 +47,9 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.QueriesMo
             new ParameterDefinitionModel
             {
                 ReturnType = $"{BaseEntityPrimaryKey.ReturnType}",
-                Name = $"{BaseEntityPrimaryKey.Name.ToLowerInvariant()}",
+                Name = $"{BaseEntityPrimaryKey.Name.ToLowerCamelCase()}",
                 MapToClassProperty = true
             },
         };
-
-        public GetByIdQueryGeneratorModel(IViewModelBase viewModelBase) : base(viewModelBase)
-        {
-        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using BoilerplateGenerator.Domain;
+﻿using BoilerplateGenerator.Contracts;
+using BoilerplateGenerator.Domain;
 using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
@@ -10,25 +11,33 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.QueriesMo
 {
     public class CreateCommandGeneratorModel : BaseGenericGeneratorModel
     {
+        private readonly IMetadataGenerationService _metadataGenerationService;
+
+        public CreateCommandGeneratorModel(IViewModelBase viewModelBase, IMetadataGenerationService metadataGenerationService) 
+            : base(viewModelBase, metadataGenerationService)
+        {
+            _metadataGenerationService = metadataGenerationService;
+        }
+
         public override AssetKind GeneratedClassKind => AssetKind.CreateCommand;
 
         public override IEnumerable<string> Usings => new List<string>
         {
            UsingTokens.MediatR,
-           AssetToNamespaceMapping[AssetKind.ResponseEntityDomainModel],
-           AssetToNamespaceMapping[AssetKind.CreateRequestDomainEntity],
-        }.Union(base.Usings);
+           _metadataGenerationService.AssetToNamespaceMapping[AssetKind.ResponseEntityDomainModel],
+           _metadataGenerationService.AssetToNamespaceMapping[AssetKind.CreateRequestDomainEntity],
+        }.Union(base.Usings).OrderBy(x => x);
 
         public override IEnumerable<string> BaseTypes => new string[]
         {
-            $"IRequest<{AssetToClassNameMapping[AssetKind.ResponseEntityDomainModel]}>"
+            $"IRequest<{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseEntityDomainModel]}>"
         };
 
         public override IEnumerable<PropertyDefinitionModel> AvailableProperties => new PropertyDefinitionModel[] 
         {
             new PropertyDefinitionModel
             {
-                ReturnType = $"{AssetToClassNameMapping[AssetKind.CreateRequestDomainEntity]}",
+                ReturnType = $"{_metadataGenerationService.AssetToClassNameMapping[AssetKind.CreateRequestDomainEntity]}",
                 Name = $"{CommonTokens.Model}",
                 Modifiers = new SyntaxKind [] { SyntaxKind.InternalKeyword }
             }
@@ -38,14 +47,10 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.QueriesMo
         {
             new ParameterDefinitionModel
             {
-                ReturnType = $"{AssetToClassNameMapping[AssetKind.CreateRequestDomainEntity]}",
-                Name = $"{nameof(CommonTokens.Model).ToLowerInvariant()}",
+                ReturnType = $"{_metadataGenerationService.AssetToClassNameMapping[AssetKind.CreateRequestDomainEntity]}",
+                Name = $"{nameof(CommonTokens.Model).ToLowerCamelCase()}",
                 MapToClassProperty = true
             }
         };
-
-        public CreateCommandGeneratorModel(IViewModelBase viewModelBase) : base(viewModelBase)
-        {
-        }
     }
 }

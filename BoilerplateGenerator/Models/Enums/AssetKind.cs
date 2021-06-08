@@ -8,9 +8,11 @@
         CreateRequestDomainEntity,
         UpdateRequestDomainEntity,
         GetAllQuery,
+        GetByIdQuery,
         CreateCommand,
         UpdateCommand,
         DeleteCommand,
-        GetByIdQuery,
+        GetAllQueryHandler,
+        GetByIdQueryHandler,
     }
 }

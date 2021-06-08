@@ -1,4 +1,4 @@
-﻿using BoilerplateGenerator.ClassGeneratorModels;
+﻿using BoilerplateGenerator.Contracts;
 using BoilerplateGenerator.Controls;
 using BoilerplateGenerator.Domain;
 using BoilerplateGenerator.Helpers;
@@ -9,14 +9,9 @@ using EnvDTE80;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.LanguageServices;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Design;
-using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Utilities;
 using System;
 using System.ComponentModel.Design;
-using System.Globalization;
-using System.Threading;
-using System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
 
 namespace BoilerplateGenerator
@@ -63,6 +58,8 @@ namespace BoilerplateGenerator
             services.AddSingleton(typeof(DTE2), _package.GetService<DTE>() as DTE2);
             services.AddSingleton(typeof(IEntityManagerService), typeof(EntityManagerService));
             services.AddSingleton(typeof(VisualStudioWorkspace), _package.GetVisualStudioWorkspace());
+            services.AddSingleton(typeof(IMetadataGenerationService), typeof(MetadataGenerationService));
+            services.AddSingleton(typeof(IGeneratorModelsManagerService), typeof(GeneratorModelsManagerService));
             services.AddSingleton<MainWindow>();
 
             _serviceProvider = services.BuildServiceProvider();

@@ -1,6 +1,6 @@
 ﻿using BoilerplateGenerator.Models.Enums;
 
-namespace BoilerplateGenerator.Models.Contracts
+namespace BoilerplateGenerator.Contracts
 {
     public interface IBaseGeneratedAsset
     {

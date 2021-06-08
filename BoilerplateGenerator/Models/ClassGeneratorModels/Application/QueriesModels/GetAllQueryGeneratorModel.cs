@@ -1,4 +1,5 @@
-﻿using BoilerplateGenerator.Domain;
+﻿using BoilerplateGenerator.Contracts;
+using BoilerplateGenerator.Domain;
 using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
@@ -9,24 +10,28 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.QueriesMo
 {
     public class GetAllQueryGeneratorModel : BaseGenericGeneratorModel
     {
+        private readonly IMetadataGenerationService _metadataGenerationService;
+
+        public GetAllQueryGeneratorModel(IViewModelBase viewModelBase, IMetadataGenerationService metadataGenerationService)
+            : base(viewModelBase, metadataGenerationService)
+        {
+            _metadataGenerationService = metadataGenerationService;
+        }
+
         public override AssetKind GeneratedClassKind => AssetKind.GetAllQuery;
 
         public override IEnumerable<string> Usings => new List<string>
         {
            UsingTokens.MediatR,
            UsingTokens.SystemCollectionsGeneric,
-           AssetToNamespaceMapping[AssetKind.ResponseEntityDomainModel],
-        }.Union(base.Usings);
+           _metadataGenerationService.AssetToNamespaceMapping[AssetKind.ResponseEntityDomainModel],
+        }.Union(base.Usings).OrderBy(x => x);
 
         public override IEnumerable<string> BaseTypes => new string[]
         {
-            $"IRequest<IEnumerable<{AssetToClassNameMapping[AssetKind.ResponseEntityDomainModel]}>>"
+            $"IRequest<IEnumerable<{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseEntityDomainModel]}>>"
         };
 
         public override IEnumerable<PropertyDefinitionModel> AvailableProperties => new PropertyDefinitionModel[] { };
-
-        public GetAllQueryGeneratorModel(IViewModelBase viewModelBase) : base(viewModelBase)
-        {
-        }
     }
 }

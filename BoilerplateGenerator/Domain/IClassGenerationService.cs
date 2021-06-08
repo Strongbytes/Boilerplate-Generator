@@ -1,4 +1,4 @@
-﻿using BoilerplateGenerator.Models.Contracts;
+﻿using BoilerplateGenerator.Contracts;
 using System.Threading.Tasks;
 
 namespace BoilerplateGenerator.Domain

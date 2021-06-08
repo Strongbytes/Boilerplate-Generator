@@ -3,7 +3,7 @@ using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Collections.Generic;
 
-namespace BoilerplateGenerator.ClassGeneratorModels
+namespace BoilerplateGenerator.Contracts
 {
     public interface IGenericGeneratorModel
     {

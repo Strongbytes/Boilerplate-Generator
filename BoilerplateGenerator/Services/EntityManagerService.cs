@@ -1,6 +1,6 @@
 ﻿using BoilerplateGenerator.Collections;
+using BoilerplateGenerator.Contracts;
 using BoilerplateGenerator.Domain;
-using BoilerplateGenerator.Models.Contracts;
 using BoilerplateGenerator.Models.RoslynWrappers;
 using EnvDTE;
 using EnvDTE80;

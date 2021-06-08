@@ -1,4 +1,4 @@
-﻿using BoilerplateGenerator.Models.Contracts;
+﻿using BoilerplateGenerator.Contracts;
 using BoilerplateGenerator.Models.Enums;
 
 namespace BoilerplateGenerator.Models.ClassGeneratorModels.TreeView

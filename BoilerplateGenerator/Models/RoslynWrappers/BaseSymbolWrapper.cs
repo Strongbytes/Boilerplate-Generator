@@ -1,4 +1,4 @@
-﻿using BoilerplateGenerator.Models.Contracts;
+﻿using BoilerplateGenerator.Contracts;
 using Microsoft.CodeAnalysis;
 
 namespace BoilerplateGenerator.Models.RoslynWrappers

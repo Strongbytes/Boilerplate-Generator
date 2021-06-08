@@ -1,8 +1,7 @@
-﻿using BoilerplateGenerator.ClassGeneratorModels;
+﻿using BoilerplateGenerator.Contracts;
 using BoilerplateGenerator.Domain;
 using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Models.ClassGeneratorModels.TreeView;
-using BoilerplateGenerator.Models.Contracts;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;

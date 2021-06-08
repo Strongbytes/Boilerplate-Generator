@@ -1,12 +1,11 @@
-﻿using BoilerplateGenerator.ClassGeneratorModels;
-using BoilerplateGenerator.Collections;
+﻿using BoilerplateGenerator.Collections;
+using BoilerplateGenerator.Contracts;
 using BoilerplateGenerator.Domain;
 using BoilerplateGenerator.Models.ClassGeneratorModels.Application.CommandsInputModels;
 using BoilerplateGenerator.Models.ClassGeneratorModels.Application.QueriesModels;
 using BoilerplateGenerator.Models.ClassGeneratorModels.Controllers;
 using BoilerplateGenerator.Models.ClassGeneratorModels.Domain;
 using BoilerplateGenerator.Models.ClassGeneratorModels.TreeView;
-using BoilerplateGenerator.Models.Contracts;
 using BoilerplateGenerator.Models.RoslynWrappers;
 using BoilerplateGenerator.Services;
 using Microsoft.VisualStudio.Shell;
@@ -24,10 +23,12 @@ namespace BoilerplateGenerator.ViewModels
     public class ViewModelBase : IViewModelBase
     {
         private readonly IEntityManagerService _fileManagerService;
+        private readonly IGeneratorModelsManagerService _generatorModelsManagerService;
 
-        public ViewModelBase(IEntityManagerService fileManagerService)
+        public ViewModelBase(IEntityManagerService fileManagerService, IGeneratorModelsManagerService generatorModelsManagerService)
         {
             _fileManagerService = fileManagerService;
+            _generatorModelsManagerService = generatorModelsManagerService;
         }
 
 
@@ -114,19 +115,6 @@ namespace BoilerplateGenerator.ViewModels
 
         public ObservableCollection<ProjectWrapper> AvailableModules { get; set; } = new ObservableCollection<ProjectWrapper>();
 
-        private List<IGenericGeneratorModel> ClassGeneratorModels => new List<IGenericGeneratorModel>
-        {
-            new ResponseEntityDomainModelGeneratorModel(this),
-            new ControllerGeneratorModel(this),
-            new CreateRequestDomainEntityGeneratorModel(this),
-            new UpdateRequestDomainEntityGeneratorModel(this),
-            new GetAllQueryGeneratorModel(this),
-            new GetByIdQueryGeneratorModel(this),
-            new CreateCommandGeneratorModel(this),
-            new UpdateCommandGeneratorModel(this),
-            new DeleteCommandGeneratorModel(this)
-        };
-
         public ObservableCollection<ITreeNode<IBaseGeneratedAsset>> DirectoriesTree { get; set; } = new ObservableCollection<ITreeNode<IBaseGeneratedAsset>>();
         #endregion
 
@@ -179,11 +167,14 @@ namespace BoilerplateGenerator.ViewModels
                         Current = new GeneratedDirectory(SelectedProject.Name),
                     };
 
-                    foreach (IGenericGeneratorModel availableModels in ClassGeneratorModels)
+                    await Task.Run(async () =>
                     {
-                        var generatedClass = await new ClassGenerationService(availableModels).GetGeneratedClass().ConfigureAwait(false);
-                        GenerateDirectoryClassTree(rootNode, generatedClass);
-                    }
+                        foreach (IGenericGeneratorModel availableModels in _generatorModelsManagerService.AvailableGeneratorModels)
+                        {
+                            var generatedClass = await new ClassGenerationService(availableModels).GetGeneratedClass().ConfigureAwait(false);
+                            GenerateDirectoryClassTree(rootNode, generatedClass);
+                        }
+                    }).ConfigureAwait(false);
 
                     await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 

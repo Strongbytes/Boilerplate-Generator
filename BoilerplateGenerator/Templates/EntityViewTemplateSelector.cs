@@ -1,5 +1,5 @@
 ﻿using BoilerplateGenerator.Collections;
-using BoilerplateGenerator.Models.Contracts;
+using BoilerplateGenerator.Contracts;
 using BoilerplateGenerator.Models.RoslynWrappers;
 using System;
 using System.Windows;

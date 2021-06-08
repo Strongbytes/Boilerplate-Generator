@@ -10,6 +10,14 @@ namespace BoilerplateGenerator.Helpers
             return CultureInfo.InvariantCulture.TextInfo.ToTitleCase(text);
         }
 
+        public static string ToLowerCamelCase(this string text)
+        {
+            if (string.IsNullOrEmpty(text) || char.IsLower(text[0]))
+                return text;
+
+            return char.ToLower(text[0]) + text.Substring(1);
+        }
+
         public static string ToTypeAlias(this ITypeSymbol dotNetTypeName)
         {
             switch (dotNetTypeName.Name)

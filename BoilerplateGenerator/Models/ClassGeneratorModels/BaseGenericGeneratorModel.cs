@@ -1,14 +1,11 @@
-﻿using BoilerplateGenerator.ClassGeneratorModels;
-using BoilerplateGenerator.Collections;
+﻿using BoilerplateGenerator.Collections;
+using BoilerplateGenerator.Contracts;
 using BoilerplateGenerator.Domain;
 using BoilerplateGenerator.Helpers;
-using BoilerplateGenerator.Models.Contracts;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.RoslynWrappers;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using Microsoft.CodeAnalysis.CSharp;
-using Pluralize.NET;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,41 +13,21 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
 {
     public abstract class BaseGenericGeneratorModel : IGenericGeneratorModel
     {
+        private readonly object _locker = new object();
         private readonly IViewModelBase _viewModelBase;
+        private readonly IMetadataGenerationService _metadataGenerationService;
 
-        public Dictionary<AssetKind, string> AssetToClassNameMapping => new Dictionary<AssetKind, string>
+        protected BaseGenericGeneratorModel(IViewModelBase viewModelBase, IMetadataGenerationService metadataGenerationService)
         {
-            { AssetKind.ResponseEntityDomainModel, $"{BaseEntity.Name}DomainModel" },
-            { AssetKind.Controller, $"{BaseEntityPluralizedName}Controller" },
-            { AssetKind.CreateRequestDomainEntity, $"Create{BaseEntity.Name}RequestModel" },
-            { AssetKind.UpdateRequestDomainEntity, $"Update{BaseEntity.Name}RequestModel" },
-            { AssetKind.GetAllQuery, $"GetAll{BaseEntityPluralizedName}Query" },
-            { AssetKind.GetByIdQuery, $"Get{BaseEntity.Name}ByIdQuery" },
-            { AssetKind.CreateCommand, $"Create{BaseEntity.Name}Command" },
-            { AssetKind.UpdateCommand, $"Update{BaseEntity.Name}Command" },
-            { AssetKind.DeleteCommand, $"Delete{BaseEntity.Name}Command" },
-        };
-
-        public Dictionary<AssetKind, string> AssetToNamespaceMapping => new Dictionary<AssetKind, string>
-        {
-            { AssetKind.ResponseEntityDomainModel, $"{_viewModelBase.SelectedProject.Namespace}.Domain.Models" },
-            { AssetKind.Controller, $"{_viewModelBase.SelectedProject.Namespace}.Controllers" },
-            { AssetKind.CreateRequestDomainEntity, $"{_viewModelBase.SelectedProject.Namespace}.Application.Commands.{BaseEntityPluralizedName}.Create.Models" },
-            { AssetKind.UpdateRequestDomainEntity, $"{_viewModelBase.SelectedProject.Namespace}.Application.Commands.{BaseEntityPluralizedName}.Update.Models" },
-            { AssetKind.GetAllQuery, $"{_viewModelBase.SelectedProject.Namespace}.Application.Queries.GetAll{BaseEntityPluralizedName}" },
-            { AssetKind.GetByIdQuery, $"{_viewModelBase.SelectedProject.Namespace}.Application.Queries.Get{BaseEntity.Name}ById" },
-            { AssetKind.CreateCommand, $"{_viewModelBase.SelectedProject.Namespace}.Application.Commands.{BaseEntityPluralizedName}.Create" },
-            { AssetKind.UpdateCommand, $"{_viewModelBase.SelectedProject.Namespace}.Application.Commands.{BaseEntityPluralizedName}.Update" },
-            { AssetKind.DeleteCommand, $"{_viewModelBase.SelectedProject.Namespace}.Application.Commands.{BaseEntityPluralizedName}.Delete" },
-        };
+            _viewModelBase = viewModelBase;
+            _metadataGenerationService = metadataGenerationService;
+        }
 
         public virtual IEnumerable<string> Usings => new List<string> { UsingTokens.System };
 
-        public string Namespace => AssetToNamespaceMapping[GeneratedClassKind];
+        public string Namespace => _metadataGenerationService.AssetToNamespaceMapping[GeneratedClassKind];
 
-        public string GeneratedClassName => AssetToClassNameMapping[GeneratedClassKind];
-
-        private string BaseEntityPluralizedName => new Pluralizer().Pluralize(BaseEntity.Name);
+        public string GeneratedClassName => _metadataGenerationService.AssetToClassNameMapping[GeneratedClassKind];
 
         public virtual IEnumerable<string> BaseTypes { get; } = new string[] { };
 
@@ -59,7 +36,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
         {
             get
             {
-                lock (_viewModelBase)
+                lock (_locker)
                 {
                     if (_availableProperties != null)
                     {
@@ -77,7 +54,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
         {
             get
             {
-                lock (_viewModelBase)
+                lock (_locker)
                 {
                     if (_baseEntityPrimaryKey != null)
                     {
@@ -96,8 +73,6 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
             }
         }
 
-        private EntityClassWrapper BaseEntity => _viewModelBase.EntityTree.First().Current as EntityClassWrapper;
-
         public virtual SyntaxKind RootClassModifier => SyntaxKind.PublicKeyword;
 
         public string TargetProjectName => _viewModelBase.SelectedProject.Name;
@@ -109,11 +84,6 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
         public virtual IEnumerable<MethodDefinitionModel> AvailableMethods { get; } = Enumerable.Empty<MethodDefinitionModel>();
 
         public virtual IEnumerable<AttributeDefinitionModel> Attributes { get; } = Enumerable.Empty<AttributeDefinitionModel>();
-
-        protected BaseGenericGeneratorModel(IViewModelBase viewModelBase)
-        {
-            _viewModelBase = viewModelBase;
-        }
 
         private IEnumerable<PropertyDefinitionModel> FilterTreeProperties(ITreeNode<IBaseSymbolWrapper> rootNode)
         {

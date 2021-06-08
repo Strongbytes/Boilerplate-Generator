@@ -23,6 +23,13 @@
         Unit,
         ControllerBase,
         IMediator,
-        Mediator
+        Mediator,
+        IUnitOfWork,
+        UnitOfWork,
+        IMapper,
+        Mapper,
+        Handle,
+        Request,
+        CancellationToken
     }
 }
