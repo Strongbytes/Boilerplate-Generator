@@ -121,6 +121,7 @@ namespace BoilerplateGenerator.ViewModels
             new CreateRequestDomainEntityGeneratorModel(this),
             new UpdateRequestDomainEntityGeneratorModel(this),
             new GetAllQueryGeneratorModel(this),
+            new GetByIdQueryGeneratorModel(this),
             new CreateCommandGeneratorModel(this),
             new UpdateCommandGeneratorModel(this),
             new DeleteCommandGeneratorModel(this)

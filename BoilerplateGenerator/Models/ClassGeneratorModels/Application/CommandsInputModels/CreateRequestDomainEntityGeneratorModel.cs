@@ -1,4 +1,5 @@
 ﻿using BoilerplateGenerator.Domain;
+using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.CommandsI
 
         public override IEnumerable<string> Usings => new List<string>
         {
-           nameof(System.ComponentModel.DataAnnotations),
+           UsingTokens.SystemComponentModelDataAnnotations,
         }.Union(base.Usings);
 
         public override IEnumerable<PropertyDefinitionModel> AvailableProperties => base.AvailableProperties.Where(x => !x.IsPrimaryKey);

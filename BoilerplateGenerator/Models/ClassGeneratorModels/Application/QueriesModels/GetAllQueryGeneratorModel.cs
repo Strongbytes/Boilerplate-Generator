@@ -1,4 +1,5 @@
 ﻿using BoilerplateGenerator.Domain;
+using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using System.Collections.Generic;
@@ -12,8 +13,8 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.QueriesMo
 
         public override IEnumerable<string> Usings => new List<string>
         {
-           "MediatR",
-           nameof(System.Collections.Generic),
+           UsingTokens.MediatR,
+           UsingTokens.SystemCollectionsGeneric,
            AssetToNamespaceMapping[AssetKind.ResponseEntityDomainModel],
         }.Union(base.Usings);
 

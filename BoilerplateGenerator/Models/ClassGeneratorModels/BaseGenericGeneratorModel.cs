@@ -1,6 +1,7 @@
 ﻿using BoilerplateGenerator.ClassGeneratorModels;
 using BoilerplateGenerator.Collections;
 using BoilerplateGenerator.Domain;
+using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Models.Contracts;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.RoslynWrappers;
@@ -43,7 +44,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
             { AssetKind.DeleteCommand, $"{_viewModelBase.SelectedProject.Namespace}.Application.Commands.{BaseEntityPluralizedName}.Delete" },
         };
 
-        public virtual IEnumerable<string> Usings => new List<string> { "System" };
+        public virtual IEnumerable<string> Usings => new List<string> { UsingTokens.System };
 
         public string Namespace => AssetToNamespaceMapping[GeneratedClassKind];
 

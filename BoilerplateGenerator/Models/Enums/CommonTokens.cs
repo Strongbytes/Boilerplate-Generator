@@ -19,6 +19,10 @@
         ApiController,
         Produces,
         Route,
-        Model
+        Model,
+        Unit,
+        ControllerBase,
+        IMediator,
+        Mediator
     }
 }

@@ -47,6 +47,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Helpers\StatusCodeTokens.cs" />
+    <Compile Include="Helpers\UsingTokens.cs" />
     <Compile Include="Models\ClassGeneratorModels\Application\CommandsInputModels\UpdateRequestDomainEntityGeneratorModel.cs" />
     <Compile Include="Models\ClassGeneratorModels\Application\CommandsInputModels\CreateRequestDomainEntityGeneratorModel.cs" />
     <Compile Include="Models\ClassGeneratorModels\Application\CommandsModels\DeleteCommandGeneratorModel.cs" />

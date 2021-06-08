@@ -1,5 +1,5 @@
-﻿
-using BoilerplateGenerator.Domain;
+﻿using BoilerplateGenerator.Domain;
+using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using Microsoft.CodeAnalysis.CSharp;
@@ -14,12 +14,12 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.QueriesMo
 
         public override IEnumerable<string> Usings => new List<string>
         {
-           "MediatR",
+           UsingTokens.MediatR,
         }.Union(base.Usings);
 
         public override IEnumerable<string> BaseTypes => new string[]
         {
-            $"IRequest<Unit>"
+            $"IRequest<{CommonTokens.Unit}>"
         };
 
         public override IEnumerable<PropertyDefinitionModel> AvailableProperties => new PropertyDefinitionModel[] 

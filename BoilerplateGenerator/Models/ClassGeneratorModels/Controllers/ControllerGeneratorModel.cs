@@ -12,27 +12,27 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
     {
         public override IEnumerable<string> Usings => new List<string>
         {
-            "System",
-            "System.Collections.Generic",
-            "System.Net.Mime",
-            "System.Threading.Tasks",
-            "MediatR",
-            "Microsoft.AspNetCore.Http",
-            "Microsoft.AspNetCore.Mvc"
+            UsingTokens.MediatR,
+            UsingTokens.System,
+            UsingTokens.SystemCollectionsGeneric,
+            UsingTokens.SystemNetMime,
+            UsingTokens.SystemThreadingTasks,
+            UsingTokens.MicrosoftAspNetCoreHttp,
+            UsingTokens.MicrosoftAspNetCoreMvc,
         }.Union(AssetToNamespaceMapping.Values);
 
         public override IEnumerable<PropertyDefinitionModel> AvailableProperties => new PropertyDefinitionModel[] { };
 
         public override AssetKind GeneratedClassKind => AssetKind.Controller;
 
-        public override IEnumerable<string> BaseTypes => new string[] { "ControllerBase" };
+        public override IEnumerable<string> BaseTypes => new string[] { nameof(CommonTokens.ControllerBase) };
 
         public override IEnumerable<ParameterDefinitionModel> ConstructorParameters => new ParameterDefinitionModel[]
         {
             new ParameterDefinitionModel
             {
-                ReturnType = "IMediator",
-                Name = "mediator"
+                ReturnType = $"{CommonTokens.IMediator}",
+                Name = $"{nameof(CommonTokens.Mediator).ToLowerInvariant()}"
             }
         };
 
@@ -63,7 +63,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
                             new AttributeDefinitionModel($"{CommonTokens.HttpGet}"),
                             new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
                             {
-                                Values = new string[] { $"typeof(List<{AssetToClassNameMapping[AssetKind.ResponseEntityDomainModel]}>)", StatusCodeTokens.Status200OK }
+                                Values = new string[] { $"typeof(IEnumerable<{AssetToClassNameMapping[AssetKind.ResponseEntityDomainModel]}>)", StatusCodeTokens.Status200OK }
                             }
                         },
                         Body = GetAllQueryBody
@@ -116,7 +116,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
                             new ParameterDefinitionModel
                             {
                                 ReturnType = AssetToClassNameMapping[AssetKind.CreateRequestDomainEntity],
-                                Name = "model"
+                                Name = $"{nameof(CommonTokens.Model).ToLowerInvariant()}"
                             }
                         },
                         Body = CreateCommandBody
@@ -149,7 +149,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
                             new ParameterDefinitionModel
                             {
                                 ReturnType = AssetToClassNameMapping[AssetKind.UpdateRequestDomainEntity],
-                                Name = "model"
+                                Name = $"{nameof(CommonTokens.Model).ToLowerInvariant()}"
                             },
                         },
                         Body = UpdateCommandBody
@@ -210,7 +210,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
             {
                 return new string[]
                 {
-                    $"{AssetToClassNameMapping[AssetKind.ResponseEntityDomainModel]} newEntity = await _mediator.Send(new {AssetToClassNameMapping[AssetKind.CreateCommand]}(model));",
+                    $"{AssetToClassNameMapping[AssetKind.ResponseEntityDomainModel]} newEntity = await _mediator.Send(new {AssetToClassNameMapping[AssetKind.CreateCommand]}({nameof(CommonTokens.Model).ToLowerInvariant()}));",
                     $"var routeValue = new {{ {BaseEntityPrimaryKey.Name.ToLowerInvariant()} = newEntity.{BaseEntityPrimaryKey.Name} }};",
                     $"return CreatedAtAction(nameof({$"{CommonTokens.GetById}"}), routeValue, newEntity);"
                 };
@@ -223,7 +223,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
             {
                 return new string[]
                 {
-                    $"return Ok(await _mediator.Send(new {AssetToClassNameMapping[AssetKind.UpdateCommand]}({BaseEntityPrimaryKey.Name.ToLowerInvariant()}, model)));"
+                    $"return Ok(await _mediator.Send(new {AssetToClassNameMapping[AssetKind.UpdateCommand]}({BaseEntityPrimaryKey.Name.ToLowerInvariant()}, {nameof(CommonTokens.Model).ToLowerInvariant()})));"
                 };
             }
         }

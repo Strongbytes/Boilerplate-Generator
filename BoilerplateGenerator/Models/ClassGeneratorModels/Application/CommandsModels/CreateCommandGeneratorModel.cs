@@ -1,4 +1,5 @@
 ﻿using BoilerplateGenerator.Domain;
+using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using Microsoft.CodeAnalysis.CSharp;
@@ -13,7 +14,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.QueriesMo
 
         public override IEnumerable<string> Usings => new List<string>
         {
-           "MediatR",
+           UsingTokens.MediatR,
            AssetToNamespaceMapping[AssetKind.ResponseEntityDomainModel],
            AssetToNamespaceMapping[AssetKind.CreateRequestDomainEntity],
         }.Union(base.Usings);
@@ -38,7 +39,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.QueriesMo
             new ParameterDefinitionModel
             {
                 ReturnType = $"{AssetToClassNameMapping[AssetKind.CreateRequestDomainEntity]}",
-                Name = "model",
+                Name = $"{nameof(CommonTokens.Model).ToLowerInvariant()}",
                 MapToClassProperty = true
             }
         };
