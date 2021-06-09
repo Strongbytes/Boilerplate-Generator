@@ -23,6 +23,8 @@
 
         <converters:InverseVisibilityConverter x:Key="InverseVisibilityConverter" />
 
+        <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+
         <templates:EntityViewTemplateSelector x:Key="EntityViewTemplateSelector" />
 
         <templates:DirectoryViewTemplateSelector x:Key="DirectoryViewTemplateSelector" />
@@ -105,6 +107,12 @@
                             <Style TargetType="{x:Type TreeViewItem}">
                                 <Setter Property="IsExpanded"
                                         Value="True" />
+                                <Setter Property="IsEnabled"
+                                        Value="{Binding Current.IsPrimaryKey, Converter={StaticResource InverseBooleanConverter}}" />
+                                <Setter Property="IsHitTestVisible"
+                                        Value="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                                <Setter Property="IsTabStop"
+                                        Value="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
                             </Style>
                         </TreeView.ItemContainerStyle>
                         <TreeView.Resources>
@@ -117,9 +125,14 @@
                             <DataTemplate x:Key="PropertySelector">
                                 <CheckBox IsChecked="{Binding Current.IsChecked, Mode=TwoWay}">
                                     <CheckBox.Content>
-                                        <TextBlock>
-                                    <Run Text="{Binding Current.Name}" /><Run Text=" (Type: " /><Run Text="{Binding Current.Type}" /><Run Text=")" />
-                                        </TextBlock>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock>
+                                                <Run Text="{Binding Current.Name}" /><Run Text=" (Type: " /><Run Text="{Binding Current.Type}" /><Run Text=")" />
+                                            </TextBlock>
+                                            <TextBlock Text=" (Primary Key)"
+                                                       FontWeight="Bold"
+                                                       Visibility="{Binding Current.IsPrimaryKey, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}" />
+                                        </StackPanel>
                                     </CheckBox.Content>
                                 </CheckBox>
                             </DataTemplate>

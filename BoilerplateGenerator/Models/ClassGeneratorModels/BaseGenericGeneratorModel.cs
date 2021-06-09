@@ -98,7 +98,12 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
                         break;
 
                     default:
-                        if (!(treeNode.Current is EntityPropertyWrapper entityPropertyWrapper) || !entityPropertyWrapper.IsChecked)
+                        if (!(treeNode.Current is EntityPropertyWrapper entityPropertyWrapper))
+                        {
+                            break;
+                        }
+
+                        if (!entityPropertyWrapper.IsChecked.HasValue || !entityPropertyWrapper.IsChecked.Value)
                         {
                             break;
                         }

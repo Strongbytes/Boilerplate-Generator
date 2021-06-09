@@ -46,6 +46,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="Helpers\StatusCodeTokens.cs" />
     <Compile Include="Helpers\UsingTokens.cs" />
     <Compile Include="Models\ClassGeneratorModels\Application\CommandsInputModels\UpdateRequestDomainEntityGeneratorModel.cs" />
