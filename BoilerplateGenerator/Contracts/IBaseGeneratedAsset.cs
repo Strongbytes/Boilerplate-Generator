@@ -1,8 +1,9 @@
 ﻿using BoilerplateGenerator.Models.Enums;
+using System.ComponentModel;
 
 namespace BoilerplateGenerator.Contracts
 {
-    public interface IBaseGeneratedAsset
+    public interface IBaseGeneratedAsset : INotifyPropertyChanged
     {
         AssetKind AssetKind { get; }
 

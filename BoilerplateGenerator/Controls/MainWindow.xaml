@@ -108,7 +108,7 @@
                                 <Setter Property="IsExpanded"
                                         Value="True" />
                                 <Setter Property="IsEnabled"
-                                        Value="{Binding Current.IsPrimaryKey, Converter={StaticResource InverseBooleanConverter}}" />
+                                        Value="{Binding Current.IsEnabled}" />
                                 <Setter Property="IsHitTestVisible"
                                         Value="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
                                 <Setter Property="IsTabStop"
@@ -119,7 +119,6 @@
                             <HierarchicalDataTemplate x:Key="ClassSelector"
                                                       ItemsSource="{Binding Path=Children}">
                                 <CheckBox IsChecked="{Binding Current.IsChecked, Mode=TwoWay}"
-                                          IsThreeState="True"
                                           Content="{Binding Current.Name}" />
                             </HierarchicalDataTemplate>
                             <DataTemplate x:Key="PropertySelector">

@@ -1,5 +1,4 @@
 ﻿using BoilerplateGenerator.Contracts;
-using BoilerplateGenerator.Domain;
 using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Models.ClassGeneratorModels.TreeView;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;

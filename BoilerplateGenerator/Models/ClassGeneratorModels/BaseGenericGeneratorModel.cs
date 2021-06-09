@@ -1,10 +1,10 @@
 ﻿using BoilerplateGenerator.Collections;
 using BoilerplateGenerator.Contracts;
-using BoilerplateGenerator.Domain;
 using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.RoslynWrappers;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
+using BoilerplateGenerator.ViewModels;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Collections.Generic;
 using System.Linq;

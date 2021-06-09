@@ -4,13 +4,12 @@ using System.Runtime.CompilerServices;
 
 namespace BoilerplateGenerator.Collections
 {
-    public class TreeNode<T> : ITreeNode<T>
+    public class TreeNode<T> : ITreeNode<T> where T : INotifyPropertyChanged
     {
         public ObservableCollection<ITreeNode<T>> Children { get; set; } = new ObservableCollection<ITreeNode<T>>();
 
         private T _current;
-
-        public T Current
+        public virtual T Current
         {
             get { return _current; }
             set
@@ -38,7 +37,7 @@ namespace BoilerplateGenerator.Collections
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

@@ -46,7 +46,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Collections\EntityHierarchyTreeNode.cs" />
     <Compile Include="Converters\InverseBooleanConverter.cs" />
+    <Compile Include="Helpers\EntityWrapperTreeExtensions.cs" />
+    <Compile Include="Helpers\GeneratedAssetsTreeExtensions.cs" />
     <Compile Include="Helpers\StatusCodeTokens.cs" />
     <Compile Include="Helpers\UsingTokens.cs" />
     <Compile Include="Models\ClassGeneratorModels\Application\CommandsInputModels\UpdateRequestDomainEntityGeneratorModel.cs" />
@@ -84,9 +87,9 @@
     </Compile>
     <Compile Include="Converters\BooleanToInverseVisibilityConverter.cs" />
     <Compile Include="Converters\InverseVisibilityConverter.cs" />
-    <Compile Include="Domain\IClassGenerationService.cs" />
-    <Compile Include="Domain\IEntityManagerService.cs" />
-    <Compile Include="Domain\IViewModelBase.cs" />
+    <Compile Include="Contracts\IClassGenerationService.cs" />
+    <Compile Include="Contracts\IEntityManagerService.cs" />
+    <Compile Include="ViewModels\IViewModelBase.cs" />
     <Compile Include="GenerateCRUD.cs" />
     <Compile Include="Helpers\AsyncPackageExtensions.cs" />
     <Compile Include="Helpers\TypeExtensions.cs" />

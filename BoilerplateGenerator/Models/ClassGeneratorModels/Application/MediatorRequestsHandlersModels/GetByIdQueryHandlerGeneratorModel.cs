@@ -1,6 +1,6 @@
 ﻿using BoilerplateGenerator.Contracts;
-using BoilerplateGenerator.Domain;
 using BoilerplateGenerator.Models.Enums;
+using BoilerplateGenerator.ViewModels;
 
 namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.MediatorRequestsHandlersModels
 {

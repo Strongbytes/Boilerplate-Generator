@@ -1,7 +1,6 @@
-﻿using BoilerplateGenerator.Contracts;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
-namespace BoilerplateGenerator.Domain
+namespace BoilerplateGenerator.Contracts
 {
     public interface IClassGenerationService
     {

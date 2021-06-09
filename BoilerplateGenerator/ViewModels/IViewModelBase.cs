@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace BoilerplateGenerator.Domain
+namespace BoilerplateGenerator.ViewModels
 {
     public interface IViewModelBase : INotifyPropertyChanged
     {

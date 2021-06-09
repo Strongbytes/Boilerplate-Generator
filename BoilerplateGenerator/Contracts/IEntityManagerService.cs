@@ -1,10 +1,9 @@
 ﻿using BoilerplateGenerator.Collections;
-using BoilerplateGenerator.Contracts;
 using BoilerplateGenerator.Models.RoslynWrappers;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace BoilerplateGenerator.Domain
+namespace BoilerplateGenerator.Contracts
 {
     public interface IEntityManagerService
     {

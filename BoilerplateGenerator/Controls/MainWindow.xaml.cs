@@ -1,4 +1,4 @@
-﻿using BoilerplateGenerator.Domain;
+﻿using BoilerplateGenerator.ViewModels;
 using System.Windows;
 
 namespace BoilerplateGenerator.Controls

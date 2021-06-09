@@ -1,7 +1,7 @@
 ﻿using BoilerplateGenerator.Contracts;
-using BoilerplateGenerator.Domain;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.RoslynWrappers;
+using BoilerplateGenerator.ViewModels;
 using Pluralize.NET;
 using System.Collections.Generic;
 using System.Linq;

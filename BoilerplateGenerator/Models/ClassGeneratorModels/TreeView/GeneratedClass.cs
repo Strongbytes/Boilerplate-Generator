@@ -1,6 +1,8 @@
 ﻿using BoilerplateGenerator.Contracts;
 using BoilerplateGenerator.Models.Enums;
 using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace BoilerplateGenerator.Models.ClassGeneratorModels.TreeView
 {
@@ -27,6 +29,13 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.TreeView
                 return _genericGeneratorModel.Namespace.Replace(_genericGeneratorModel.TargetProjectName, string.Empty)
                                                        .Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
             }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using BoilerplateGenerator.Contracts;
 using BoilerplateGenerator.Models.Enums;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace BoilerplateGenerator.Models.ClassGeneratorModels.TreeView
 {
@@ -13,5 +15,12 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.TreeView
         public AssetKind AssetKind => AssetKind.Directory;
 
         public string AssetName { get; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

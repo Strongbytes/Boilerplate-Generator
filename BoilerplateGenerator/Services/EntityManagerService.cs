@@ -1,6 +1,5 @@
 ﻿using BoilerplateGenerator.Collections;
 using BoilerplateGenerator.Contracts;
-using BoilerplateGenerator.Domain;
 using BoilerplateGenerator.Models.RoslynWrappers;
 using EnvDTE;
 using EnvDTE80;
@@ -93,7 +92,7 @@ namespace BoilerplateGenerator.Services
         {
             return await Task.Run(() =>
             {
-                ITreeNode<IBaseSymbolWrapper> rootNode = new TreeNode<IBaseSymbolWrapper>()
+                ITreeNode<IBaseSymbolWrapper> rootNode = new EntityHierarchyTreeNode
                 {
                     Current = new EntityClassWrapper(_entityClassType),
                 };
@@ -109,7 +108,7 @@ namespace BoilerplateGenerator.Services
         {
             while (_entityClassType.BaseType != null && !_entityClassType.BaseType.Name.Equals(nameof(Object)))
             {
-                TreeNode<IBaseSymbolWrapper> childNode = new TreeNode<IBaseSymbolWrapper>()
+                EntityHierarchyTreeNode childNode = new EntityHierarchyTreeNode
                 {
                     Current = new EntityClassWrapper(_entityClassType.BaseType),
                     Parent = rootNode
@@ -125,15 +124,15 @@ namespace BoilerplateGenerator.Services
 
         public void PopulateClassProperties(INamedTypeSymbol referencedClass, ITreeNode<IBaseSymbolWrapper> parent)
         {
-            foreach (TreeNode<IBaseSymbolWrapper> child in from ISymbol member in referencedClass.GetMembers()
-                                                           where member.Kind == SymbolKind.Property
-                                                           let property = member as IPropertySymbol
-                                                           where property.Type.Name != nameof(ICollection)
-                                                           select new TreeNode<IBaseSymbolWrapper>()
-                                                           {
-                                                               Current = new EntityPropertyWrapper(property),
-                                                               Parent = parent
-                                                           })
+            foreach (EntityHierarchyTreeNode child in from ISymbol member in referencedClass.GetMembers()
+                                                      where member.Kind == SymbolKind.Property
+                                                      let property = member as IPropertySymbol
+                                                      where property.Type.Name != nameof(ICollection)
+                                                      select new EntityHierarchyTreeNode
+                                                      {
+                                                          Current = new EntityPropertyWrapper(property),
+                                                          Parent = parent
+                                                      })
             {
                 parent.Children.Add(child);
             }
