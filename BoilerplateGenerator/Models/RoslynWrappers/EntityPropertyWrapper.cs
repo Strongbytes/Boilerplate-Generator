@@ -15,6 +15,8 @@ namespace BoilerplateGenerator.Models.RoslynWrappers
 
         public bool IsPrimaryKey => Attributes.Contains(nameof(CommonTokens.Key));
 
+        public bool IsRequired => Attributes.Contains(nameof(CommonTokens.Required));
+
         public override bool IsEnabled => !IsPrimaryKey;
 
         public EntityPropertyWrapper(IPropertySymbol symbol) : base(symbol)

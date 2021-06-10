@@ -12,7 +12,7 @@
 				<Icon guid="ImageCatalogGuid" id="DomainController"/>
 				<CommandFlag>IconIsMoniker</CommandFlag>
 				<Strings>
-					<ButtonText>Generate Mediator CRUD...</ButtonText>
+					<ButtonText>Generate Boilerplate Code...</ButtonText>
 				</Strings>
 			</Button>
 		</Buttons>

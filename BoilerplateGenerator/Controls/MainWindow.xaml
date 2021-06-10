@@ -13,7 +13,7 @@
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=viewModels:ViewModelBase, IsDesignTimeCreatable=False}"
         WindowState="Maximized"
-        Title="CRUD Generator"
+        Title="Boilerplate Code Generator"
         Height="450"
         Width="800">
     <Window.Resources>
@@ -81,8 +81,6 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <Grid>
@@ -128,9 +126,12 @@
                                             <TextBlock>
                                                 <Run Text="{Binding Current.Name}" /><Run Text=" (Type: " /><Run Text="{Binding Current.Type}" /><Run Text=")" />
                                             </TextBlock>
-                                            <TextBlock Text=" (Primary Key)"
+                                            <TextBlock Text=" [Primary Key]"
                                                        FontWeight="Bold"
                                                        Visibility="{Binding Current.IsPrimaryKey, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}" />
+                                            <TextBlock Text=" [Required]"
+                                                       FontWeight="Bold"
+                                                       Visibility="{Binding Current.IsRequired, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}" />
                                         </StackPanel>
                                     </CheckBox.Content>
                                 </CheckBox>
@@ -139,78 +140,80 @@
                     </TreeView>
                 </Grid>
 
-                <Grid Grid.Row="1"
-                      Margin="0,0,0,10">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
+                <StackPanel Grid.Row="1"
+                            Orientation="Vertical"
+                            Background="#FFEEF5FD">
+                    <Grid Margin="0,0,0,10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
 
-                    <Label Content="Target Module"
-                           Target="{Binding ElementName=ComboModule}"
-                           VerticalContentAlignment="Center"
-                           HorizontalContentAlignment="Left" />
+                        <Label Content="Target Module"
+                               Target="{Binding ElementName=ComboModule}"
+                               VerticalContentAlignment="Center"
+                               HorizontalContentAlignment="Left" />
 
-                    <ComboBox x:Name="ComboModule"
-                              Margin="5,0"
-                              ItemsSource="{Binding AvailableModules}"
-                              SelectedItem="{Binding SelectedProject, Mode=TwoWay}"
-                              Grid.Row="1">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Name}" />
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                </Grid>
-
-                <Grid Grid.Row="2"
-                      Margin="0,0,0,10">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-
-                    <Separator VerticalAlignment="Top"
-                               Margin="0" />
-
-                    <Label Content="Operations"
-                           Target="{Binding ElementName=GridOperations}"
-                           VerticalContentAlignment="Center"
-                           HorizontalContentAlignment="Left" />
-
-                    <Grid x:Name="GridOperations"
-                          Grid.Row="1"
-                          Margin="5,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <CheckBox Content="GET" />
-
-                        <CheckBox Grid.Column="1"
-                                  Content="POST" />
-
-                        <CheckBox Grid.Column="2"
-                                  Content="PUT" />
-
-                        <CheckBox Grid.Column="3"
-                                  Content="DELETE" />
+                        <ComboBox x:Name="ComboModule"
+                                  Margin="5,0"
+                                  ItemsSource="{Binding AvailableModules}"
+                                  SelectedItem="{Binding SelectedProject, Mode=TwoWay}"
+                                  Grid.Row="1">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
                     </Grid>
 
-                </Grid>
+                    <Grid Margin="0,0,0,10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
 
-                <Grid Grid.Row="3">
-                    <Separator VerticalAlignment="Top"
-                               Margin="0" />
+                        <Separator VerticalAlignment="Top"
+                                   Margin="0" />
 
-                    <Button Content="Generate Code"
-                            Margin="5,10"
-                            Command="{Binding GenerateCodeCommand}" />
-                </Grid>
+                        <Label Content="Operations"
+                               Target="{Binding ElementName=GridOperations}"
+                               VerticalContentAlignment="Center"
+                               HorizontalContentAlignment="Left" />
+
+                        <Grid x:Name="GridOperations"
+                              Grid.Row="1"
+                              Margin="5,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <CheckBox Content="GET" />
+
+                            <CheckBox Grid.Column="1"
+                                      Content="POST" />
+
+                            <CheckBox Grid.Column="2"
+                                      Content="PUT" />
+
+                            <CheckBox Grid.Column="3"
+                                      Content="DELETE" />
+                        </Grid>
+
+                    </Grid>
+
+                    <Grid>
+                        <Separator VerticalAlignment="Top"
+                                   Margin="0" />
+
+                        <Button Content="Generate Code"
+                                Margin="5,10"
+                                Command="{Binding GenerateCodeCommand}" />
+                    </Grid>
+                </StackPanel>
             </Grid>
 
             <GridSplitter Grid.Column="1"
