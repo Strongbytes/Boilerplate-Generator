@@ -17,5 +17,6 @@
         CreateCommandHandler,
         UpdateCommandHandler,
         DeleteCommandHandler,
+        ProfileMapper,
     }
 }

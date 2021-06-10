@@ -1,7 +1,7 @@
 ﻿using BoilerplateGenerator.Models.Enums;
 using System.Collections.Generic;
 
-namespace BoilerplateGenerator.Contracts
+namespace BoilerplateGenerator.Contracts.Services
 {
     public interface IMetadataGenerationService
     {

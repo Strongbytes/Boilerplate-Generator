@@ -1,4 +1,4 @@
-﻿using BoilerplateGenerator.Contracts;
+﻿using BoilerplateGenerator.Contracts.Services;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.ViewModels;
 

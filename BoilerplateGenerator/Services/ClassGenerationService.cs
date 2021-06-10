@@ -1,4 +1,5 @@
-﻿using BoilerplateGenerator.Contracts;
+﻿using BoilerplateGenerator.Contracts.Generators;
+using BoilerplateGenerator.Contracts.Services;
 using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using BoilerplateGenerator.Models.TreeView;

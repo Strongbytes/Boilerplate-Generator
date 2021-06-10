@@ -1,4 +1,4 @@
-﻿using BoilerplateGenerator.Contracts;
+﻿using BoilerplateGenerator.Contracts.Generators;
 using BoilerplateGenerator.Models.Enums;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;

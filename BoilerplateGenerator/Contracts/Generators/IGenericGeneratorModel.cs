@@ -2,8 +2,9 @@
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace BoilerplateGenerator.Contracts
+namespace BoilerplateGenerator.Contracts.Generators
 {
     public interface IGenericGeneratorModel
     {
@@ -14,6 +15,8 @@ namespace BoilerplateGenerator.Contracts
         string TargetProjectName { get; }
 
         string Namespace { get; }
+
+        bool FileExistsInProject { get; }
 
         SyntaxKind RootClassModifier { get; }
 

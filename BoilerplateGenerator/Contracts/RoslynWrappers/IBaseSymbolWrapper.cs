@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace BoilerplateGenerator.Contracts
+namespace BoilerplateGenerator.Contracts.RoslynWrappers
 {
     public interface IBaseSymbolWrapper : INotifyPropertyChanged
     {

@@ -1,6 +1,5 @@
 ﻿using BoilerplateGenerator.Collections;
-using BoilerplateGenerator.Contracts;
-using BoilerplateGenerator.Models.RoslynWrappers;
+using BoilerplateGenerator.Contracts.RoslynWrappers;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -13,7 +12,9 @@ namespace BoilerplateGenerator.ViewModels
     {
         Visibility LoaderVisibility { get; set; }
 
-        ProjectWrapper SelectedProject { get; set; }
+        IProjectWrapper SelectedTargetModuleProject { get; set; }
+
+        IProjectWrapper SelectedControllersProject { get; set; }
 
         ObservableCollection<ITreeNode<IBaseSymbolWrapper>> EntityTree { get; set; }
 

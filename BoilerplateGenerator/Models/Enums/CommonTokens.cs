@@ -30,6 +30,17 @@
         Mapper,
         Handle,
         Request,
-        CancellationToken
+        CancellationToken,
+        DomainModel,
+        Controller,
+        RequestModel,
+        Query,
+        Get,
+        ByIdQuery,
+        Command,
+        QueryHandler,
+        ByIdQueryHandler,
+        CommandHandler,
+        ById
     }
 }

@@ -1,7 +1,9 @@
-﻿using BoilerplateGenerator.Contracts;
+﻿using BoilerplateGenerator.Contracts.Generators;
 using BoilerplateGenerator.Models.Enums;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace BoilerplateGenerator.Models.TreeView
@@ -22,12 +24,20 @@ namespace BoilerplateGenerator.Models.TreeView
 
         public string AssetName => $"{_genericGeneratorModel.GeneratedClassName}.cs";
 
-        public string[] ParentDirectoryHierarchy
+        public bool FileExistsInProject => _genericGeneratorModel.FileExistsInProject;
+
+        public IEnumerable<string> ParentDirectoryHierarchy
         {
             get
             {
-                return _genericGeneratorModel.Namespace.Replace(_genericGeneratorModel.TargetProjectName, string.Empty)
-                                                       .Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+                return new string[] 
+                { 
+                    _genericGeneratorModel.TargetProjectName 
+                }.Union
+                (
+                    _genericGeneratorModel.Namespace.Replace(_genericGeneratorModel.TargetProjectName, string.Empty)
+                                                    .Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries)
+                );
             }
         }
 

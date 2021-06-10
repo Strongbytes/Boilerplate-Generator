@@ -1,4 +1,5 @@
-﻿using BoilerplateGenerator.Contracts;
+﻿using BoilerplateGenerator.Contracts.RoslynWrappers;
+using BoilerplateGenerator.Contracts.Services;
 using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
@@ -10,11 +11,13 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
 {
     public class ControllerGeneratorModel : BaseGenericGeneratorModel
     {
+        private readonly IViewModelBase _viewModelBase;
         private readonly IMetadataGenerationService _metadataGenerationService;
 
         public ControllerGeneratorModel(IViewModelBase viewModelBase, IMetadataGenerationService metadataGenerationService)
             : base(viewModelBase, metadataGenerationService)
         {
+            _viewModelBase = viewModelBase;
             _metadataGenerationService = metadataGenerationService;
         }
 
@@ -28,6 +31,8 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
             UsingTokens.MicrosoftAspNetCoreHttp,
             UsingTokens.MicrosoftAspNetCoreMvc,
         }.Union(_metadataGenerationService.AssetToNamespaceMapping.Values).Distinct().OrderBy(x => x);
+
+        protected override IProjectWrapper TargetModule => _viewModelBase.SelectedControllersProject;
 
         public override IEnumerable<PropertyDefinitionModel> AvailableProperties => new PropertyDefinitionModel[] { };
 

@@ -1,4 +1,4 @@
-﻿using BoilerplateGenerator.Contracts;
+﻿using BoilerplateGenerator.Contracts.Services;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.RoslynWrappers;
 using BoilerplateGenerator.ViewModels;
@@ -15,8 +15,6 @@ namespace BoilerplateGenerator.Services
         private readonly IViewModelBase _viewModelBase;
 
         private string BaseEntityPluralizedName => new Pluralizer().Pluralize(BaseEntity.Name);
-
-        private string TargetModuleNamespace => _viewModelBase.SelectedProject.Namespace;
 
         private EntityClassWrapper _baseEntity;
         private EntityClassWrapper BaseEntity
@@ -43,38 +41,40 @@ namespace BoilerplateGenerator.Services
 
         public IDictionary<AssetKind, string> AssetToClassNameMapping => new Dictionary<AssetKind, string>
         {
-            { AssetKind.ResponseDomainEntity, $"{BaseEntity.Name}DomainModel" },
-            { AssetKind.Controller, $"{BaseEntityPluralizedName}Controller" },
-            { AssetKind.CreateRequestDomainEntity, $"Create{BaseEntity.Name}RequestModel" },
-            { AssetKind.UpdateRequestDomainEntity, $"Update{BaseEntity.Name}RequestModel" },
-            { AssetKind.GetAllQuery, $"GetAll{BaseEntityPluralizedName}Query" },
-            { AssetKind.GetByIdQuery, $"Get{BaseEntity.Name}ByIdQuery" },
-            { AssetKind.CreateCommand, $"Create{BaseEntity.Name}Command" },
-            { AssetKind.UpdateCommand, $"Update{BaseEntity.Name}Command" },
-            { AssetKind.DeleteCommand, $"Delete{BaseEntity.Name}Command" },
-            { AssetKind.GetAllQueryHandler, $"GetAll{BaseEntityPluralizedName}QueryHandler" },
-            { AssetKind.GetByIdQueryHandler, $"Get{BaseEntity.Name}ByIdQueryHandler" },
-            { AssetKind.CreateCommandHandler, $"Create{BaseEntity.Name}CommandHandler" },
-            { AssetKind.UpdateCommandHandler, $"Update{BaseEntity.Name}CommandHandler" },
-            { AssetKind.DeleteCommandHandler, $"Delete{BaseEntity.Name}CommandHandler" },
+            { AssetKind.ResponseDomainEntity, $"{BaseEntity.Name}{CommonTokens.DomainModel}" },
+            { AssetKind.Controller, $"{BaseEntityPluralizedName}{CommonTokens.Controller}" },
+            { AssetKind.CreateRequestDomainEntity, $"{CommonTokens.Create}{BaseEntity.Name}{CommonTokens.RequestModel}" },
+            { AssetKind.UpdateRequestDomainEntity, $"{CommonTokens.Update}{BaseEntity.Name}{CommonTokens.RequestModel}" },
+            { AssetKind.GetAllQuery, $"{CommonTokens.GetAll}{BaseEntityPluralizedName}{CommonTokens.Query}" },
+            { AssetKind.GetByIdQuery, $"{CommonTokens.Get}{BaseEntity.Name}{CommonTokens.ByIdQuery}" },
+            { AssetKind.CreateCommand, $"{CommonTokens.Create}{BaseEntity.Name}{CommonTokens.Command}" },
+            { AssetKind.UpdateCommand, $"{CommonTokens.Update}{BaseEntity.Name}{CommonTokens.Command}" },
+            { AssetKind.DeleteCommand, $"{CommonTokens.Delete}{BaseEntity.Name}{CommonTokens.Command}" },
+            { AssetKind.GetAllQueryHandler, $"{CommonTokens.GetAll}{BaseEntityPluralizedName}{CommonTokens.QueryHandler}" },
+            { AssetKind.GetByIdQueryHandler, $"{CommonTokens.Get}{BaseEntity.Name}{CommonTokens.ByIdQueryHandler}" },
+            { AssetKind.CreateCommandHandler, $"{CommonTokens.Create}{BaseEntity.Name}{CommonTokens.CommandHandler}" },
+            { AssetKind.UpdateCommandHandler, $"{CommonTokens.Update}{BaseEntity.Name}{CommonTokens.CommandHandler}" },
+            { AssetKind.DeleteCommandHandler, $"{CommonTokens.Delete}{BaseEntity.Name}{CommonTokens.CommandHandler}" },
+            { AssetKind.ProfileMapper, $"{BaseEntityPluralizedName}{CommonTokens.Mapper}" },
         };
 
         public IDictionary<AssetKind, string> AssetToNamespaceMapping => new Dictionary<AssetKind, string>
         {
-            { AssetKind.ResponseDomainEntity, $"{TargetModuleNamespace}.Domain.Models" },
-            { AssetKind.Controller, $"{TargetModuleNamespace}.Controllers" },
-            { AssetKind.CreateRequestDomainEntity, $"{TargetModuleNamespace}.Application.Commands.{BaseEntityPluralizedName}.Create.Models" },
-            { AssetKind.UpdateRequestDomainEntity, $"{TargetModuleNamespace}.Application.Commands.{BaseEntityPluralizedName}.Update.Models" },
-            { AssetKind.GetAllQuery, $"{TargetModuleNamespace}.Application.Queries.GetAll{BaseEntityPluralizedName}" },
-            { AssetKind.GetByIdQuery, $"{TargetModuleNamespace}.Application.Queries.Get{BaseEntity.Name}ById" },
-            { AssetKind.CreateCommand, $"{TargetModuleNamespace}.Application.Commands.{BaseEntityPluralizedName}.Create" },
-            { AssetKind.UpdateCommand, $"{TargetModuleNamespace}.Application.Commands.{BaseEntityPluralizedName}.Update" },
-            { AssetKind.DeleteCommand, $"{TargetModuleNamespace}.Application.Commands.{BaseEntityPluralizedName}.Delete" },
-            { AssetKind.GetAllQueryHandler, $"{TargetModuleNamespace}.Application.Queries.GetAll{BaseEntityPluralizedName}" },
-            { AssetKind.GetByIdQueryHandler, $"{TargetModuleNamespace}.Application.Queries.Get{BaseEntity.Name}ById" },
-            { AssetKind.CreateCommandHandler, $"{TargetModuleNamespace}.Application.Commands.{BaseEntityPluralizedName}.Create" },
-            { AssetKind.UpdateCommandHandler, $"{TargetModuleNamespace}.Application.Commands.{BaseEntityPluralizedName}.Update" },
-            { AssetKind.DeleteCommandHandler, $"{TargetModuleNamespace}.Application.Commands.{BaseEntityPluralizedName}.Delete" },
+            { AssetKind.ResponseDomainEntity, $"{NamespaceTokens.Domain}.{NamespaceTokens.Models}" },
+            { AssetKind.Controller, $"{NamespaceTokens.Controllers}" },
+            { AssetKind.CreateRequestDomainEntity, $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Create}.{NamespaceTokens.Models}" },
+            { AssetKind.UpdateRequestDomainEntity, $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Update}.{NamespaceTokens.Models}" },
+            { AssetKind.GetAllQuery, $"{NamespaceTokens.Application}.{NamespaceTokens.Queries}.{CommonTokens.GetAll}{BaseEntityPluralizedName}" },
+            { AssetKind.GetByIdQuery, $"{NamespaceTokens.Application}.{NamespaceTokens.Queries}.{CommonTokens.Get}{BaseEntity.Name}{CommonTokens.ById}" },
+            { AssetKind.CreateCommand, $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Create}" },
+            { AssetKind.UpdateCommand, $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Update}" },
+            { AssetKind.DeleteCommand, $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Delete}" },
+            { AssetKind.GetAllQueryHandler, $"{NamespaceTokens.Application}.{NamespaceTokens.Queries}.{CommonTokens.GetAll}{BaseEntityPluralizedName}" },
+            { AssetKind.GetByIdQueryHandler, $"{NamespaceTokens.Application}.{NamespaceTokens.Queries}.{CommonTokens.Get}{BaseEntity.Name}{CommonTokens.ById}" },
+            { AssetKind.CreateCommandHandler, $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Create}" },
+            { AssetKind.UpdateCommandHandler, $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Update}" },
+            { AssetKind.DeleteCommandHandler, $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Delete}" },
+            { AssetKind.ProfileMapper, string.Empty },
         };
     }
 }

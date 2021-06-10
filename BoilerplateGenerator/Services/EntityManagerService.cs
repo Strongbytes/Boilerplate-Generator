@@ -1,5 +1,6 @@
 ﻿using BoilerplateGenerator.Collections;
-using BoilerplateGenerator.Contracts;
+using BoilerplateGenerator.Contracts.RoslynWrappers;
+using BoilerplateGenerator.Contracts.Services;
 using BoilerplateGenerator.Models.RoslynWrappers;
 using EnvDTE;
 using EnvDTE80;
@@ -51,11 +52,17 @@ namespace BoilerplateGenerator.Services
             return _selectedItem.Name;
         }
 
-        public IEnumerable<ProjectWrapper> RetrieveAllModules()
+        public IEnumerable<IProjectWrapper> RetrieveAllModules()
         {
             return from project in _visualStudioWorkspace.CurrentSolution.Projects
                    where !project.Name.Equals(_parentProjectName)
                    select new ProjectWrapper(project);
+        }
+
+        public async Task<ISolutionWrapper> RetrieveSolution()
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            return new SolutionWrapper(_packageAutomation.Solution);
         }
 
         public async Task FindSelectedFileClassType()

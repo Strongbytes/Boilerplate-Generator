@@ -1,4 +1,4 @@
-﻿using BoilerplateGenerator.Contracts;
+﻿using BoilerplateGenerator.Contracts.RoslynWrappers;
 using BoilerplateGenerator.Helpers;
 using System.ComponentModel;
 

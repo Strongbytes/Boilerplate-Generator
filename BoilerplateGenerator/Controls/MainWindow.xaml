@@ -143,21 +143,17 @@
                 <StackPanel Grid.Row="1"
                             Orientation="Vertical"
                             Background="#FFEEF5FD">
-                    <Grid Margin="0,0,0,10">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-
+                    <StackPanel Orientation="Vertical"
+                                Margin="0,0,0,10">
                         <Label Content="Target Module"
-                               Target="{Binding ElementName=ComboModule}"
+                               Target="{Binding ElementName=ComboTargetModule}"
                                VerticalContentAlignment="Center"
                                HorizontalContentAlignment="Left" />
 
-                        <ComboBox x:Name="ComboModule"
+                        <ComboBox x:Name="ComboTargetModule"
                                   Margin="5,0"
                                   ItemsSource="{Binding AvailableModules}"
-                                  SelectedItem="{Binding SelectedProject, Mode=TwoWay}"
+                                  SelectedItem="{Binding SelectedTargetModuleProject, Mode=TwoWay}"
                                   Grid.Row="1">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
@@ -165,24 +161,40 @@
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
-                    </Grid>
+                    </StackPanel>
 
-                    <Grid Margin="0,0,0,10">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
+                    <Separator VerticalAlignment="Top"
+                               Margin="0" />
 
-                        <Separator VerticalAlignment="Top"
-                                   Margin="0" />
+                    <StackPanel Orientation="Vertical"
+                                Margin="0,0,0,10">
+                        <Label Content="Controller Location"
+                               Target="{Binding ElementName=ComboApplicationEntrypoint}"
+                               VerticalContentAlignment="Center"
+                               HorizontalContentAlignment="Left" />
 
+                        <ComboBox x:Name="ComboApplicationEntrypoint"
+                                  Margin="5,0"
+                                  ItemsSource="{Binding AvailableModules}"
+                                  SelectedItem="{Binding SelectedControllersProject, Mode=TwoWay}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <Separator VerticalAlignment="Top"
+                               Margin="0" />
+
+                    <StackPanel Margin="0,0,0,10">
                         <Label Content="Operations"
                                Target="{Binding ElementName=GridOperations}"
                                VerticalContentAlignment="Center"
                                HorizontalContentAlignment="Left" />
 
                         <Grid x:Name="GridOperations"
-                              Grid.Row="1"
                               Margin="5,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -203,16 +215,15 @@
                                       Content="DELETE" />
                         </Grid>
 
-                    </Grid>
+                    </StackPanel>
 
-                    <Grid>
-                        <Separator VerticalAlignment="Top"
-                                   Margin="0" />
+                    <Separator VerticalAlignment="Top"
+                               Margin="0" />
 
-                        <Button Content="Generate Code"
-                                Margin="5,10"
-                                Command="{Binding GenerateCodeCommand}" />
-                    </Grid>
+                    <Button Content="Generate Code"
+                            IsEnabled="{Binding GenerateCodeCommandIsEnabled}"
+                            Margin="5,10"
+                            Command="{Binding GenerateCodeCommand}" />
                 </StackPanel>
             </Grid>
 
@@ -279,8 +290,28 @@
 
                                     <imaging:CrispImage Width="16"
                                                         Height="16"
+                                                        Visibility="{Binding Current.FileExistsInProject, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                        Moniker="{x:Static catalog:KnownMonikers.DocumentWarning}">
+                                        <imaging:CrispImage.ToolTip>
+                                            <ToolTip Content="File already exists in the selected project." />
+                                        </imaging:CrispImage.ToolTip>
+                                    </imaging:CrispImage>
+
+                                    <imaging:CrispImage Width="16"
+                                                        Height="16"
+                                                        Margin="-5,-2,0,0"
+                                                        IsEnabled="False"
+                                                        IsHitTestVisible="False"
+                                                        Visibility="{Binding Current.FileExistsInProject, Converter={StaticResource BoolToInverseVisibilityConverter}}"
+                                                        Moniker="{x:Static catalog:KnownMonikers.Document}" />
+
+                                    <imaging:CrispImage Width="16"
+                                                        Height="16"
+                                                        IsEnabled="False"
+                                                        IsHitTestVisible="False"
                                                         Moniker="{x:Static catalog:KnownMonikers.CSFileNode}" />
-                                    <TextBlock Grid.Column="1"
+
+                                    <TextBlock Grid.Column="2"
                                                Padding="4,2"
                                                Text="{Binding Current.AssetName}"
                                                VerticalAlignment="Center" />
@@ -312,49 +343,82 @@
                         <Button Command="Cut">
                             <imaging:CrispImage Width="16"
                                                 Height="16"
-                                                Moniker="{x:Static catalog:KnownMonikers.Cut}" />
+                                                Moniker="{x:Static catalog:KnownMonikers.Cut}">
+                                <imaging:CrispImage.ToolTip>
+                                    <ToolTip Content="Cut (Ctrl+X)" />
+                                </imaging:CrispImage.ToolTip>
+                            </imaging:CrispImage>
                         </Button>
                         <Button Command="Copy">
                             <imaging:CrispImage Width="16"
                                                 Height="16"
-                                                Moniker="{x:Static catalog:KnownMonikers.Copy}" />
+                                                Moniker="{x:Static catalog:KnownMonikers.Copy}">
+                                <imaging:CrispImage.ToolTip>
+                                    <ToolTip Content="Copy (Ctrl+C)" />
+                                </imaging:CrispImage.ToolTip>
+                            </imaging:CrispImage>
                         </Button>
                         <Button Command="Paste">
                             <imaging:CrispImage Width="16"
                                                 Height="16"
-                                                Moniker="{x:Static catalog:KnownMonikers.Paste}" />
+                                                Moniker="{x:Static catalog:KnownMonikers.Paste}">
+                                <imaging:CrispImage.ToolTip>
+                                    <ToolTip Content="Paste (Ctrl+V)" />
+                                </imaging:CrispImage.ToolTip>
+                            </imaging:CrispImage>
                         </Button>
                         <Button Command="Delete">
                             <imaging:CrispImage Width="16"
                                                 Height="16"
-                                                Moniker="{x:Static catalog:KnownMonikers.TestCoveredFailing}" />
+                                                Moniker="{x:Static catalog:KnownMonikers.TestCoveredFailing}">
+                                <imaging:CrispImage.ToolTip>
+                                    <ToolTip Content="Delete (Del)" />
+                                </imaging:CrispImage.ToolTip>
+                            </imaging:CrispImage>
                         </Button>
                         <Separator />
                         <Button Command="Undo">
                             <imaging:CrispImage Width="16"
                                                 Height="16"
-                                                Moniker="{x:Static catalog:KnownMonikers.Undo}" />
+                                                Moniker="{x:Static catalog:KnownMonikers.Undo}">
+                                <imaging:CrispImage.ToolTip>
+                                    <ToolTip Content="Undo (Ctrl+Z)" />
+                                </imaging:CrispImage.ToolTip>
+                            </imaging:CrispImage>
                         </Button>
                         <Button Command="Redo">
                             <imaging:CrispImage Width="16"
                                                 Height="16"
-                                                Moniker="{x:Static catalog:KnownMonikers.Redo}" />
+                                                Moniker="{x:Static catalog:KnownMonikers.Redo}">
+                                <imaging:CrispImage.ToolTip>
+                                    <ToolTip Content="Redo (Ctrl+Y)" />
+                                </imaging:CrispImage.ToolTip>
+                            </imaging:CrispImage>
                         </Button>
                         <Separator />
                         <CheckBox IsChecked="{Binding ElementName=SyntaxHighliter, Path=WordWrap}">
                             <imaging:CrispImage Width="16"
                                                 Height="16"
                                                 Moniker="{x:Static catalog:KnownMonikers.WordWrap}" />
+                            <CheckBox.ToolTip>
+                                <ToolTip Content="Word Wrap" />
+                            </CheckBox.ToolTip>
                         </CheckBox>
                         <CheckBox IsChecked="{Binding ElementName=SyntaxHighliter, Path=ShowLineNumbers}">
                             <imaging:CrispImage Width="16"
                                                 Height="16"
                                                 Moniker="{x:Static catalog:KnownMonikers.ThisLine}" />
+                            <CheckBox.ToolTip>
+                                <ToolTip Content="Toggle Line Numbers Visibility" />
+                            </CheckBox.ToolTip>
                         </CheckBox>
                         <CheckBox IsChecked="{Binding ElementName=SyntaxHighliter, Path=Options.ShowEndOfLine}">
                             <imaging:CrispImage Width="16"
                                                 Height="16"
                                                 Moniker="{x:Static catalog:KnownMonikers.DocumentOutline}" />
+                            <CheckBox.ToolTip>
+                                <ToolTip Content="Toggle End Of Line Visibility" />
+                            </CheckBox.ToolTip>
                         </CheckBox>
                     </ToolBar>
                     <avalonEdit:TextEditor x:Name="SyntaxHighliter"

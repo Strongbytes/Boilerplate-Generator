@@ -1,4 +1,5 @@
-﻿using BoilerplateGenerator.Contracts;
+﻿using BoilerplateGenerator.Contracts.Generators;
+using BoilerplateGenerator.Contracts.Services;
 using BoilerplateGenerator.Models.ClassGeneratorModels;
 using System;
 using System.Collections.Generic;

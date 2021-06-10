@@ -1,9 +1,9 @@
 ﻿using BoilerplateGenerator.Collections;
-using BoilerplateGenerator.Models.RoslynWrappers;
+using BoilerplateGenerator.Contracts.RoslynWrappers;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace BoilerplateGenerator.Contracts
+namespace BoilerplateGenerator.Contracts.Services
 {
     public interface IEntityManagerService
     {
@@ -11,7 +11,9 @@ namespace BoilerplateGenerator.Contracts
 
         Task<string> LoadSelectedEntityDetails();
 
-        IEnumerable<ProjectWrapper> RetrieveAllModules();
+        IEnumerable<IProjectWrapper> RetrieveAllModules();
+
+        Task<ISolutionWrapper> RetrieveSolution();
 
         Task FindSelectedFileClassType();
 

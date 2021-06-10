@@ -1,7 +1,7 @@
 ﻿using BoilerplateGenerator.Models.Enums;
 using System.ComponentModel;
 
-namespace BoilerplateGenerator.Contracts
+namespace BoilerplateGenerator.Contracts.Generators
 {
     public interface IBaseGeneratedAsset : INotifyPropertyChanged
     {

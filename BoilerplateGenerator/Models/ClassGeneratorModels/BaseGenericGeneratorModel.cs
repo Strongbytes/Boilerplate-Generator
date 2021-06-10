@@ -1,5 +1,7 @@
 ﻿using BoilerplateGenerator.Collections;
-using BoilerplateGenerator.Contracts;
+using BoilerplateGenerator.Contracts.Generators;
+using BoilerplateGenerator.Contracts.RoslynWrappers;
+using BoilerplateGenerator.Contracts.Services;
 using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.RoslynWrappers;
@@ -8,6 +10,7 @@ using BoilerplateGenerator.ViewModels;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BoilerplateGenerator.Models.ClassGeneratorModels
 {
@@ -25,7 +28,11 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
 
         public virtual IEnumerable<string> Usings => new List<string> { UsingTokens.System };
 
-        public string Namespace => _metadataGenerationService.AssetToNamespaceMapping[GeneratedClassKind];
+        public string Namespace => string.Join(".", new string[]
+        {
+            TargetModule.Namespace,
+            _metadataGenerationService.AssetToNamespaceMapping[GeneratedClassKind]
+        }.Where(x => !string.IsNullOrEmpty(x)));
 
         public string GeneratedClassName => _metadataGenerationService.AssetToClassNameMapping[GeneratedClassKind];
 
@@ -75,9 +82,13 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
 
         public virtual SyntaxKind RootClassModifier => SyntaxKind.PublicKeyword;
 
-        public string TargetProjectName => _viewModelBase.SelectedProject.Name;
+        protected virtual IProjectWrapper TargetModule => _viewModelBase.SelectedTargetModuleProject;
+
+        public string TargetProjectName => TargetModule.Name;
 
         public abstract AssetKind GeneratedClassKind { get; }
+
+        public bool FileExistsInProject => TargetModule.GeneratedFileAlreadyExists($"{_metadataGenerationService.AssetToNamespaceMapping[GeneratedClassKind]}", $"{_metadataGenerationService.AssetToClassNameMapping[GeneratedClassKind]}");
 
         public virtual IEnumerable<ParameterDefinitionModel> ConstructorParameters { get; } = Enumerable.Empty<ParameterDefinitionModel>();
 

@@ -6,16 +6,16 @@ using BoilerplateGenerator.ViewModels;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.CommandsInputModels
+namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule
 {
-    public class UpdateRequestDomainEntityGeneratorModel : BaseGenericGeneratorModel
+    public class ProfileMapperGeneratorModel : BaseGenericGeneratorModel
     {
-        public UpdateRequestDomainEntityGeneratorModel(IViewModelBase viewModelBase, IMetadataGenerationService metadataGenerationService) 
+        public ProfileMapperGeneratorModel(IViewModelBase viewModelBase, IMetadataGenerationService metadataGenerationService)
             : base(viewModelBase, metadataGenerationService)
         {
         }
 
-        public override AssetKind GeneratedClassKind => AssetKind.UpdateRequestDomainEntity;
+        public override AssetKind GeneratedClassKind => AssetKind.ProfileMapper;
 
         public override IEnumerable<string> Usings => new List<string>
         {

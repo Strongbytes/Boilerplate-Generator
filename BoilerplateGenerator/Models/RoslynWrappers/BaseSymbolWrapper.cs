@@ -1,4 +1,4 @@
-﻿using BoilerplateGenerator.Contracts;
+﻿using BoilerplateGenerator.Contracts.RoslynWrappers;
 using Microsoft.CodeAnalysis;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;

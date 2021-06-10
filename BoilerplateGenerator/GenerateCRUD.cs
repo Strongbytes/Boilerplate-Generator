@@ -1,4 +1,4 @@
-﻿using BoilerplateGenerator.Contracts;
+﻿using BoilerplateGenerator.Contracts.Services;
 using BoilerplateGenerator.Controls;
 using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Services;

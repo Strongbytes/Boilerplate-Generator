@@ -1,5 +1,7 @@
 ﻿using BoilerplateGenerator.Collections;
-using BoilerplateGenerator.Contracts;
+using BoilerplateGenerator.Contracts.Generators;
+using BoilerplateGenerator.Contracts.RoslynWrappers;
+using BoilerplateGenerator.Contracts.Services;
 using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Models.RoslynWrappers;
 using BoilerplateGenerator.Models.TreeView;
@@ -68,8 +70,10 @@ namespace BoilerplateGenerator.ViewModels
             }
         }
 
-        private ProjectWrapper _selectedProject;
-        public ProjectWrapper SelectedProject
+        public bool GenerateCodeCommandIsEnabled => SelectedControllersProject != null && SelectedTargetModuleProject != null;
+
+        private IProjectWrapper _selectedProject;
+        public IProjectWrapper SelectedTargetModuleProject
         {
             get
             {
@@ -85,6 +89,28 @@ namespace BoilerplateGenerator.ViewModels
 
                 _selectedProject = value;
                 NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(GenerateCodeCommandIsEnabled));
+            }
+        }
+
+        private IProjectWrapper _selectedControllersProject;
+        public IProjectWrapper SelectedControllersProject
+        {
+            get
+            {
+                return _selectedControllersProject;
+            }
+
+            set
+            {
+                if (value == _selectedControllersProject)
+                {
+                    return;
+                }
+
+                _selectedControllersProject = value;
+                NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(GenerateCodeCommandIsEnabled));
             }
         }
 
@@ -102,12 +128,13 @@ namespace BoilerplateGenerator.ViewModels
             }
         }
 
+        public ISolutionWrapper Solution { get; set; }
         #endregion
 
         #region Collections
         public ObservableCollection<ITreeNode<IBaseSymbolWrapper>> EntityTree { get; set; } = new ObservableCollection<ITreeNode<IBaseSymbolWrapper>>();
 
-        public ObservableCollection<ProjectWrapper> AvailableModules { get; set; } = new ObservableCollection<ProjectWrapper>();
+        public ObservableCollection<IProjectWrapper> AvailableModules { get; set; } = new ObservableCollection<IProjectWrapper>();
 
         public ObservableCollection<ITreeNode<IBaseGeneratedAsset>> DirectoriesTree { get; set; } = new ObservableCollection<ITreeNode<IBaseGeneratedAsset>>();
         #endregion
@@ -158,12 +185,15 @@ namespace BoilerplateGenerator.ViewModels
                 {
                     ITreeNode<IBaseGeneratedAsset> rootNode = new TreeNode<IBaseGeneratedAsset>
                     {
-                        Current = new GeneratedDirectory(SelectedProject.Name),
+                        Current = new GeneratedDirectory(Solution.Name),
                     };
 
-                    foreach (IGenericGeneratorModel availableModels in await _generatorModelsManagerService.RetrieveAvailableGeneratorModels().ConfigureAwait(false))
+                    foreach (IGenericGeneratorModel availableModel in await _generatorModelsManagerService.RetrieveAvailableGeneratorModels().ConfigureAwait(false))
                     {
-                        var generatedClass = await new ClassGenerationService(availableModels).GetGeneratedClass().ConfigureAwait(false);
+                        IGeneratedClass generatedClass = await new ClassGenerationService(availableModel)
+                                                                    .GetGeneratedClass()
+                                                                    .ConfigureAwait(false);
+
                         rootNode.GenerateDirectoryClassTree(generatedClass);
                     }
 
@@ -213,9 +243,11 @@ namespace BoilerplateGenerator.ViewModels
 
         public async Task PopulateSolutionProjects()
         {
+            Solution = await _fileManagerService.RetrieveSolution();
+
             ReferencedEntityName = await _fileManagerService.LoadSelectedEntityDetails();
 
-            foreach (ProjectWrapper item in _fileManagerService.RetrieveAllModules())
+            foreach (IProjectWrapper item in _fileManagerService.RetrieveAllModules())
             {
                 AvailableModules.Add(item);
             }

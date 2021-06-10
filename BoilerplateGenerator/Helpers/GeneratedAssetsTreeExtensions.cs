@@ -1,5 +1,5 @@
 ﻿using BoilerplateGenerator.Collections;
-using BoilerplateGenerator.Contracts;
+using BoilerplateGenerator.Contracts.Generators;
 using BoilerplateGenerator.Models.TreeView;
 using System.Linq;
 

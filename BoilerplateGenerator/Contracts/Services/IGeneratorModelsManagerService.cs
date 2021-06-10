@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using BoilerplateGenerator.Contracts.Generators;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace BoilerplateGenerator.Contracts
+namespace BoilerplateGenerator.Contracts.Services
 {
     public interface IGeneratorModelsManagerService
     {
