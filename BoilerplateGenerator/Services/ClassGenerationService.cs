@@ -1,7 +1,7 @@
 ﻿using BoilerplateGenerator.Contracts;
 using BoilerplateGenerator.Helpers;
-using BoilerplateGenerator.Models.ClassGeneratorModels.TreeView;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
+using BoilerplateGenerator.Models.TreeView;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -59,8 +59,7 @@ namespace BoilerplateGenerator.Services
                                         .AddAttributeLists(GenerateAttributeList(methodDeclaration.Attributes))
                                         .AddModifiers(GenerateModifiers(methodDeclaration.Modifiers))
                                         .AddParameterListParameters(GenerateParameters(methodDeclaration.Parameters))
-                                        .WithBody(GenerateMethodBody(methodDeclaration.Body))
-                    ).ToArray();
+                                        .WithBody(GenerateMethodBody(methodDeclaration.Body))).ToArray();
         }
 
         private SyntaxToken[] GenerateModifiers(SyntaxKind[] modifiers)

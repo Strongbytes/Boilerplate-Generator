@@ -1,6 +1,6 @@
 ﻿using BoilerplateGenerator.Collections;
 using BoilerplateGenerator.Contracts;
-using BoilerplateGenerator.Models.ClassGeneratorModels.TreeView;
+using BoilerplateGenerator.Models.TreeView;
 using System;
 using System.Windows;
 using System.Windows.Controls;

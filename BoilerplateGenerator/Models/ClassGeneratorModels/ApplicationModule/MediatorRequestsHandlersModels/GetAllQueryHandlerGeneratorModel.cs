@@ -2,7 +2,7 @@
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.ViewModels;
 
-namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.MediatorRequestsHandlersModels
+namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.MediatorRequestsHandlersModels
 {
     public class GetAllQueryHandlerGeneratorModel : BaseMediatorHandlerGeneratorModel
     {
@@ -16,6 +16,6 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.MediatorR
 
         public override AssetKind GeneratedClassKind => AssetKind.GetAllQueryHandler;
 
-        protected override string HandlerResponseType => $"IEnumerable<{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseEntityDomainModel]}>";
+        protected override string HandlerResponseType => $"IEnumerable<{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]}>";
     }
 }

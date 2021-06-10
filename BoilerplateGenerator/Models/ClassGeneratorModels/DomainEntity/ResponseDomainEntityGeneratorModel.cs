@@ -5,11 +5,11 @@ using BoilerplateGenerator.ViewModels;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BoilerplateGenerator.Models.ClassGeneratorModels.Domain
+namespace BoilerplateGenerator.Models.ClassGeneratorModels.DomainEntity
 {
-    public class ResponseEntityDomainModelGeneratorModel : BaseGenericGeneratorModel
+    public class ResponseDomainEntityGeneratorModel : BaseGenericGeneratorModel
     {
-        public ResponseEntityDomainModelGeneratorModel(IViewModelBase viewModelBase, IMetadataGenerationService metadataGenerationService) 
+        public ResponseDomainEntityGeneratorModel(IViewModelBase viewModelBase, IMetadataGenerationService metadataGenerationService)
             : base(viewModelBase, metadataGenerationService)
         {
         }
@@ -19,6 +19,6 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Domain
            UsingTokens.SystemComponentModelDataAnnotations,
         }.Union(base.Usings).OrderBy(x => x);
 
-        public override AssetKind GeneratedClassKind => AssetKind.ResponseEntityDomainModel;
+        public override AssetKind GeneratedClassKind => AssetKind.ResponseDomainEntity;
     }
 }

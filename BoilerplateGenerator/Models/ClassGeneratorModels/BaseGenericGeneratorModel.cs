@@ -65,7 +65,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
                     {
                         Name = $"{CommonTokens.Id}",
                         IsPrimaryKey = true,
-                        ReturnType = "Int32"
+                        ReturnType = "int"
                     };
 
                     return _baseEntityPrimaryKey;

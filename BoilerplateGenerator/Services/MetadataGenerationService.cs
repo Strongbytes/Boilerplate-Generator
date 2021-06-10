@@ -43,7 +43,7 @@ namespace BoilerplateGenerator.Services
 
         public IDictionary<AssetKind, string> AssetToClassNameMapping => new Dictionary<AssetKind, string>
         {
-            { AssetKind.ResponseEntityDomainModel, $"{BaseEntity.Name}DomainModel" },
+            { AssetKind.ResponseDomainEntity, $"{BaseEntity.Name}DomainModel" },
             { AssetKind.Controller, $"{BaseEntityPluralizedName}Controller" },
             { AssetKind.CreateRequestDomainEntity, $"Create{BaseEntity.Name}RequestModel" },
             { AssetKind.UpdateRequestDomainEntity, $"Update{BaseEntity.Name}RequestModel" },
@@ -61,7 +61,7 @@ namespace BoilerplateGenerator.Services
 
         public IDictionary<AssetKind, string> AssetToNamespaceMapping => new Dictionary<AssetKind, string>
         {
-            { AssetKind.ResponseEntityDomainModel, $"{TargetModuleNamespace}.Domain.Models" },
+            { AssetKind.ResponseDomainEntity, $"{TargetModuleNamespace}.Domain.Models" },
             { AssetKind.Controller, $"{TargetModuleNamespace}.Controllers" },
             { AssetKind.CreateRequestDomainEntity, $"{TargetModuleNamespace}.Application.Commands.{BaseEntityPluralizedName}.Create.Models" },
             { AssetKind.UpdateRequestDomainEntity, $"{TargetModuleNamespace}.Application.Commands.{BaseEntityPluralizedName}.Update.Models" },

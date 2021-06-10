@@ -71,7 +71,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
                             new AttributeDefinitionModel($"{CommonTokens.HttpGet}"),
                             new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
                             {
-                                Values = new string[] { $"typeof(IEnumerable<{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseEntityDomainModel]}>)", StatusCodeTokens.Status200OK }
+                                Values = new string[] { $"typeof(IEnumerable<{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]}>)", StatusCodeTokens.Status200OK }
                             }
                         },
                         Body = GetAllQueryBody
@@ -91,7 +91,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
                             },
                             new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
                             {
-                                Values = new string[] { $"typeof({_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseEntityDomainModel]})", StatusCodeTokens.Status200OK }
+                                Values = new string[] { $"typeof({_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]})", StatusCodeTokens.Status200OK }
                             }
                         },
                         Parameters = new ParameterDefinitionModel[]
@@ -116,7 +116,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
                             },
                             new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
                             {
-                                Values = new string[] { $"typeof({_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseEntityDomainModel]})", StatusCodeTokens.Status201Created }
+                                Values = new string[] { $"typeof({_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]})", StatusCodeTokens.Status201Created }
                             }
                         },
                         Parameters = new ParameterDefinitionModel[]
@@ -144,7 +144,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
                             },
                             new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
                             {
-                                Values = new string[] { $"typeof({_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseEntityDomainModel]})", StatusCodeTokens.Status200OK }
+                                Values = new string[] { $"typeof({_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]})", StatusCodeTokens.Status200OK }
                             }
                         },
                         Parameters = new ParameterDefinitionModel[]
@@ -218,7 +218,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
             {
                 return new string[]
                 {
-                    $"{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseEntityDomainModel]} newEntity = await _mediator.Send(new {_metadataGenerationService.AssetToClassNameMapping[AssetKind.CreateCommand]}({nameof(CommonTokens.Model).ToLowerCamelCase()}));",
+                    $"{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]} newEntity = await _mediator.Send(new {_metadataGenerationService.AssetToClassNameMapping[AssetKind.CreateCommand]}({nameof(CommonTokens.Model).ToLowerCamelCase()}));",
                     $"var routeValue = new {{ {BaseEntityPrimaryKey.Name.ToLowerCamelCase()} = newEntity.{BaseEntityPrimaryKey.Name} }};",
                     $"return CreatedAtAction(nameof({$"{CommonTokens.GetById}"}), routeValue, newEntity);"
                 };

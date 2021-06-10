@@ -1,13 +1,12 @@
 ﻿using BoilerplateGenerator.Collections;
 using BoilerplateGenerator.Contracts;
 using BoilerplateGenerator.Helpers;
-using BoilerplateGenerator.Models.ClassGeneratorModels.TreeView;
 using BoilerplateGenerator.Models.RoslynWrappers;
+using BoilerplateGenerator.Models.TreeView;
 using BoilerplateGenerator.Services;
 using Microsoft.VisualStudio.Shell;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;

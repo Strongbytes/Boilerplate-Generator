@@ -3,7 +3,7 @@ using BoilerplateGenerator.Models.Enums;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace BoilerplateGenerator.Models.ClassGeneratorModels.TreeView
+namespace BoilerplateGenerator.Models.TreeView
 {
     public class GeneratedDirectory : IBaseGeneratedAsset
     {

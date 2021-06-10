@@ -6,7 +6,7 @@ using BoilerplateGenerator.ViewModels;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.MediatorRequestsModels
+namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.MediatorRequestsModels
 {
     public class GetAllQueryGeneratorModel : BaseGenericGeneratorModel
     {
@@ -24,12 +24,12 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.MediatorR
         {
            UsingTokens.MediatR,
            UsingTokens.SystemCollectionsGeneric,
-           _metadataGenerationService.AssetToNamespaceMapping[AssetKind.ResponseEntityDomainModel],
+           _metadataGenerationService.AssetToNamespaceMapping[AssetKind.ResponseDomainEntity],
         }.Union(base.Usings).OrderBy(x => x);
 
         public override IEnumerable<string> BaseTypes => new string[]
         {
-            $"IRequest<IEnumerable<{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseEntityDomainModel]}>>"
+            $"IRequest<IEnumerable<{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]}>>"
         };
 
         public override IEnumerable<PropertyDefinitionModel> AvailableProperties => new PropertyDefinitionModel[] { };

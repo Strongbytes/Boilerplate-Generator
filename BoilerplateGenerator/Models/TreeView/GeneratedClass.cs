@@ -4,7 +4,7 @@ using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace BoilerplateGenerator.Models.ClassGeneratorModels.TreeView
+namespace BoilerplateGenerator.Models.TreeView
 {
     public class GeneratedClass : IGeneratedClass
     {

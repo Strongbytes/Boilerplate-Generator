@@ -6,7 +6,7 @@ using BoilerplateGenerator.ViewModels;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.CommandsInputModels
+namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.CommandsInputModels
 {
     public class UpdateRequestDomainEntityGeneratorModel : BaseGenericGeneratorModel
     {

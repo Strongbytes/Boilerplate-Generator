@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.MediatorRequestsModels
+namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.MediatorRequestsModels
 {
     public class DeleteCommandGeneratorModel : BaseGenericGeneratorModel
     {

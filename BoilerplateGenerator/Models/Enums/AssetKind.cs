@@ -3,7 +3,7 @@
     public enum AssetKind
     {
         Directory,
-        ResponseEntityDomainModel,
+        ResponseDomainEntity,
         Controller,
         CreateRequestDomainEntity,
         UpdateRequestDomainEntity,

@@ -6,7 +6,7 @@ using BoilerplateGenerator.ViewModels;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.MediatorRequestsHandlersModels
+namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.MediatorRequestsHandlersModels
 {
     public abstract class BaseMediatorHandlerGeneratorModel : BaseGenericGeneratorModel
     {
@@ -29,7 +29,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.MediatorR
             { AssetKind.UpdateCommandHandler, AssetKind.UpdateCommand },
         };
 
-        protected virtual string HandlerResponseType => $"{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseEntityDomainModel]}";
+        protected virtual string HandlerResponseType => $"{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]}";
 
         public override IEnumerable<string> Usings => new List<string>
         {
@@ -37,7 +37,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.MediatorR
            UsingTokens.MediatR,
            UsingTokens.SystemThreading,
            UsingTokens.SystemCollectionsGeneric,
-           _metadataGenerationService.AssetToNamespaceMapping[AssetKind.ResponseEntityDomainModel],
+           _metadataGenerationService.AssetToNamespaceMapping[AssetKind.ResponseDomainEntity],
         }.Union(base.Usings).OrderBy(x => x);
 
         public override IEnumerable<string> BaseTypes => new string[]

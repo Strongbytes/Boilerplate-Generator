@@ -2,7 +2,7 @@
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.ViewModels;
 
-namespace BoilerplateGenerator.Models.ClassGeneratorModels.Application.MediatorRequestsHandlersModels
+namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.MediatorRequestsHandlersModels
 {
     public class UpdateCommandHandlerGeneratorModel : BaseMediatorHandlerGeneratorModel
     {
