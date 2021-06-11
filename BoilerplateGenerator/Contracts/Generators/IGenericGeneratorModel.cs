@@ -1,6 +1,8 @@
 ﻿using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -14,9 +16,11 @@ namespace BoilerplateGenerator.Contracts.Generators
 
         string TargetProjectName { get; }
 
-        string Namespace { get; }
+        string ClassNamespace { get; }
 
         bool FileExistsInProject { get; }
+
+        bool MergeWithExistingClass { get; }
 
         SyntaxKind RootClassModifier { get; }
 
@@ -28,8 +32,12 @@ namespace BoilerplateGenerator.Contracts.Generators
 
         IEnumerable<ParameterDefinitionModel> ConstructorParameters { get; }
 
+        IEnumerable<MethodDefinitionModel> Constructors { get; }
+
         IEnumerable<MethodDefinitionModel> AvailableMethods { get; }
 
         IEnumerable<AttributeDefinitionModel> Attributes { get; }
+
+        Task<CompilationUnitSyntax> LoadClassFromExistingFile();
     }
 }

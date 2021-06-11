@@ -20,7 +20,7 @@ namespace BoilerplateGenerator.Models.TreeView
 
         public AssetKind AssetKind => _genericGeneratorModel.GeneratedClassKind;
 
-        public string Code { get; }
+        public string Code { get; set; }
 
         public string AssetName => $"{_genericGeneratorModel.GeneratedClassName}.cs";
 
@@ -35,7 +35,7 @@ namespace BoilerplateGenerator.Models.TreeView
                     _genericGeneratorModel.TargetProjectName 
                 }.Union
                 (
-                    _genericGeneratorModel.Namespace.Replace(_genericGeneratorModel.TargetProjectName, string.Empty)
+                    _genericGeneratorModel.ClassNamespace.Replace(_genericGeneratorModel.TargetProjectName, string.Empty)
                                                     .Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries)
                 );
             }

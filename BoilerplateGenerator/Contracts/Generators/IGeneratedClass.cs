@@ -4,7 +4,7 @@ namespace BoilerplateGenerator.Contracts.Generators
 {
     public interface IGeneratedClass : IBaseGeneratedAsset
     {
-        string Code { get; }
+        string Code { get; set; }
 
         IEnumerable<string> ParentDirectoryHierarchy { get; }
 

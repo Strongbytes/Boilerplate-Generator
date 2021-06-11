@@ -47,6 +47,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Collections\EntityHierarchyTreeNode.cs" />
+    <Compile Include="Controls\BindableTextEditor.cs" />
     <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="Helpers\EntityWrapperTreeExtensions.cs" />
     <Compile Include="Helpers\GeneratedAssetsTreeExtensions.cs" />

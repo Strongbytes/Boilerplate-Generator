@@ -7,7 +7,9 @@ using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.RoslynWrappers;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using BoilerplateGenerator.ViewModels;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,11 +30,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
 
         public virtual IEnumerable<string> Usings => new List<string> { UsingTokens.System };
 
-        public string Namespace => string.Join(".", new string[]
-        {
-            TargetModule.Namespace,
-            _metadataGenerationService.AssetToNamespaceMapping[GeneratedClassKind]
-        }.Where(x => !string.IsNullOrEmpty(x)));
+        public string ClassNamespace => _metadataGenerationService.NamespaceByAssetKind(GeneratedClassKind);
 
         public string GeneratedClassName => _metadataGenerationService.AssetToClassNameMapping[GeneratedClassKind];
 
@@ -50,7 +48,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
                         return _availableProperties;
                     }
 
-                    _availableProperties = FilterTreeProperties(_viewModelBase.EntityTree.First());
+                    _availableProperties = _viewModelBase.EntityTree.First().FilterTreeProperties();
                     return _availableProperties;
                 }
             }
@@ -68,7 +66,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
                         return _baseEntityPrimaryKey;
                     }
 
-                    _baseEntityPrimaryKey = FilterTreeProperties(_viewModelBase.EntityTree.First()).FirstOrDefault(x => x.IsPrimaryKey) ?? new PropertyDefinitionModel
+                    _baseEntityPrimaryKey = _viewModelBase.EntityTree.First().FilterTreeProperties().FirstOrDefault(x => x.IsPrimaryKey) ?? new PropertyDefinitionModel
                     {
                         Name = $"{CommonTokens.Id}",
                         IsPrimaryKey = true,
@@ -88,43 +86,25 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
 
         public abstract AssetKind GeneratedClassKind { get; }
 
-        public bool FileExistsInProject => TargetModule.GeneratedFileAlreadyExists($"{_metadataGenerationService.AssetToNamespaceMapping[GeneratedClassKind]}", $"{_metadataGenerationService.AssetToClassNameMapping[GeneratedClassKind]}");
+        public virtual bool MergeWithExistingClass { get; }
+
+        public bool FileExistsInProject => TargetModule.GeneratedFileAlreadyExists($"{_metadataGenerationService.NamespaceByAssetKind(GeneratedClassKind)}", $"{_metadataGenerationService.AssetToClassNameMapping[GeneratedClassKind]}");
 
         public virtual IEnumerable<ParameterDefinitionModel> ConstructorParameters { get; } = Enumerable.Empty<ParameterDefinitionModel>();
+
+        public virtual IEnumerable<MethodDefinitionModel> Constructors { get; } = Enumerable.Empty<MethodDefinitionModel>();
 
         public virtual IEnumerable<MethodDefinitionModel> AvailableMethods { get; } = Enumerable.Empty<MethodDefinitionModel>();
 
         public virtual IEnumerable<AttributeDefinitionModel> Attributes { get; } = Enumerable.Empty<AttributeDefinitionModel>();
 
-        private IEnumerable<PropertyDefinitionModel> FilterTreeProperties(ITreeNode<IBaseSymbolWrapper> rootNode)
+        public async Task<CompilationUnitSyntax> LoadClassFromExistingFile()
         {
-            List<PropertyDefinitionModel> symbols = new List<PropertyDefinitionModel>();
-
-            foreach (ITreeNode<IBaseSymbolWrapper> treeNode in rootNode.Children)
-            {
-                switch (treeNode.Current.GetType().Name)
-                {
-                    case nameof(EntityClassWrapper):
-                        symbols.AddRange(FilterTreeProperties(treeNode));
-                        break;
-
-                    default:
-                        if (!(treeNode.Current is EntityPropertyWrapper entityPropertyWrapper))
-                        {
-                            break;
-                        }
-
-                        if (!entityPropertyWrapper.IsChecked.HasValue || !entityPropertyWrapper.IsChecked.Value)
-                        {
-                            break;
-                        }
-
-                        symbols.Add(new PropertyDefinitionModel(entityPropertyWrapper));
-                        break;
-                }
-            }
-
-            return symbols;
+            return await TargetModule.GetExistingFileClass
+            (
+                $"{_metadataGenerationService.NamespaceByAssetKind(GeneratedClassKind)}", 
+                $"{_metadataGenerationService.AssetToClassNameMapping[GeneratedClassKind]}"
+            );
         }
     }
 }

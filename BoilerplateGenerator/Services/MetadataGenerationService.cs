@@ -3,6 +3,7 @@ using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.RoslynWrappers;
 using BoilerplateGenerator.ViewModels;
 using Pluralize.NET;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -21,7 +22,7 @@ namespace BoilerplateGenerator.Services
         {
             get
             {
-                lock(_locker)
+                lock (_locker)
                 {
                     if (_baseEntity != null)
                     {
@@ -33,11 +34,34 @@ namespace BoilerplateGenerator.Services
                 }
             }
         }
-        
+
         public MetadataGenerationService(IViewModelBase viewModelBase)
         {
             _viewModelBase = viewModelBase;
         }
+
+        public string NamespaceByAssetKind(AssetKind referencedAsset)
+        {
+            if (!AssetToNamespaceMapping.ContainsKey(referencedAsset))
+            {
+                throw new Exception($"{referencedAsset} does not have an entry in AssetToNamespaceMapping");
+            }
+
+            return AbsoluteNamespace(referencedAsset);
+        }
+
+        private string AbsoluteNamespace(AssetKind referencedAsset)
+        {
+            string relativeNamespace = AssetToNamespaceMapping[referencedAsset];
+
+            return string.Join(".", new string[]
+            {
+                RetrieveBaseNamespace(referencedAsset),
+                relativeNamespace
+            }.Where(x => !string.IsNullOrEmpty(x)));
+        }
+
+        public IEnumerable<string> AvailableNamespaces => AssetToNamespaceMapping.Keys.Select(AbsoluteNamespace);
 
         public IDictionary<AssetKind, string> AssetToClassNameMapping => new Dictionary<AssetKind, string>
         {
@@ -58,7 +82,7 @@ namespace BoilerplateGenerator.Services
             { AssetKind.ProfileMapper, $"{BaseEntityPluralizedName}{CommonTokens.Mapper}" },
         };
 
-        public IDictionary<AssetKind, string> AssetToNamespaceMapping => new Dictionary<AssetKind, string>
+        private IDictionary<AssetKind, string> AssetToNamespaceMapping => new Dictionary<AssetKind, string>
         {
             { AssetKind.ResponseDomainEntity, $"{NamespaceTokens.Domain}.{NamespaceTokens.Models}" },
             { AssetKind.Controller, $"{NamespaceTokens.Controllers}" },
@@ -76,5 +100,17 @@ namespace BoilerplateGenerator.Services
             { AssetKind.DeleteCommandHandler, $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Delete}" },
             { AssetKind.ProfileMapper, string.Empty },
         };
+
+        private string RetrieveBaseNamespace(AssetKind referencedAsset)
+        {
+            switch (referencedAsset)
+            {
+                case AssetKind.Controller:
+                    return _viewModelBase.SelectedControllersProject.Namespace;
+
+                default:
+                    return _viewModelBase.SelectedTargetModuleProject.Namespace;
+            }
+        }
     }
 }

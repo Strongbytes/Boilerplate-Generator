@@ -33,6 +33,21 @@ namespace BoilerplateGenerator.Helpers
             }
         }
 
+        public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+        {
+            HashSet<TKey> seenKeys = new HashSet<TKey>();
+
+            foreach (TSource element in source)
+            {
+                if (!seenKeys.Add(keySelector(element)))
+                {
+                    continue;
+                }
+
+                yield return element;
+            }
+        }
+
         public static string ToTypeAlias(this ITypeSymbol dotNetTypeName)
         {
             switch (dotNetTypeName.Name)

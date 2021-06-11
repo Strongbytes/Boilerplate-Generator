@@ -7,6 +7,8 @@ namespace BoilerplateGenerator.Contracts.Services
     {
         IDictionary<AssetKind, string> AssetToClassNameMapping { get; }
 
-        IDictionary<AssetKind, string> AssetToNamespaceMapping { get; }
+        string NamespaceByAssetKind(AssetKind referencedAsset);
+
+        IEnumerable<string> AvailableNamespaces { get; }
     }
 }

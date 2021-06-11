@@ -30,7 +30,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
             UsingTokens.SystemThreadingTasks,
             UsingTokens.MicrosoftAspNetCoreHttp,
             UsingTokens.MicrosoftAspNetCoreMvc,
-        }.Union(_metadataGenerationService.AssetToNamespaceMapping.Values).Distinct().OrderBy(x => x);
+        }.Union(_metadataGenerationService.AvailableNamespaces).Distinct().OrderBy(x => x);
 
         protected override IProjectWrapper TargetModule => _viewModelBase.SelectedControllersProject;
 

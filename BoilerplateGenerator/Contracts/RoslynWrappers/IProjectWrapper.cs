@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Threading.Tasks;
 
 namespace BoilerplateGenerator.Contracts.RoslynWrappers
@@ -13,6 +13,6 @@ namespace BoilerplateGenerator.Contracts.RoslynWrappers
 
         bool GeneratedFileAlreadyExists(string classNamespace, string className);
 
-        Task<INamedTypeSymbol> GetExistingFileClass(string fullyQualifiedMetadataName);
+        Task<CompilationUnitSyntax> GetExistingFileClass(string classNamespace, string className);
     }
 }

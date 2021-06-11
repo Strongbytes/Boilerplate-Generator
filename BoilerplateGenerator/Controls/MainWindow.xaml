@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:converters="clr-namespace:BoilerplateGenerator.Converters"
+        xmlns:controls="clr-namespace:BoilerplateGenerator.Controls"
         xmlns:templates="clr-namespace:BoilerplateGenerator.Templates"
         xmlns:viewModels="clr-namespace:BoilerplateGenerator.ViewModels"
         xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
@@ -58,14 +59,16 @@
                          VerticalAlignment="Center"
                          Margin="10,1,0,0"
                          IsReadOnly="True"
-                         Text="{Binding ReferencedEntityName}" />
+                         Text="{Binding ReferencedEntityName}"
+                         Padding="0,3" />
             </Grid>
 
             <Button Grid.Column="1"
                     VerticalAlignment="Center"
                     Margin="10,0"
                     Content="View Entity Hierarchy"
-                    Command="{Binding ValidateSelectedFileCommand}" />
+                    Command="{Binding ValidateSelectedFileCommand}"
+                    Padding="1,3" />
         </Grid>
 
         <Grid Grid.Row="1">
@@ -223,7 +226,8 @@
                     <Button Content="Generate Code"
                             IsEnabled="{Binding GenerateCodeCommandIsEnabled}"
                             Margin="5,10"
-                            Command="{Binding GenerateCodeCommand}" />
+                            Command="{Binding GenerateCodeCommand}"
+                            Padding="1,3" />
                 </StackPanel>
             </Grid>
 
@@ -250,13 +254,7 @@
                               Grid.Row="1"
                               ItemsSource="{Binding DirectoriesTree}"
                               ItemTemplateSelector="{StaticResource DirectoryViewTemplateSelector}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectedItemChanged">
-                                <i:InvokeCommandAction x:Name="SelectionCommand"
-                                                       Command="{Binding ShowCodeFileOnItemSelected}"
-                                                       CommandParameter="{Binding ElementName=TreeDirectory, Path=SelectedItem}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
+                        
                         <TreeView.ItemContainerStyle>
                             <Style TargetType="{x:Type TreeViewItem}">
                                 <Setter Property="IsExpanded"
@@ -328,7 +326,8 @@
 
             <Grid Grid.Column="4">
                 <DockPanel>
-                    <ToolBar DockPanel.Dock="Top">
+                    <ToolBar x:Name="EditorToolBar"
+                             DockPanel.Dock="Top">
                         <ToolBar.Resources>
                             <Style TargetType="{x:Type imaging:CrispImage}">
                                 <Style.Triggers>
@@ -421,15 +420,31 @@
                             </CheckBox.ToolTip>
                         </CheckBox>
                     </ToolBar>
-                    <avalonEdit:TextEditor x:Name="SyntaxHighliter"
-                                           Document="{Binding HighlitedGeneratedCode}"
-                                           WordWrap="True"
-                                           ShowLineNumbers="True"
-                                           FontFamily="Consolas"
-                                           Focusable="True"
-                                           ForceCursor="True"
-                                           SyntaxHighlighting="C#">
-                    </avalonEdit:TextEditor>
+                    <controls:BindableTextEditor x:Name="SyntaxHighliter"
+                                                 Text="{Binding ElementName=TreeDirectory, Path=SelectedItem.Current.Code}"
+                                                 WordWrap="True"
+                                                 ShowLineNumbers="True"
+                                                 FontFamily="Consolas"
+                                                 SyntaxHighlighting="C#">
+                        <!--<i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectedItemChanged">
+                                <i:InvokeCommandAction x:Name="SelectionCommand"
+                                                       Command="{Binding ShowCodeFileOnItemSelected}"
+                                                       CommandParameter="{Binding ElementName=TreeDirectory, Path=SelectedItem}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>-->
+                        <avalonEdit:TextEditor.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Command="Cut" />
+                                <MenuItem Command="Copy" />
+                                <MenuItem Command="Paste" />
+                                <MenuItem Command="Delete" />
+                                <Separator />
+                                <MenuItem Command="Undo" />
+                                <MenuItem Command="Redo" />
+                            </ContextMenu>
+                        </avalonEdit:TextEditor.ContextMenu>
+                    </controls:BindableTextEditor>
                 </DockPanel>
             </Grid>
 

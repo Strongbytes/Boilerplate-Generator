@@ -18,8 +18,6 @@ namespace BoilerplateGenerator.ViewModels
 
         ObservableCollection<ITreeNode<IBaseSymbolWrapper>> EntityTree { get; set; }
 
-        string ReferencedEntityName { get; set; }
-
         void ResetInterface();
 
         Task PopulateSolutionProjects();

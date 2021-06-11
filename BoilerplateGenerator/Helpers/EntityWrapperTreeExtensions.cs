@@ -1,7 +1,9 @@
 ﻿using BoilerplateGenerator.Collections;
 using BoilerplateGenerator.Contracts.RoslynWrappers;
 using BoilerplateGenerator.Models.RoslynWrappers;
+using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using Microsoft.CodeAnalysis;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace BoilerplateGenerator.Helpers
@@ -66,6 +68,37 @@ namespace BoilerplateGenerator.Helpers
             symbolWrapper.IsPropertyChanging = true;
             symbolWrapper.IsChecked = selectionStatus;
             symbolWrapper.IsPropertyChanging = false;
+        }
+
+        public static IEnumerable<PropertyDefinitionModel> FilterTreeProperties(this ITreeNode<IBaseSymbolWrapper> rootNode)
+        {
+            List<PropertyDefinitionModel> symbols = new List<PropertyDefinitionModel>();
+
+            foreach (ITreeNode<IBaseSymbolWrapper> treeNode in rootNode.Children)
+            {
+                switch (treeNode.Current.GetType().Name)
+                {
+                    case nameof(EntityClassWrapper):
+                        symbols.AddRange(FilterTreeProperties(treeNode));
+                        break;
+
+                    default:
+                        if (!(treeNode.Current is EntityPropertyWrapper entityPropertyWrapper))
+                        {
+                            break;
+                        }
+
+                        if (!entityPropertyWrapper.IsChecked.HasValue || !entityPropertyWrapper.IsChecked.Value)
+                        {
+                            break;
+                        }
+
+                        symbols.Add(new PropertyDefinitionModel(entityPropertyWrapper));
+                        break;
+                }
+            }
+
+            return symbols;
         }
     }
 }

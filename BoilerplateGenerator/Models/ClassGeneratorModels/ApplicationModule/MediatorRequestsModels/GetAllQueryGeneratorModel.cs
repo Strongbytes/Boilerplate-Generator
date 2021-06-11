@@ -24,7 +24,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
         {
            UsingTokens.MediatR,
            UsingTokens.SystemCollectionsGeneric,
-           _metadataGenerationService.AssetToNamespaceMapping[AssetKind.ResponseDomainEntity],
+           _metadataGenerationService.NamespaceByAssetKind(AssetKind.ResponseDomainEntity),
         }.Union(base.Usings).OrderBy(x => x);
 
         public override IEnumerable<string> BaseTypes => new string[]
