@@ -42,7 +42,8 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule
                 {
                     new MethodDefinitionModel
                     {
-                        Body = ConstructorBody
+                        Body = ConstructorBody,
+                        MemberConflictResolutionKind = MemberConflictResolutionKind.Merge
                     }
                 };
             }
@@ -56,9 +57,9 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule
 
                 return new string[]
                 {
-                    $"CreateMap<{referencedEntityName}, {_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]}>();",
-                    $"CreateMap<{_metadataGenerationService.AssetToClassNameMapping[AssetKind.CreateRequestDomainEntity]}, {referencedEntityName}>();",
-                    $"CreateMap<{_metadataGenerationService.AssetToClassNameMapping[AssetKind.UpdateRequestDomainEntity]}, {referencedEntityName}>();",
+                    $"{CommonTokens.CreateMap}<{referencedEntityName}, {_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]}>();",
+                    $"{CommonTokens.CreateMap}<{_metadataGenerationService.AssetToClassNameMapping[AssetKind.CreateRequestDomainEntity]}, {referencedEntityName}>();",
+                    $"{CommonTokens.CreateMap}<{_metadataGenerationService.AssetToClassNameMapping[AssetKind.UpdateRequestDomainEntity]}, {referencedEntityName}>();",
                 };
             }
         }

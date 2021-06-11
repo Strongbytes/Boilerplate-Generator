@@ -41,6 +41,7 @@
         QueryHandler,
         ByIdQueryHandler,
         CommandHandler,
-        ById
+        ById,
+        CreateMap
     }
 }

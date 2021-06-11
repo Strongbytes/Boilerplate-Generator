@@ -6,7 +6,6 @@ using BoilerplateGenerator.Models.TreeView;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -69,18 +68,11 @@ namespace BoilerplateGenerator.Services
             });
         }
 
-        private IEnumerable<ConstructorDeclarationSyntax> RetrieveClassConstructors(ClassDeclarationSyntax classDeclarationSyntax)
-        {
-            return classDeclarationSyntax.Members.Where(x => x.Kind() == SyntaxKind.ConstructorDeclaration)
-                                                 .Cast<ConstructorDeclarationSyntax>()
-                                                 .ToArray();
-        }
-
         private ClassDeclarationSyntax GenerateConstructors(ClassDeclarationSyntax classDeclarationSyntax)
         {
-            var existingConstructors = RetrieveClassConstructors(classDeclarationSyntax);
+            IEnumerable<ConstructorDeclarationSyntax> existingConstructors = classDeclarationSyntax.RetrieveClassMembers<ConstructorDeclarationSyntax>(SyntaxKind.ConstructorDeclaration);
 
-            foreach (var constructorDeclaration in _genericGeneratorModel.Constructors)
+            foreach (MethodDefinitionModel constructorDeclaration in _genericGeneratorModel.Constructors)
             {
                 ConstructorDeclarationSyntax existingConstructor = existingConstructors.FirstOrDefault(x => x.ParameterList.Parameters.Count == constructorDeclaration.Parameters.Count());
 

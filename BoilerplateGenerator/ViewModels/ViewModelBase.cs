@@ -114,20 +114,6 @@ namespace BoilerplateGenerator.ViewModels
             }
         }
 
-        private ICSharpCode.AvalonEdit.Document.TextDocument _highlitedGeneratedCode = new ICSharpCode.AvalonEdit.Document.TextDocument();
-        public ICSharpCode.AvalonEdit.Document.TextDocument HighlitedGeneratedCode
-        {
-            get
-            {
-                return _highlitedGeneratedCode;
-            }
-            set
-            {
-                _highlitedGeneratedCode = value;
-                NotifyPropertyChanged();
-            }
-        }
-
         public ISolutionWrapper Solution { get; set; }
         #endregion
 
@@ -156,11 +142,10 @@ namespace BoilerplateGenerator.ViewModels
 
                     if (!_fileManagerService.IsEntityClassTypeValid)
                     {
-                        // TODO: Show validation error
                         return;
                     }
 
-                    var rootNode = await _fileManagerService.PopulateClassHierarchy();
+                    ITreeNode<IBaseSymbolWrapper> rootNode = await _fileManagerService.PopulateClassHierarchy();
                     await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
                     EntityTree.Clear();
@@ -190,10 +175,7 @@ namespace BoilerplateGenerator.ViewModels
 
                     foreach (IGenericGeneratorModel availableModel in await _generatorModelsManagerService.RetrieveAvailableGeneratorModels().ConfigureAwait(false))
                     {
-                        IGeneratedClass generatedClass = await new ClassGenerationService(availableModel)
-                                                                    .GetGeneratedClass()
-                                                                    .ConfigureAwait(false);
-
+                        IGeneratedClass generatedClass = await new ClassGenerationService(availableModel).GetGeneratedClass().ConfigureAwait(false);
                         rootNode.GenerateDirectoryClassTree(generatedClass);
                     }
 
@@ -204,37 +186,6 @@ namespace BoilerplateGenerator.ViewModels
                 });
 
                 return _generateCodeCommand;
-            }
-        }
-
-        private ICommand _showCodeFileOnItemSelected;
-        public ICommand ShowCodeFileOnItemSelected
-        {
-            get
-            {
-                if (_showCodeFileOnItemSelected != null)
-                {
-                    return _showCodeFileOnItemSelected;
-                }
-
-                _showCodeFileOnItemSelected = new CommandHandler((parameter) =>
-                {
-                    HighlitedGeneratedCode.Text = string.Empty;
-
-                    if (!(parameter is ITreeNode<IBaseGeneratedAsset> treeNode))
-                    {
-                        return;
-                    }
-
-                    if (!(treeNode.Current is IGeneratedClass generatedClass))
-                    {
-                        return;
-                    }
-
-                    HighlitedGeneratedCode.Text = generatedClass.Code;
-                });
-
-                return _showCodeFileOnItemSelected;
             }
         }
         #endregion

@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis.CSharp;
+﻿using BoilerplateGenerator.Models.Enums;
+using Microsoft.CodeAnalysis.CSharp;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,6 +8,8 @@ namespace BoilerplateGenerator.Models.SyntaxDefinitionModels
     public class MethodDefinitionModel
     {
         public string Name { get; set; }
+
+        public MemberConflictResolutionKind MemberConflictResolutionKind { get; set; } = MemberConflictResolutionKind.Replace;
 
         public IEnumerable<ParameterDefinitionModel> Parameters { get; set; } = Enumerable.Empty<ParameterDefinitionModel>();
 
