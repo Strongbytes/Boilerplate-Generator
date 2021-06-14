@@ -1,4 +1,5 @@
-﻿using BoilerplateGenerator.Models.SyntaxDefinitionModels;
+﻿using BoilerplateGenerator.EqualityComparers;
+using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
@@ -15,22 +16,30 @@ namespace BoilerplateGenerator.Helpers
                                                  .ToArray();
         }
 
-        //public static T RetrieveExistingMember<T>(this IEnumerable<T> classMembers, MethodDefinitionModel methodDefinitionModel) where T : BaseMethodDeclarationSyntax
-        //{
-        //    if (!classMembers.Any(x => x.ParameterList.Parameters.Count == methodDefinitionModel.Parameters.Count()))
-        //    {
-        //        return default;
-        //    }
+        public static T RetrieveExistingMember<T>(this IEnumerable<T> classMembers, MethodDefinitionModel methodDefinitionModel) where T : BaseMethodDeclarationSyntax
+        {
+            if (!classMembers.Any(x => x.ParameterList.Parameters.Count == methodDefinitionModel.Parameters.Count()))
+            {
+                return default;
+            }
 
-        //    foreach(var classMember in classMembers.Where(x => x.ParameterList.Parameters.Count == methodDefinitionModel.Parameters.Count()))
-        //    {
-        //        classMember.ParameterList.Parameters.Select(x => new ParameterDefinitionModel
-        //        {
-        //            Name = x.Identifier.Text,
-        //            ReturnType = x.Type?.ToString()
-        //        });
-        //    }
+            foreach (BaseMethodDeclarationSyntax classMember in classMembers.Where(x => x.ParameterList.Parameters.Count == methodDefinitionModel.Parameters.Count()))
+            {
+                var differentParameters = methodDefinitionModel.Parameters.Except(classMember.ParameterList.Parameters.Select(x => new ParameterDefinitionModel
+                {
+                    Name = x.Identifier.Text,
+                    ReturnType = x.Type?.ToString()
+                }), new ParameterDefinitionModelComparer());
 
-        //}
+                if (differentParameters.Any())
+                {
+                    continue;
+                }
+
+                return (T)classMember;
+            }
+
+            return default;
+        }
     }
 }

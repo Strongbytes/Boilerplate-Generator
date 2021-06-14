@@ -74,7 +74,7 @@ namespace BoilerplateGenerator.Services
 
             foreach (MethodDefinitionModel constructorDeclaration in _genericGeneratorModel.Constructors)
             {
-                ConstructorDeclarationSyntax existingConstructor = existingConstructors.FirstOrDefault(x => x.ParameterList.Parameters.Count == constructorDeclaration.Parameters.Count());
+                ConstructorDeclarationSyntax existingConstructor = existingConstructors.RetrieveExistingMember(constructorDeclaration);
 
                 if (existingConstructor != null)
                 {
