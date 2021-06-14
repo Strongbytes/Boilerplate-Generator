@@ -312,6 +312,14 @@ namespace BoilerplateGenerator.ViewModels
                 _exportGeneratedFilesCommand = new CommandHandler(async (parameter) =>
                 {
                     await DirectoriesTree.First().ExportGeneratedFiles().ConfigureAwait(false);
+
+                    if (!(parameter is Window mainWindow))
+                    {
+                        return;
+                    }
+
+                    await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                    mainWindow.Close();
                 });
 
                 return _exportGeneratedFilesCommand;

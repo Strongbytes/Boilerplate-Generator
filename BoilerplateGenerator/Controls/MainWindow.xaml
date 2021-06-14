@@ -1,4 +1,5 @@
 ﻿<Window x:Class="BoilerplateGenerator.Controls.MainWindow"
+        x:Name="PrimaryWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -346,10 +347,11 @@
                     </TreeView>
                 </Grid>
 
-                <Button Content="Export Generated Files"
+                <Button Content="Export Files to Solution"
                         Grid.Row="1"
                         Margin="5,10"
                         Command="{Binding ExportGeneratedFilesCommand}"
+                        CommandParameter="{Binding ElementName=PrimaryWindow}"
                         Padding="1,3">
                     <Button.Style>
                         <Style TargetType="Button">

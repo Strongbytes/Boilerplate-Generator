@@ -12,13 +12,13 @@ namespace BoilerplateGenerator.Helpers
         {
             if (treeNode.Current is GeneratedClass generatedClass)
             {
-                await generatedClass.ExportFile();
+                await generatedClass.ExportFile().ConfigureAwait(false);
                 return;
             }
 
             foreach (ITreeNode<IBaseGeneratedAsset> node in treeNode.Children)
             {
-                await ExportGeneratedFiles(node);
+                await ExportGeneratedFiles(node).ConfigureAwait(false);
             }
         }
 
