@@ -1,9 +1,14 @@
 ﻿<?xml version="1.0" ?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="ed96cbaa-c44a-4d0a-9ae4-b08b92bee7a0" Version="1.0" Language="en-US" Publisher="Ionuț Dănilă" />
+        <Identity Id="ed96cbaa-c44a-4d0a-9ae4-b08b92bee7a0" Version="1.1" Language="en-US" Publisher="Strongbytes" />
         <DisplayName>Boilerplate Code Generator</DisplayName>
-        <Description xml:space="preserve">Empty VSIX Project.</Description>
+        <Description xml:space="preserve">Generate boilerplate code using Roslyn, starting from a model entity</Description>
+        <GettingStartedGuide>https://github.com/Strongbytes/Boilerplate-Generator</GettingStartedGuide>
+        <Icon>Assets\file-icon.ico</Icon>
+        <PreviewImage>Assets\Screenshot.png</PreviewImage>
+        <Tags>.net-core, .net-5, mediatr, cqrs, roslyn, automapper, unit-of-work</Tags>
+        <Preview>true</Preview>
     </Metadata>
     <Installation>
         <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[16.0, 17.0)" />
