@@ -196,26 +196,15 @@
                     <Separator VerticalAlignment="Top"
                                Margin="0" />
 
-                    <StackPanel Orientation="Vertical"
-                                Margin="0,0,0,10">
-                        <CheckBox Content="Use Unit of Work from"
-                                  Margin="5"
-                                  IsChecked="{Binding UseUnitOfWork, Mode=TwoWay}"
-                                  VerticalContentAlignment="Center"
-                                  HorizontalContentAlignment="Left" />
-
-                        <ComboBox x:Name="ComboUnitOfWork"
-                                  Margin="5,0"
-                                  IsEnabled="{Binding UseUnitOfWork}"
-                                  ItemsSource="{Binding AvailableModules}"
-                                  SelectedItem="{Binding SelectedControllersProject, Mode=TwoWay}">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Name}" />
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                    </StackPanel>
+                    <CheckBox Content="Use Unit of Work"
+                              Margin="5,10"
+                              IsChecked="{Binding UseUnitOfWork, Mode=TwoWay}"
+                              VerticalContentAlignment="Center"
+                              HorizontalContentAlignment="Left">
+                        <CheckBox.ToolTip>
+                            <ToolTip Content="Enabling this option all CQRS Handlers will reference IUnitOfWork from the same Target Module" />
+                        </CheckBox.ToolTip>
+                    </CheckBox>
 
                     <Separator VerticalAlignment="Top"
                                Margin="0" />

@@ -8,6 +8,8 @@ namespace BoilerplateGenerator.ViewModels
 {
     public interface IViewModelBase : INotifyPropertyChanged
     {
+        bool UseUnitOfWork { get; set; }
+
         IProjectWrapper SelectedTargetModuleProject { get; set; }
 
         IProjectWrapper SelectedControllersProject { get; set; }

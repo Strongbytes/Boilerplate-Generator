@@ -99,6 +99,7 @@ namespace BoilerplateGenerator.Services
             { AssetKind.UpdateCommandHandler, $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Update}" },
             { AssetKind.DeleteCommandHandler, $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Delete}" },
             { AssetKind.ProfileMapper, string.Empty },
+            { AssetKind.IUnitOfWork, $"{NamespaceTokens.Domain}" },
         };
 
         private string RetrieveBaseNamespace(AssetKind referencedAsset)

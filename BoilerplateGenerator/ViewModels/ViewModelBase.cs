@@ -3,7 +3,6 @@ using BoilerplateGenerator.Contracts.Generators;
 using BoilerplateGenerator.Contracts.RoslynWrappers;
 using BoilerplateGenerator.Contracts.Services;
 using BoilerplateGenerator.Helpers;
-using BoilerplateGenerator.Models.RoslynWrappers;
 using BoilerplateGenerator.Models.TreeView;
 using BoilerplateGenerator.Services;
 using Microsoft.VisualStudio.Shell;
@@ -27,7 +26,6 @@ namespace BoilerplateGenerator.ViewModels
             _fileManagerService = fileManagerService;
             _generatorModelsManagerService = generatorModelsManagerService;
         }
-
 
         #region Properties
         private bool _getCommandEnabled = true;

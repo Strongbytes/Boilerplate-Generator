@@ -147,6 +147,7 @@ namespace BoilerplateGenerator.Services
         private ParameterSyntax[] GenerateParameters(IEnumerable<ParameterDefinitionModel> parameters)
         {
             return (from parameter in parameters
+                    where parameter.IsEnabled
                     select SyntaxFactory.Parameter(SyntaxFactory.Identifier(parameter.Name))
                                         .WithType(SyntaxFactory.ParseTypeName(parameter.ReturnType))).ToArray();
         }
@@ -155,6 +156,7 @@ namespace BoilerplateGenerator.Services
         {
             return (from parameter in parameters
                     where !parameter.MapToClassProperty
+                    where parameter.IsEnabled
                     select SyntaxFactory.FieldDeclaration
                     (
                         SyntaxFactory.VariableDeclaration
@@ -175,6 +177,7 @@ namespace BoilerplateGenerator.Services
         private BlockSyntax GenerateMethodBody(IEnumerable<ParameterDefinitionModel> parameters)
         {
             var assignments = (from parameter in parameters
+                               where parameter.IsEnabled
                                select SyntaxFactory.ExpressionStatement
                                (
                                    SyntaxFactory.AssignmentExpression

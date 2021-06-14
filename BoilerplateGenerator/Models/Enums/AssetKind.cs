@@ -18,5 +18,6 @@
         UpdateCommandHandler,
         DeleteCommandHandler,
         ProfileMapper,
+        IUnitOfWork,
     }
 }

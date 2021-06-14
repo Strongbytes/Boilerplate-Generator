@@ -8,6 +8,8 @@
 
         public bool MapToClassProperty { get; set; }
 
+        public bool IsEnabled { get; set; } = true;
+
         public ParameterDefinitionModel()
         {
         }

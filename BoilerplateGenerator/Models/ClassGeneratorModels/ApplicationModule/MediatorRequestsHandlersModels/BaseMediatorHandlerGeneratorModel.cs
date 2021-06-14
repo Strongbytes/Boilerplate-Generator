@@ -3,6 +3,7 @@ using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using BoilerplateGenerator.ViewModels;
+using Microsoft.CodeAnalysis.CSharp;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,11 +11,13 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
 {
     public abstract class BaseMediatorHandlerGeneratorModel : BaseGenericGeneratorModel
     {
+        private readonly IViewModelBase _viewModelBase;
         private readonly IMetadataGenerationService _metadataGenerationService;
 
         protected BaseMediatorHandlerGeneratorModel(IViewModelBase viewModelBase, IMetadataGenerationService metadataGenerationService)
             : base(viewModelBase, metadataGenerationService)
         {
+            _viewModelBase = viewModelBase;
             _metadataGenerationService = metadataGenerationService;
         }
 
@@ -29,6 +32,8 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
             { AssetKind.UpdateCommandHandler, AssetKind.UpdateCommand },
         };
 
+        public override SyntaxKind RootClassModifier => SyntaxKind.InternalKeyword;
+
         protected virtual string HandlerResponseType => $"{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]}";
 
         public override IEnumerable<string> Usings => new List<string>
@@ -39,6 +44,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
            UsingTokens.SystemThreadingTasks,
            UsingTokens.SystemCollectionsGeneric,
            _metadataGenerationService.NamespaceByAssetKind(AssetKind.ResponseDomainEntity),
+           _metadataGenerationService.NamespaceByAssetKind(AssetKind.IUnitOfWork),
         }.Union(base.Usings).OrderBy(x => x);
 
         public override IEnumerable<string> BaseTypes => new string[]
@@ -51,7 +57,8 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
             new ParameterDefinitionModel
             {
                 ReturnType = $"{CommonTokens.IUnitOfWork}",
-                Name = $"{nameof(CommonTokens.UnitOfWork).ToLowerCamelCase()}"
+                Name = $"{nameof(CommonTokens.UnitOfWork).ToLowerCamelCase()}",
+                IsEnabled = _viewModelBase.UseUnitOfWork
             },
             new ParameterDefinitionModel
             {
