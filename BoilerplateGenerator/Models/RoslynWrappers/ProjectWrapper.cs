@@ -34,6 +34,21 @@ namespace BoilerplateGenerator.Models.RoslynWrappers
             return File.Exists(GenerateCompleteFilePath(classNamespace, className));
         }
 
+        public async Task ExportFile(string classNamespace, string className, string content)
+        {
+            await Task.Run(() =>
+            {
+                if (string.IsNullOrEmpty(_project.FilePath))
+                {
+                    throw new Exception("There was an error with the parent project.");
+                }
+
+                string filePath = GenerateCompleteFilePath(classNamespace, className);
+                Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+                File.WriteAllText(filePath, content);
+            });
+        }
+
         public ProjectWrapper(Project project)
         {
             _project = project;

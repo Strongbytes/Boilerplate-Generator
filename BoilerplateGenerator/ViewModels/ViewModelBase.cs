@@ -9,6 +9,7 @@ using BoilerplateGenerator.Services;
 using Microsoft.VisualStudio.Shell;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
@@ -29,6 +30,110 @@ namespace BoilerplateGenerator.ViewModels
 
 
         #region Properties
+        private bool _getCommandEnabled = true;
+        public bool GetCommandEnabled
+        {
+            get
+            {
+                return _getCommandEnabled;
+            }
+
+            set
+            {
+                if (value == _getCommandEnabled)
+                {
+                    return;
+                }
+
+                _getCommandEnabled = value;
+                NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(GenerateCodeCommandIsEnabled));
+            }
+        }
+
+        private bool _postCommandEnabled = true;
+        public bool PostCommandEnabled
+        {
+            get
+            {
+                return _postCommandEnabled;
+            }
+
+            set
+            {
+                if (value == _postCommandEnabled)
+                {
+                    return;
+                }
+
+                _postCommandEnabled = value;
+                NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(GenerateCodeCommandIsEnabled));
+            }
+        }
+
+        private bool _putCommandEnabled = true;
+        public bool PutCommandEnabled
+        {
+            get
+            {
+                return _putCommandEnabled;
+            }
+
+            set
+            {
+                if (value == _putCommandEnabled)
+                {
+                    return;
+                }
+
+                _putCommandEnabled = value;
+                NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(GenerateCodeCommandIsEnabled));
+            }
+        }
+
+        private bool _useUnitOfWork = true;
+        public bool UseUnitOfWork
+        {
+            get
+            {
+                return _useUnitOfWork;
+            }
+
+            set
+            {
+                if (value == _useUnitOfWork)
+                {
+                    return;
+                }
+
+                _useUnitOfWork = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private bool _deleteCommandEnabled = true;
+        public bool DeleteCommandEnabled
+        {
+            get
+            {
+                return _deleteCommandEnabled;
+            }
+
+            set
+            {
+                if (value == _deleteCommandEnabled)
+                {
+                    return;
+                }
+
+                _deleteCommandEnabled = value;
+                NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(GenerateCodeCommandIsEnabled));
+            }
+        }
+
 
         private Visibility _loaderVisibility = Visibility.Collapsed;
         public Visibility LoaderVisibility
@@ -70,7 +175,8 @@ namespace BoilerplateGenerator.ViewModels
             }
         }
 
-        public bool GenerateCodeCommandIsEnabled => SelectedControllersProject != null && SelectedTargetModuleProject != null;
+        public bool GenerateCodeCommandIsEnabled => SelectedControllersProject != null && SelectedTargetModuleProject != null
+                                                && (GetCommandEnabled || PostCommandEnabled || PutCommandEnabled || DeleteCommandEnabled);
 
         private IProjectWrapper _selectedProject;
         public IProjectWrapper SelectedTargetModuleProject
@@ -126,18 +232,21 @@ namespace BoilerplateGenerator.ViewModels
         #endregion
 
         #region Commands
-        private ICommand _validateSelectedFileCommand;
-        public ICommand ValidateSelectedFileCommand
+        private ICommand _viewEntityHierarchyCommand;
+        public ICommand ViewEntityHierarchyCommand
         {
             get
             {
-                if (_validateSelectedFileCommand != null)
+                if (_viewEntityHierarchyCommand != null)
                 {
-                    return _validateSelectedFileCommand;
+                    return _viewEntityHierarchyCommand;
                 }
 
-                _validateSelectedFileCommand = new CommandHandler(async (parameter) =>
+                _viewEntityHierarchyCommand = new CommandHandler(async (parameter) =>
                 {
+                    EntityTree.Clear();
+                    DirectoriesTree.Clear();
+
                     await _fileManagerService.FindSelectedFileClassType().ConfigureAwait(false);
 
                     if (!_fileManagerService.IsEntityClassTypeValid)
@@ -149,10 +258,11 @@ namespace BoilerplateGenerator.ViewModels
                     await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
                     EntityTree.Clear();
+                    DirectoriesTree.Clear();
                     EntityTree.Add(rootNode);
                 });
 
-                return _validateSelectedFileCommand;
+                return _viewEntityHierarchyCommand;
             }
         }
 
@@ -168,6 +278,8 @@ namespace BoilerplateGenerator.ViewModels
 
                 _generateCodeCommand = new CommandHandler(async (parameter) =>
                 {
+                    DirectoriesTree.Clear();
+                   
                     ITreeNode<IBaseGeneratedAsset> rootNode = new TreeNode<IBaseGeneratedAsset>
                     {
                         Current = new GeneratedDirectory(Solution.Name),
@@ -188,6 +300,25 @@ namespace BoilerplateGenerator.ViewModels
                 return _generateCodeCommand;
             }
         }
+
+        private ICommand _exportGeneratedFilesCommand;
+        public ICommand ExportGeneratedFilesCommand
+        {
+            get
+            {
+                if (_exportGeneratedFilesCommand != null)
+                {
+                    return _exportGeneratedFilesCommand;
+                }
+
+                _exportGeneratedFilesCommand = new CommandHandler(async (parameter) =>
+                {
+                    await DirectoriesTree.First().ExportGeneratedFiles().ConfigureAwait(false);
+                });
+
+                return _exportGeneratedFilesCommand;
+            }
+        }
         #endregion
 
         #region Business
@@ -204,7 +335,6 @@ namespace BoilerplateGenerator.ViewModels
             }
         }
         #endregion
-
 
         #region Event Handlers
         public void ResetInterface()

@@ -14,5 +14,7 @@ namespace BoilerplateGenerator.Contracts.RoslynWrappers
         bool GeneratedFileAlreadyExists(string classNamespace, string className);
 
         Task<CompilationUnitSyntax> GetExistingFileClass(string classNamespace, string className);
+
+        Task ExportFile(string classNamespace, string className, string content);
     }
 }

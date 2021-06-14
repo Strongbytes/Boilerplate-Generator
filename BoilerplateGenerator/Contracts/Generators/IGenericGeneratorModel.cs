@@ -39,5 +39,7 @@ namespace BoilerplateGenerator.Contracts.Generators
         IEnumerable<AttributeDefinitionModel> Attributes { get; }
 
         Task<CompilationUnitSyntax> LoadClassFromExistingFile();
+
+        Task ExportFile(string content);
     }
 }

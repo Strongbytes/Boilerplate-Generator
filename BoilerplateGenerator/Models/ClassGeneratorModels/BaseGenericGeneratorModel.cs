@@ -90,6 +90,16 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
 
         public bool FileExistsInProject => TargetModule.GeneratedFileAlreadyExists($"{_metadataGenerationService.NamespaceByAssetKind(GeneratedClassKind)}", $"{_metadataGenerationService.AssetToClassNameMapping[GeneratedClassKind]}");
 
+        public async Task ExportFile(string content)
+        {
+            await TargetModule.ExportFile
+            (
+                $"{_metadataGenerationService.NamespaceByAssetKind(GeneratedClassKind)}",
+                $"{_metadataGenerationService.AssetToClassNameMapping[GeneratedClassKind]}",
+                content
+            );
+        }
+
         public virtual IEnumerable<ParameterDefinitionModel> ConstructorParameters { get; } = Enumerable.Empty<ParameterDefinitionModel>();
 
         public virtual IEnumerable<MethodDefinitionModel> Constructors { get; } = Enumerable.Empty<MethodDefinitionModel>();

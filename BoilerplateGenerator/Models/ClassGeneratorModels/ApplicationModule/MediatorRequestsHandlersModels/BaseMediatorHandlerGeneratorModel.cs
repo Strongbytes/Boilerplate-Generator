@@ -36,13 +36,14 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
            UsingTokens.AutoMapper,
            UsingTokens.MediatR,
            UsingTokens.SystemThreading,
+           UsingTokens.SystemThreadingTasks,
            UsingTokens.SystemCollectionsGeneric,
            _metadataGenerationService.NamespaceByAssetKind(AssetKind.ResponseDomainEntity),
         }.Union(base.Usings).OrderBy(x => x);
 
         public override IEnumerable<string> BaseTypes => new string[]
         {
-            $"IRequestHandler<{RequestHandlerClassName}, {HandlerResponseType}>"
+            $"{CommonTokens.IRequestHandler}<{RequestHandlerClassName}, {HandlerResponseType}>"
         };
 
         public override IEnumerable<ParameterDefinitionModel> ConstructorParameters => new ParameterDefinitionModel[]
@@ -70,7 +71,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
                     new MethodDefinitionModel
                     {
                         Name = $"{CommonTokens.Handle}",
-                        ReturnType = $"Task<{HandlerResponseType}>",
+                        ReturnType = $"{CommonTokens.Task}<{HandlerResponseType}>",
                         Parameters = new ParameterDefinitionModel[]
                         {
                             new ParameterDefinitionModel

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace BoilerplateGenerator.Models.TreeView
 {
@@ -26,6 +27,8 @@ namespace BoilerplateGenerator.Models.TreeView
 
         public bool FileExistsInProject => _genericGeneratorModel.FileExistsInProject;
 
+        public async Task ExportFile() => await _genericGeneratorModel.ExportFile(Code);
+
         public IEnumerable<string> ParentDirectoryHierarchy
         {
             get
@@ -36,7 +39,7 @@ namespace BoilerplateGenerator.Models.TreeView
                 }.Union
                 (
                     _genericGeneratorModel.ClassNamespace.Replace(_genericGeneratorModel.TargetProjectName, string.Empty)
-                                                    .Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries)
+                                                         .Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries)
                 );
             }
         }

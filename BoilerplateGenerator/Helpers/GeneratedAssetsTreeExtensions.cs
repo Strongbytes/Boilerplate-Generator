@@ -2,11 +2,26 @@
 using BoilerplateGenerator.Contracts.Generators;
 using BoilerplateGenerator.Models.TreeView;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BoilerplateGenerator.Helpers
 {
     public static class GeneratedAssetsTreeExtensions
     {
+        public static async Task ExportGeneratedFiles(this ITreeNode<IBaseGeneratedAsset> treeNode)
+        {
+            if (treeNode.Current is GeneratedClass generatedClass)
+            {
+                await generatedClass.ExportFile();
+                return;
+            }
+
+            foreach (ITreeNode<IBaseGeneratedAsset> node in treeNode.Children)
+            {
+                await ExportGeneratedFiles(node);
+            }
+        }
+
         public static void GenerateDirectoryClassTree(this ITreeNode<IBaseGeneratedAsset> rootNode, IGeneratedClass generatedClass)
         {
             foreach (string directory in generatedClass.ParentDirectoryHierarchy)

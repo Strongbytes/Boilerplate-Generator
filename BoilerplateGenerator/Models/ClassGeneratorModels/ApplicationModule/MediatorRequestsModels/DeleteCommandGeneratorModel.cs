@@ -25,7 +25,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
 
         public override IEnumerable<string> BaseTypes => new string[]
         {
-            $"IRequest<{CommonTokens.Unit}>"
+            $"{CommonTokens.IRequest}<{CommonTokens.Unit}>"
         };
 
         public override IEnumerable<PropertyDefinitionModel> AvailableProperties => new PropertyDefinitionModel[]

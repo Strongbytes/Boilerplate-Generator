@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BoilerplateGenerator.Contracts.Generators
 {
@@ -9,5 +10,7 @@ namespace BoilerplateGenerator.Contracts.Generators
         IEnumerable<string> ParentDirectoryHierarchy { get; }
 
         bool FileExistsInProject { get; }
+
+        Task ExportFile();
     }
 }

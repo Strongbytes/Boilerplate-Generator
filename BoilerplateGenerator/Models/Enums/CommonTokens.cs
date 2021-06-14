@@ -42,6 +42,10 @@
         ByIdQueryHandler,
         CommandHandler,
         ById,
-        CreateMap
+        CreateMap,
+        IRequestHandler,
+        Task,
+        IEnumerable,
+        IRequest
     }
 }

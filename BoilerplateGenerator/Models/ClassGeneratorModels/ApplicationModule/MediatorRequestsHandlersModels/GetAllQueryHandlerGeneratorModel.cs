@@ -16,6 +16,6 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
 
         public override AssetKind GeneratedClassKind => AssetKind.GetAllQueryHandler;
 
-        protected override string HandlerResponseType => $"IEnumerable<{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]}>";
+        protected override string HandlerResponseType => $"{CommonTokens.IEnumerable}<{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]}>";
     }
 }
