@@ -1,5 +1,6 @@
 ﻿using BoilerplateGenerator.Contracts.Generators;
 using BoilerplateGenerator.Contracts.Services;
+using BoilerplateGenerator.EqualityComparers;
 using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using BoilerplateGenerator.Models.TreeView;
@@ -78,7 +79,8 @@ namespace BoilerplateGenerator.Services
 
                 if (existingConstructor != null)
                 {
-                    classDeclarationSyntax = classDeclarationSyntax.ReplaceNode(existingConstructor, existingConstructor.AddBodyStatements(GenerateBodyStatements(constructorDeclaration.Body).ToArray()));
+                    existingConstructor = existingConstructor.WithBody(GenerateMethodBody(GenerateBodyStatements(constructorDeclaration.Body).Union(existingConstructor.Body.Statements)));
+                    classDeclarationSyntax = classDeclarationSyntax.ReplaceNode(existingConstructor, existingConstructor);
                     continue;
                 }
 
@@ -198,7 +200,7 @@ namespace BoilerplateGenerator.Services
                 return NotImplementedBody;
             }
 
-            return SyntaxFactory.Block(bodyStatements);
+            return SyntaxFactory.Block(bodyStatements.Distinct(new StatementSyntaxComparer()));
         }
 
         private IEnumerable<StatementSyntax> GenerateBodyStatements(IEnumerable<string> bodyStatements)
@@ -209,8 +211,7 @@ namespace BoilerplateGenerator.Services
             }
 
             return from statement in bodyStatements
-                   select SyntaxFactory.ParseStatement(statement)
-                                       .NormalizeWhitespace(eol: string.Empty);
+                   select SyntaxFactory.ParseStatement(statement);
         }
 
         private ClassDeclarationSyntax RetrieveBaseClassDeclaration()
