@@ -26,6 +26,7 @@ namespace BoilerplateGenerator.ViewModels
         {
             _fileManagerService = fileManagerService;
             _generatorModelsManagerService = generatorModelsManagerService;
+            PaginationRequirements.PropertyChanged += (sender, eventArgs) => NotifyPropertyChanged(nameof(GetPaginatedQueryIsEnabled));
         }
 
         #region Properties
@@ -73,12 +74,13 @@ namespace BoilerplateGenerator.ViewModels
             }
         }
 
-        private bool _getPaginatedQueryIsEnabled;
+        private bool _getPaginatedQueryIsEnabled = true;
         public bool GetPaginatedQueryIsEnabled
         {
             get
             {
-                return _getPaginatedQueryIsEnabled;
+                
+                return _getPaginatedQueryIsEnabled && PaginationRequirements.PaginationIsAvailable.HasValue;
             }
 
             set

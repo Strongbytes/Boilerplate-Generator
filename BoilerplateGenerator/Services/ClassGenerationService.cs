@@ -185,7 +185,7 @@ namespace BoilerplateGenerator.Services
                                    SyntaxFactory.AssignmentExpression
                                    (
                                        SyntaxKind.SimpleAssignmentExpression,
-                                       SyntaxFactory.IdentifierName(parameter.MapToClassProperty ? $"{parameter.Name.ToTitleCase()}" : $"_{parameter.Name}"),
+                                       SyntaxFactory.IdentifierName(parameter.MapToClassProperty ? $"{parameter.Name.ToUpperCamelCase()}" : $"_{parameter.Name}"),
                                        SyntaxFactory.IdentifierName(parameter.Name)
                                     )
                                 )).ToArray();

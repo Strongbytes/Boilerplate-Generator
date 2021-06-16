@@ -2,6 +2,7 @@
 using BoilerplateGenerator.Contracts.RoslynWrappers;
 using BoilerplateGenerator.Contracts.Services;
 using BoilerplateGenerator.EqualityComparers;
+using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.Pagination;
 using BoilerplateGenerator.Models.RoslynWrappers;
 using EnvDTE;
@@ -76,13 +77,13 @@ namespace BoilerplateGenerator.Services
              .ToArray();
 
             var iPaginatedDataQuery = availableTypes.Where(x => x.TypeKind == TypeKind.Interface)
-                                                    .FirstOrDefault(x => x.Name == "IPaginatedDataQuery");
+                                                    .FirstOrDefault(x => x.Name == $"{CommonTokens.IPaginatedDataQuery}");
 
             var paginatedDataQuery = availableTypes.Where(x => x.TypeKind == TypeKind.Class)
                                                    .FirstOrDefault(x => x.Interfaces.Contains(iPaginatedDataQuery, new NamedTypeSymbolComparer()));
 
             var iPaginatedDataResponse = availableTypes.Where(x => x.TypeKind == TypeKind.Interface)
-                                                       .FirstOrDefault(x => x.Name == "IPaginatedDataResponse");
+                                                       .FirstOrDefault(x => x.Name == $"{CommonTokens.IPaginatedDataResponse}");
 
             var paginatedDataResponse = availableTypes.Where(x => x.TypeKind == TypeKind.Class)
                                                       .FirstOrDefault(x => x.Interfaces.Contains(iPaginatedDataResponse, new NamedTypeSymbolComparer()));

@@ -6,6 +6,8 @@ namespace BoilerplateGenerator.Contracts.RoslynWrappers
     {
         string Name { get; set; }
 
+        string Namespace { get; }
+
         bool? IsChecked { get; set; }
 
         bool IsPropertyChanging { get; set; }

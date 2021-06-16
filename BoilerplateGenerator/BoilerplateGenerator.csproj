@@ -60,6 +60,8 @@
     <Compile Include="Helpers\UsingTokens.cs" />
     <Compile Include="Models\ClassGeneratorModels\ApplicationModule\CommandsInputModels\UpdateRequestDomainEntityGeneratorModel.cs" />
     <Compile Include="Models\ClassGeneratorModels\ApplicationModule\CommandsInputModels\CreateRequestDomainEntityGeneratorModel.cs" />
+    <Compile Include="Models\ClassGeneratorModels\ApplicationModule\MediatorRequestsHandlersModels\GetPaginatedQueryHandlerGeneratorModel.cs" />
+    <Compile Include="Models\ClassGeneratorModels\ApplicationModule\MediatorRequestsModels\GetPaginatedQueryGeneratorModel.cs" />
     <Compile Include="Models\ClassGeneratorModels\ApplicationModule\ProfileMapperGeneratorModel.cs" />
     <Compile Include="Models\ClassGeneratorModels\ApplicationModule\MediatorRequestsHandlersModels\DeleteCommandHandlerGeneratorModel.cs" />
     <Compile Include="Models\ClassGeneratorModels\ApplicationModule\MediatorRequestsHandlersModels\UpdateCommandHandlerGeneratorModel.cs" />

@@ -21,7 +21,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
             _metadataGenerationService = metadataGenerationService;
         }
 
-        public override IEnumerable<string> Usings => new List<string>
+        public override IEnumerable<string> Usings => new string[]
         {
             UsingTokens.MediatR,
             UsingTokens.System,
@@ -30,6 +30,8 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
             UsingTokens.SystemThreadingTasks,
             UsingTokens.MicrosoftAspNetCoreHttp,
             UsingTokens.MicrosoftAspNetCoreMvc,
+            _viewModelBase.PaginationRequirements.PaginatedDataResponseInterface.Namespace,
+            _viewModelBase.PaginationRequirements.PaginatedDataQueryClass.Namespace,
         }.Union(_metadataGenerationService.AvailableNamespaces).Distinct().OrderBy(x => x);
 
         protected override IProjectWrapper TargetModule => _viewModelBase.SelectedControllersProject;
@@ -76,10 +78,34 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
                             new AttributeDefinitionModel($"{CommonTokens.HttpGet}"),
                             new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
                             {
-                                Values = new string[] { $"typeof(IEnumerable<{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]}>)", StatusCodeTokens.Status200OK }
+                                Values = new string[] { $"typeof({CommonTokens.IEnumerable}<{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]}>)", StatusCodeTokens.Status200OK }
                             }
                         },
                         Body = GetAllQueryBody
+                    },
+                    new MethodDefinitionModel
+                    {
+                        Name = $"{CommonTokens.GetPaginated}",
+                        Attributes = new List<AttributeDefinitionModel>
+                        {
+                            new AttributeDefinitionModel($"{CommonTokens.HttpGet}"),
+                            new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
+                            {
+                                Values = new string[]
+                                {
+                                    $"typeof({CommonTokens.IPaginatedDataResponse}<{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]}>)", StatusCodeTokens.Status200OK 
+                                }
+                            }
+                        },
+                        Parameters = new ParameterDefinitionModel[]
+                        {
+                            new ParameterDefinitionModel
+                            {
+                                ReturnType = _viewModelBase.PaginationRequirements.PaginatedDataQueryClass.Name,
+                                Name = _viewModelBase.PaginationRequirements.PaginatedDataQueryClass.Name.ToLowerCamelCase()
+                            }
+                        },
+                        Body = GetPaginatedQueryBody
                     },
                     new MethodDefinitionModel
                     {
@@ -202,6 +228,17 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
                 return new string[]
                 {
                     $"return Ok(await _mediator.Send(new {_metadataGenerationService.AssetToClassNameMapping[AssetKind.GetAllQuery]}()));"
+                };
+            }
+        }
+
+        private IEnumerable<string> GetPaginatedQueryBody
+        {
+            get
+            {
+                return new string[]
+                {
+                    $"return Ok(await _mediator.Send(new {_metadataGenerationService.AssetToClassNameMapping[AssetKind.GetPaginatedQuery]}({_viewModelBase.PaginationRequirements.PaginatedDataQueryClass.Name.ToLowerCamelCase()})));"
                 };
             }
         }

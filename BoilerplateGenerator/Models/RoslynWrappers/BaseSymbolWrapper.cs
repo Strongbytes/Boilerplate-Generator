@@ -9,6 +9,8 @@ namespace BoilerplateGenerator.Models.RoslynWrappers
     {
         public string Name { get; set; }
 
+        public string Namespace { get; }
+
         private bool? _isChecked;
         public bool? IsChecked
         {
@@ -41,6 +43,7 @@ namespace BoilerplateGenerator.Models.RoslynWrappers
         public BaseSymbolWrapper(T symbol)
         {
             Name = symbol?.Name;
+            Namespace = symbol?.ContainingNamespace.ToString();
             IsChecked = true;
             IsEnabled = true;
         }

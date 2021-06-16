@@ -9,17 +9,20 @@ namespace BoilerplateGenerator.Helpers
 {
     public static class TypeExtensions
     {
-        public static string ToTitleCase(this string text)
-        {
-            return CultureInfo.InvariantCulture.TextInfo.ToTitleCase(text);
-        }
-
         public static string ToLowerCamelCase(this string text)
         {
             if (string.IsNullOrEmpty(text) || char.IsLower(text[0]))
                 return text;
 
             return char.ToLower(text[0]) + text.Substring(1);
+        }
+
+        public static string ToUpperCamelCase(this string text)
+        {
+            if (string.IsNullOrEmpty(text) || char.IsUpper(text[0]))
+                return text;
+
+            return char.ToUpper(text[0]) + text.Substring(1);
         }
 
         public static void Sort<TSource, TKey>(this ObservableCollection<TSource> source, Func<TSource, TKey> keySelector)

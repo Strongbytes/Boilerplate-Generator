@@ -1,13 +1,10 @@
-﻿using BoilerplateGenerator.Collections;
-using BoilerplateGenerator.Contracts.Generators;
+﻿using BoilerplateGenerator.Contracts.Generators;
 using BoilerplateGenerator.Contracts.RoslynWrappers;
 using BoilerplateGenerator.Contracts.Services;
 using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Models.Enums;
-using BoilerplateGenerator.Models.RoslynWrappers;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using BoilerplateGenerator.ViewModels;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
@@ -28,7 +25,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
             _metadataGenerationService = metadataGenerationService;
         }
 
-        public virtual IEnumerable<string> Usings => new List<string> { UsingTokens.System };
+        public virtual IEnumerable<string> Usings => new string[] { UsingTokens.System };
 
         public string ClassNamespace => _metadataGenerationService.NamespaceByAssetKind(GeneratedClassKind);
 

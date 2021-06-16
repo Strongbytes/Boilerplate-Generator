@@ -24,7 +24,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule
 
         public override AssetKind GeneratedClassKind => AssetKind.ProfileMapper;
 
-        public override IEnumerable<string> Usings => new List<string>
+        public override IEnumerable<string> Usings => new string[]
         {
            UsingTokens.AutoMapper,
            _metadataGenerationService.NamespaceByAssetKind(AssetKind.ResponseDomainEntity),

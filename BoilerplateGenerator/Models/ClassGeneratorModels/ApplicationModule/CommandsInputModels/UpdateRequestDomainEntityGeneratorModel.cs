@@ -17,10 +17,10 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Com
 
         public override AssetKind GeneratedClassKind => AssetKind.UpdateRequestDomainEntity;
 
-        public override IEnumerable<string> Usings => new List<string>
+        public override IEnumerable<string> Usings => new string[]
         {
            UsingTokens.SystemComponentModelDataAnnotations,
-        }.Union(base.Usings).OrderBy(x => x);
+        }.Union(base.Usings).Distinct().OrderBy(x => x);
 
         public override IEnumerable<PropertyDefinitionModel> AvailableProperties => base.AvailableProperties.Where(x => !x.IsPrimaryKey);
     }

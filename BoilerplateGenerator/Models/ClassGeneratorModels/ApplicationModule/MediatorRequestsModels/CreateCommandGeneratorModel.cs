@@ -21,12 +21,12 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
 
         public override AssetKind GeneratedClassKind => AssetKind.CreateCommand;
 
-        public override IEnumerable<string> Usings => new List<string>
+        public override IEnumerable<string> Usings => new string[]
         {
            UsingTokens.MediatR,
            _metadataGenerationService.NamespaceByAssetKind(AssetKind.ResponseDomainEntity),
            _metadataGenerationService.NamespaceByAssetKind(AssetKind.CreateRequestDomainEntity),
-        }.Union(base.Usings).OrderBy(x => x);
+        }.Union(base.Usings).Distinct().OrderBy(x => x);
 
         public override IEnumerable<string> BaseTypes => new string[]
         {

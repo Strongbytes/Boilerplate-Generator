@@ -46,6 +46,9 @@
         IRequestHandler,
         Task,
         IEnumerable,
-        IRequest
+        IRequest,
+        GetPaginated,
+        IPaginatedDataResponse,
+        IPaginatedDataQuery
     }
 }

@@ -14,10 +14,10 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.DomainEntity
         {
         }
 
-        public override IEnumerable<string> Usings => new List<string>
+        public override IEnumerable<string> Usings => new string[]
         {
            UsingTokens.SystemComponentModelDataAnnotations,
-        }.Union(base.Usings).OrderBy(x => x);
+        }.Union(base.Usings).Distinct().OrderBy(x => x);
 
         public override AssetKind GeneratedClassKind => AssetKind.ResponseDomainEntity;
     }

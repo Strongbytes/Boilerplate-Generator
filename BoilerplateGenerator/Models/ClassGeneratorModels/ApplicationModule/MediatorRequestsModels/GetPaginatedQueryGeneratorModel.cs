@@ -9,42 +9,39 @@ using System.Linq;
 
 namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.MediatorRequestsModels
 {
-    public class UpdateCommandGeneratorModel : BaseGenericGeneratorModel
+    public class GetPaginatedQueryGeneratorModel : BaseGenericGeneratorModel
     {
+        private readonly IViewModelBase _viewModelBase;
         private readonly IMetadataGenerationService _metadataGenerationService;
 
-        public UpdateCommandGeneratorModel(IViewModelBase viewModelBase, IMetadataGenerationService metadataGenerationService)
+        public GetPaginatedQueryGeneratorModel(IViewModelBase viewModelBase, IMetadataGenerationService metadataGenerationService)
             : base(viewModelBase, metadataGenerationService)
         {
+            _viewModelBase = viewModelBase;
             _metadataGenerationService = metadataGenerationService;
         }
 
-        public override AssetKind GeneratedClassKind => AssetKind.UpdateCommand;
+        public override AssetKind GeneratedClassKind => AssetKind.GetPaginatedQuery;
 
         public override IEnumerable<string> Usings => new string[]
         {
            UsingTokens.MediatR,
+           _viewModelBase.PaginationRequirements.PaginatedDataResponseInterface.Namespace,
+           _viewModelBase.PaginationRequirements.PaginatedDataQueryInterface.Namespace,
            _metadataGenerationService.NamespaceByAssetKind(AssetKind.ResponseDomainEntity),
-           _metadataGenerationService.NamespaceByAssetKind(AssetKind.UpdateRequestDomainEntity),
         }.Union(base.Usings).Distinct().OrderBy(x => x);
 
         public override IEnumerable<string> BaseTypes => new string[]
         {
-            $"{CommonTokens.IRequest}<{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]}>"
+            $"{CommonTokens.IRequest}<{CommonTokens.IPaginatedDataResponse}<{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]}>>"
         };
 
         public override IEnumerable<PropertyDefinitionModel> AvailableProperties => new PropertyDefinitionModel[]
         {
             new PropertyDefinitionModel
             {
-                ReturnType = $"{_metadataGenerationService.AssetToClassNameMapping[AssetKind.UpdateRequestDomainEntity]}",
-                Name = $"{CommonTokens.Model}",
-                Modifiers = new SyntaxKind [] { SyntaxKind.InternalKeyword }
-            },
-            new PropertyDefinitionModel
-            {
-                ReturnType = $"{BaseEntityPrimaryKey.ReturnType}",
-                Name = $"{BaseEntityPrimaryKey.Name}",
+                ReturnType = _viewModelBase.PaginationRequirements.PaginatedDataQueryInterface.Name,
+                Name = _viewModelBase.PaginationRequirements.PaginatedDataQueryClass.Name,
                 Modifiers = new SyntaxKind [] { SyntaxKind.InternalKeyword }
             }
         };
@@ -53,16 +50,10 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
         {
             new ParameterDefinitionModel
             {
-                ReturnType = $"{BaseEntityPrimaryKey.ReturnType}",
-                Name = $"{BaseEntityPrimaryKey.Name.ToLowerCamelCase()}",
+                ReturnType = _viewModelBase.PaginationRequirements.PaginatedDataQueryInterface.Name,
+                Name = _viewModelBase.PaginationRequirements.PaginatedDataQueryClass.Name.ToLowerCamelCase(),
                 MapToClassProperty = true
             },
-            new ParameterDefinitionModel
-            {
-                ReturnType = $"{_metadataGenerationService.AssetToClassNameMapping[AssetKind.UpdateRequestDomainEntity]}",
-                Name = $"{nameof(CommonTokens.Model).ToLowerCamelCase()}",
-                MapToClassProperty = true
-            }
         };
     }
 }

@@ -27,6 +27,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
         {
             { AssetKind.GetAllQueryHandler, AssetKind.GetAllQuery },
             { AssetKind.GetByIdQueryHandler, AssetKind.GetByIdQuery },
+            { AssetKind.GetPaginatedQueryHandler, AssetKind.GetPaginatedQuery },
             { AssetKind.CreateCommandHandler, AssetKind.CreateCommand },
             { AssetKind.DeleteCommandHandler, AssetKind.DeleteCommand },
             { AssetKind.UpdateCommandHandler, AssetKind.UpdateCommand },
@@ -36,7 +37,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
 
         protected virtual string HandlerResponseType => $"{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]}";
 
-        public override IEnumerable<string> Usings => new List<string>
+        public override IEnumerable<string> Usings => new string[]
         {
            UsingTokens.AutoMapper,
            UsingTokens.MediatR,
@@ -45,7 +46,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
            UsingTokens.SystemCollectionsGeneric,
            _metadataGenerationService.NamespaceByAssetKind(AssetKind.ResponseDomainEntity),
            _metadataGenerationService.NamespaceByAssetKind(AssetKind.IUnitOfWork),
-        }.Union(base.Usings).OrderBy(x => x);
+        }.Union(base.Usings).Distinct().OrderBy(x => x);
 
         public override IEnumerable<string> BaseTypes => new string[]
         {
