@@ -10,4 +10,4 @@ dotnet_diagnostic.VSTHRD100.severity = none
 dotnet_diagnostic.S112.severity = silent
 
 # VSTHRD101: Avoid unsupported async delegates
-dotnet_diagnostic.VSTHRD101.severity = silent
+dotnet_diagnostic.VSTHRD101.severity = none

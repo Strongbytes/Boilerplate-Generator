@@ -1,6 +1,8 @@
 ﻿using BoilerplateGenerator.Collections;
 using BoilerplateGenerator.Contracts.RoslynWrappers;
 using BoilerplateGenerator.Contracts.Services;
+using BoilerplateGenerator.EqualityComparers;
+using BoilerplateGenerator.Models.Pagination;
 using BoilerplateGenerator.Models.RoslynWrappers;
 using EnvDTE;
 using EnvDTE80;
@@ -57,6 +59,39 @@ namespace BoilerplateGenerator.Services
             return from project in _visualStudioWorkspace.CurrentSolution.Projects
                    where !project.Name.Equals(_parentProjectName)
                    select new ProjectWrapper(project);
+        }
+
+        public async Task RetrievePaginationRequirements(IPaginationRequirements paginationRequirements)
+        {
+            INamedTypeSymbol[] availableTypes = (await Task.WhenAll
+            (
+                _visualStudioWorkspace.CurrentSolution.Projects
+                    .SelectMany(project => project.Documents)
+                    .Select(async document => new
+                    {
+                        Model = await document.GetSemanticModelAsync().ConfigureAwait(false),
+                        Declarations = (await document.GetSyntaxRootAsync().ConfigureAwait(false))?.DescendantNodes().OfType<TypeDeclarationSyntax>()
+                    }))
+            ).SelectMany(pair => pair.Declarations.Select(declaration => pair.Model.GetDeclaredSymbol(declaration) as INamedTypeSymbol))
+             .ToArray();
+
+            var iPaginatedDataQuery = availableTypes.Where(x => x.TypeKind == TypeKind.Interface)
+                                                    .FirstOrDefault(x => x.Name == "IPaginatedDataQuery");
+
+            var paginatedDataQuery = availableTypes.Where(x => x.TypeKind == TypeKind.Class)
+                                                   .FirstOrDefault(x => x.Interfaces.Contains(iPaginatedDataQuery, new NamedTypeSymbolComparer()));
+
+            var iPaginatedDataResponse = availableTypes.Where(x => x.TypeKind == TypeKind.Interface)
+                                                       .FirstOrDefault(x => x.Name == "IPaginatedDataResponse");
+
+            var paginatedDataResponse = availableTypes.Where(x => x.TypeKind == TypeKind.Class)
+                                                      .FirstOrDefault(x => x.Interfaces.Contains(iPaginatedDataResponse, new NamedTypeSymbolComparer()));
+
+            paginationRequirements.PaginatedDataQueryInterface = new EntityInterfaceWrapper(iPaginatedDataQuery);
+            paginationRequirements.PaginatedDataQueryClass = new EntityClassWrapper(paginatedDataQuery);
+            paginationRequirements.PaginatedDataResponseInterface = new EntityInterfaceWrapper(iPaginatedDataResponse);
+            paginationRequirements.PaginatedDataResponseClass = new EntityClassWrapper(paginatedDataResponse);
+            paginationRequirements.LoadComplete();
         }
 
         public async Task<ISolutionWrapper> RetrieveSolution()

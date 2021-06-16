@@ -48,7 +48,9 @@
   <ItemGroup>
     <Compile Include="Collections\EntityHierarchyTreeNode.cs" />
     <Compile Include="Controls\BindableTextEditor.cs" />
+    <Compile Include="Converters\NullBooleanToBooleanConverter.cs" />
     <Compile Include="Converters\InverseBooleanConverter.cs" />
+    <Compile Include="EqualityComparers\NamedTypeSymbolComparer.cs" />
     <Compile Include="EqualityComparers\StatementSyntaxComparer.cs" />
     <Compile Include="EqualityComparers\ParameterDefinitionModelComparer.cs" />
     <Compile Include="Helpers\EntityWrapperTreeExtensions.cs" />
@@ -76,6 +78,9 @@
     <Compile Include="Contracts\RoslynWrappers\ISolutionWrapper.cs" />
     <Compile Include="Models\Enums\MemberConflictResolutionKind.cs" />
     <Compile Include="Models\Enums\NamespaceTokens.cs" />
+    <Compile Include="Models\Pagination\IPaginationRequirements.cs" />
+    <Compile Include="Models\Pagination\PaginationRequirements.cs" />
+    <Compile Include="Models\RoslynWrappers\EntityInterfaceWrapper.cs" />
     <Compile Include="Models\RoslynWrappers\SolutionWrapper.cs" />
     <Compile Include="Models\TreeView\GeneratedDirectory.cs" />
     <Compile Include="Models\TreeView\GeneratedClass.cs" />

@@ -23,7 +23,7 @@ namespace BoilerplateGenerator.Controls
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
             Loaded -= OnLoaded;
-            await _viewModelBase.PopulateSolutionProjects();
+            await _viewModelBase.PopulateUiData();
         }
     }
 }

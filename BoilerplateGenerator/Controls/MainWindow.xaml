@@ -27,474 +27,466 @@
 
         <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
 
+        <converters:NullBooleanToBooleanConverter x:Key="NullBooleanToBooleanConverter" />
+
         <templates:EntityViewTemplateSelector x:Key="EntityViewTemplateSelector" />
 
         <templates:DirectoryViewTemplateSelector x:Key="DirectoryViewTemplateSelector" />
     </Window.Resources>
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
-        <Grid Height="50">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
             <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"
+                                   MinHeight="34" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-                <Label Content="Selected File"
-                       Target="{Binding ElementName=TextEntity}"
+                <Separator VerticalAlignment="Top"
+                           Margin="0" />
+
+                <Label Content="Entity Hierarchy"
+                       TextBlock.FontWeight="Bold"
+                       Target="{Binding ElementName=TreeEntity}"
                        VerticalContentAlignment="Center"
-                       HorizontalContentAlignment="Center" />
+                       VerticalAlignment="Stretch"
+                       HorizontalContentAlignment="Left" />
 
-                <TextBox x:Name="TextEntity"
-                         Grid.Column="1"
-                         VerticalAlignment="Center"
-                         Margin="10,1,0,0"
-                         IsReadOnly="True"
-                         Text="{Binding ReferencedEntityName}"
-                         Padding="0,3" />
+                <Button Grid.Column="1"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Right"
+                        Margin="5"
+                        Content="Regenerate Hierarchy"
+                        Command="{Binding ViewEntityHierarchyCommand}"
+                        Padding="5,3" />
+
+                <TreeView x:Name="TreeEntity"
+                          Grid.Row="1"
+                          BorderBrush="Transparent"
+                          ItemsSource="{Binding EntityTree}"
+                          ItemTemplateSelector="{StaticResource EntityViewTemplateSelector}">
+                    <TreeView.ItemContainerStyle>
+                        <Style TargetType="{x:Type TreeViewItem}">
+                            <Setter Property="IsExpanded"
+                                    Value="True" />
+                            <Setter Property="IsEnabled"
+                                    Value="{Binding Current.IsEnabled}" />
+                            <Setter Property="IsHitTestVisible"
+                                    Value="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                            <Setter Property="IsTabStop"
+                                    Value="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                        </Style>
+                    </TreeView.ItemContainerStyle>
+                    <TreeView.Resources>
+                        <HierarchicalDataTemplate x:Key="ClassSelector"
+                                                  ItemsSource="{Binding Path=Children}">
+                            <CheckBox IsChecked="{Binding Current.IsChecked, Mode=TwoWay}"
+                                      Content="{Binding Current.Name}" />
+                        </HierarchicalDataTemplate>
+                        <DataTemplate x:Key="PropertySelector">
+                            <CheckBox IsChecked="{Binding Current.IsChecked, Mode=TwoWay}">
+                                <CheckBox.Content>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock>
+                                                <Run Text="{Binding Current.Name}" /><Run Text=" (Type: " /><Run Text="{Binding Current.Type}" /><Run Text=")" />
+                                        </TextBlock>
+                                        <TextBlock Text=" [Primary Key]"
+                                                   FontWeight="Bold"
+                                                   Visibility="{Binding Current.IsPrimaryKey, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}" />
+                                        <TextBlock Text=" [Required]"
+                                                   FontWeight="Bold"
+                                                   Visibility="{Binding Current.IsRequired, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}" />
+                                    </StackPanel>
+                                </CheckBox.Content>
+                            </CheckBox>
+                        </DataTemplate>
+                    </TreeView.Resources>
+                </TreeView>
             </Grid>
 
-            <Button Grid.Column="1"
-                    VerticalAlignment="Center"
-                    Margin="10,0"
-                    Content="View Entity Hierarchy"
-                    Command="{Binding ViewEntityHierarchyCommand}"
-                    Padding="1,3" />
+            <StackPanel Grid.Row="1"
+                        Orientation="Vertical"
+                        Background="#FFEEF5FD">
+                <Separator VerticalAlignment="Top"
+                           Margin="0" />
+
+                <StackPanel Orientation="Vertical"
+                            Margin="0,0,0,10">
+                    <Label Content="Target Module"
+                           Target="{Binding ElementName=ComboTargetModule}"
+                           VerticalContentAlignment="Center"
+                           HorizontalContentAlignment="Left" />
+
+                    <ComboBox x:Name="ComboTargetModule"
+                              Margin="5,0"
+                              ItemsSource="{Binding AvailableModules}"
+                              SelectedItem="{Binding SelectedTargetModuleProject, Mode=TwoWay}"
+                              Grid.Row="1">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+
+                <Separator VerticalAlignment="Top"
+                           Margin="0" />
+
+                <StackPanel Orientation="Vertical"
+                            Margin="0,0,0,10">
+                    <Label Content="Controller Location"
+                           Target="{Binding ElementName=ComboApplicationEntrypoint}"
+                           VerticalContentAlignment="Center"
+                           HorizontalContentAlignment="Left" />
+
+                    <ComboBox x:Name="ComboApplicationEntrypoint"
+                              Margin="5,0"
+                              ItemsSource="{Binding AvailableModules}"
+                              SelectedItem="{Binding SelectedControllersProject, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+
+                <Separator VerticalAlignment="Top"
+                           Margin="0" />
+
+                <CheckBox Content="Use Unit of Work"
+                          Margin="5,10"
+                          IsChecked="{Binding UseUnitOfWork, Mode=TwoWay}"
+                          VerticalContentAlignment="Center"
+                          HorizontalContentAlignment="Left">
+                    <CheckBox.ToolTip>
+                        <ToolTip Content="Enabling this option all CQRS Handlers will reference IUnitOfWork from the same Target Module" />
+                    </CheckBox.ToolTip>
+                </CheckBox>
+
+                <Separator VerticalAlignment="Top"
+                           Margin="0" />
+
+                <Grid x:Name="GridOperations"
+                      Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Margin="5,0">
+                        <Label Content="Queries"
+                               Padding="0,5"
+                               VerticalContentAlignment="Center"
+                               HorizontalContentAlignment="Left" />
+
+                        <CheckBox Content="GetAll"
+                                  VerticalContentAlignment="Center"
+                                  IsChecked="{Binding GetAllQueryIsEnabled, Mode=TwoWay}" />
+
+                        <CheckBox Grid.Column="1"
+                                  Content="GetById"
+                                  VerticalContentAlignment="Center"
+                                  IsChecked="{Binding GetByIdQueryIsEnabled, Mode=TwoWay}" />
+
+                        <CheckBox Grid.Column="1"
+                                  Content="GetPaginated"
+                                  VerticalContentAlignment="Center"
+                                  IsEnabled="{Binding PaginationRequirements.PaginationIsAvailable, Converter={StaticResource NullBooleanToBooleanConverter}}"
+                                  IsChecked="{Binding GetPaginatedQueryIsEnabled, Mode=TwoWay}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1"
+                                Margin="5,0">
+                        <Label Content="Commands"
+                               Padding="0,5"
+                               VerticalContentAlignment="Center"
+                               HorizontalContentAlignment="Left" />
+
+                        <CheckBox Grid.Column="2"
+                                  Content="Create"
+                                  VerticalContentAlignment="Center"
+                                  IsChecked="{Binding CreateCommandIsEnabled, Mode=TwoWay}" />
+
+                        <CheckBox Grid.Column="3"
+                                  Content="Update"
+                                  VerticalContentAlignment="Center"
+                                  IsChecked="{Binding UpdateCommandIsEnabled, Mode=TwoWay}" />
+
+                        <CheckBox Grid.Column="4"
+                                  Content="Delete"
+                                  VerticalContentAlignment="Center"
+                                  IsChecked="{Binding DeleteCommandIsEnabled, Mode=TwoWay}" />
+                    </StackPanel>
+                </Grid>
+
+                <Separator VerticalAlignment="Top"
+                           Margin="0" />
+
+                <Button Content="Generate Code"
+                        IsEnabled="{Binding GenerateCodeCommandIsEnabled}"
+                        Margin="5,10"
+                        Command="{Binding GenerateCodeCommand}"
+                        Padding="1,3" />
+            </StackPanel>
         </Grid>
 
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="5" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="5" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+        <GridSplitter Grid.Column="1"
+                      ResizeDirection="Columns"
+                      HorizontalAlignment="Stretch" />
+
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
             <Grid>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"
+                                   MinHeight="34" />
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
+                <Separator VerticalAlignment="Top"
+                           Margin="0" />
 
-                    <Separator VerticalAlignment="Top"
-                               Margin="0" />
+                <Label Content="Directory Structure"
+                       TextBlock.FontWeight="Bold"
+                       Target="{Binding ElementName=TreeDirectory}"
+                       VerticalContentAlignment="Center"
+                       HorizontalContentAlignment="Left" />
 
-                    <Label Content="Entity Hierarchy"
-                           TextBlock.FontWeight="Bold"
-                           Target="{Binding ElementName=TreeEntity}"
-                           VerticalContentAlignment="Center"
-                           HorizontalContentAlignment="Left" />
+                <TreeView x:Name="TreeDirectory"
+                          Grid.Row="1"
+                          BorderBrush="Transparent"
+                          ItemsSource="{Binding DirectoriesTree}"
+                          ItemTemplateSelector="{StaticResource DirectoryViewTemplateSelector}">
+                    <TreeView.ItemContainerStyle>
+                        <Style TargetType="{x:Type TreeViewItem}">
+                            <Setter Property="IsExpanded"
+                                    Value="True" />
+                        </Style>
+                    </TreeView.ItemContainerStyle>
+                    <TreeView.Resources>
+                        <HierarchicalDataTemplate x:Key="DirectorySelector"
+                                                  ItemsSource="{Binding Path=Children}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
 
-                    <TreeView x:Name="TreeEntity"
-                              Grid.Row="1"
-                              BorderBrush="Transparent"
-                              ItemsSource="{Binding EntityTree}"
-                              ItemTemplateSelector="{StaticResource EntityViewTemplateSelector}">
-                        <TreeView.ItemContainerStyle>
-                            <Style TargetType="{x:Type TreeViewItem}">
-                                <Setter Property="IsExpanded"
-                                        Value="True" />
-                                <Setter Property="IsEnabled"
-                                        Value="{Binding Current.IsEnabled}" />
-                                <Setter Property="IsHitTestVisible"
-                                        Value="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
-                                <Setter Property="IsTabStop"
-                                        Value="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
-                            </Style>
-                        </TreeView.ItemContainerStyle>
-                        <TreeView.Resources>
-                            <HierarchicalDataTemplate x:Key="ClassSelector"
-                                                      ItemsSource="{Binding Path=Children}">
-                                <CheckBox IsChecked="{Binding Current.IsChecked, Mode=TwoWay}"
-                                          Content="{Binding Current.Name}" />
-                            </HierarchicalDataTemplate>
-                            <DataTemplate x:Key="PropertySelector">
-                                <CheckBox IsChecked="{Binding Current.IsChecked, Mode=TwoWay}">
-                                    <CheckBox.Content>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock>
-                                                <Run Text="{Binding Current.Name}" /><Run Text=" (Type: " /><Run Text="{Binding Current.Type}" /><Run Text=")" />
-                                            </TextBlock>
-                                            <TextBlock Text=" [Primary Key]"
-                                                       FontWeight="Bold"
-                                                       Visibility="{Binding Current.IsPrimaryKey, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}" />
-                                            <TextBlock Text=" [Required]"
-                                                       FontWeight="Bold"
-                                                       Visibility="{Binding Current.IsRequired, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}" />
-                                        </StackPanel>
-                                    </CheckBox.Content>
-                                </CheckBox>
-                            </DataTemplate>
-                        </TreeView.Resources>
-                    </TreeView>
-                </Grid>
+                                <imaging:CrispImage Width="16"
+                                                    Height="16"
+                                                    Moniker="{x:Static catalog:KnownMonikers.FolderOpened}" />
+                                <TextBlock Grid.Column="1"
+                                           Padding="4,2"
+                                           Text="{Binding Current.AssetName}"
+                                           VerticalAlignment="Center" />
+                            </Grid>
+                        </HierarchicalDataTemplate>
+                        <DataTemplate x:Key="FileSelector">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Row="1"
-                            Orientation="Vertical"
-                            Background="#FFEEF5FD">
-                    <Separator VerticalAlignment="Top"
-                               Margin="0" />
+                                <imaging:CrispImage Width="16"
+                                                    Height="16"
+                                                    Visibility="{Binding Current.FileExistsInProject, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                    Moniker="{x:Static catalog:KnownMonikers.DocumentWarning}">
+                                    <imaging:CrispImage.ToolTip>
+                                        <ToolTip Content="File already exists in the selected project." />
+                                    </imaging:CrispImage.ToolTip>
+                                </imaging:CrispImage>
 
-                    <StackPanel Orientation="Vertical"
-                                Margin="0,0,0,10">
-                        <Label Content="Target Module"
-                               Target="{Binding ElementName=ComboTargetModule}"
-                               VerticalContentAlignment="Center"
-                               HorizontalContentAlignment="Left" />
+                                <imaging:CrispImage Width="16"
+                                                    Height="16"
+                                                    Margin="-5,-2,0,0"
+                                                    IsEnabled="False"
+                                                    IsHitTestVisible="False"
+                                                    Visibility="{Binding Current.FileExistsInProject, Converter={StaticResource BoolToInverseVisibilityConverter}}"
+                                                    Moniker="{x:Static catalog:KnownMonikers.Document}" />
 
-                        <ComboBox x:Name="ComboTargetModule"
-                                  Margin="5,0"
-                                  ItemsSource="{Binding AvailableModules}"
-                                  SelectedItem="{Binding SelectedTargetModuleProject, Mode=TwoWay}"
-                                  Grid.Row="1">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Name}" />
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                    </StackPanel>
+                                <imaging:CrispImage Width="16"
+                                                    Height="16"
+                                                    IsEnabled="False"
+                                                    IsHitTestVisible="False"
+                                                    Moniker="{x:Static catalog:KnownMonikers.CSFileNode}" />
 
-                    <Separator VerticalAlignment="Top"
-                               Margin="0" />
-
-                    <StackPanel Orientation="Vertical"
-                                Margin="0,0,0,10">
-                        <Label Content="Controller Location"
-                               Target="{Binding ElementName=ComboApplicationEntrypoint}"
-                               VerticalContentAlignment="Center"
-                               HorizontalContentAlignment="Left" />
-
-                        <ComboBox x:Name="ComboApplicationEntrypoint"
-                                  Margin="5,0"
-                                  ItemsSource="{Binding AvailableModules}"
-                                  SelectedItem="{Binding SelectedControllersProject, Mode=TwoWay}">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Name}" />
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                    </StackPanel>
-
-                    <Separator VerticalAlignment="Top"
-                               Margin="0" />
-
-                    <CheckBox Content="Use Unit of Work"
-                              Margin="5,10"
-                              IsChecked="{Binding UseUnitOfWork, Mode=TwoWay}"
-                              VerticalContentAlignment="Center"
-                              HorizontalContentAlignment="Left">
-                        <CheckBox.ToolTip>
-                            <ToolTip Content="Enabling this option all CQRS Handlers will reference IUnitOfWork from the same Target Module" />
-                        </CheckBox.ToolTip>
-                    </CheckBox>
-
-                    <Separator VerticalAlignment="Top"
-                               Margin="0" />
-
-                    <StackPanel Margin="0,0,0,10">
-                        <Label Content="Operations"
-                               Target="{Binding ElementName=GridOperations}"
-                               VerticalContentAlignment="Center"
-                               HorizontalContentAlignment="Left" />
-
-                        <Grid x:Name="GridOperations"
-                              Margin="5,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-
-                            <CheckBox Content="GET"
-                                      IsChecked="{Binding GetCommandEnabled, Mode=TwoWay}" />
-
-                            <CheckBox Grid.Column="1"
-                                      Content="POST"
-                                      IsChecked="{Binding PostCommandEnabled, Mode=TwoWay}" />
-
-                            <CheckBox Grid.Column="2"
-                                      Content="PUT"
-                                      IsChecked="{Binding PutCommandEnabled, Mode=TwoWay}" />
-
-                            <CheckBox Grid.Column="3"
-                                      Content="DELETE"
-                                      IsChecked="{Binding DeleteCommandEnabled, Mode=TwoWay}" />
-                        </Grid>
-                    </StackPanel>
-
-                    <Separator VerticalAlignment="Top"
-                               Margin="0" />
-
-                    <Button Content="Generate Code"
-                            IsEnabled="{Binding GenerateCodeCommandIsEnabled}"
-                            Margin="5,10"
-                            Command="{Binding GenerateCodeCommand}"
-                            Padding="1,3" />
-                </StackPanel>
+                                <TextBlock Grid.Column="2"
+                                           Padding="4,2"
+                                           Text="{Binding Current.AssetName}"
+                                           VerticalAlignment="Center" />
+                            </Grid>
+                        </DataTemplate>
+                    </TreeView.Resources>
+                </TreeView>
             </Grid>
 
-            <GridSplitter Grid.Column="1"
-                          ResizeDirection="Columns"
-                          HorizontalAlignment="Stretch" />
+            <Button Content="Export Files to Solution"
+                    Grid.Row="1"
+                    Margin="5,10"
+                    Command="{Binding ExportGeneratedFilesCommand}"
+                    CommandParameter="{Binding ElementName=PrimaryWindow}"
+                    Padding="1,3">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding DirectoriesTree.Count}"
+                                         Value="0">
+                                <Setter Property="IsEnabled"
+                                        Value="False" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </Grid>
 
-            <Grid Grid.Column="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
+        <GridSplitter Grid.Column="3"
+                      ResizeDirection="Columns"
+                      HorizontalAlignment="Stretch" />
 
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-
-                    <Separator VerticalAlignment="Top"
-                               Margin="0" />
-
-                    <Label Content="Directory Structure"
-                           TextBlock.FontWeight="Bold"
-                           Target="{Binding ElementName=TreeDirectory}"
-                           VerticalContentAlignment="Center"
-                           HorizontalContentAlignment="Left" />
-
-                    <TreeView x:Name="TreeDirectory"
-                              Grid.Row="1"
-                              BorderBrush="Transparent"
-                              ItemsSource="{Binding DirectoriesTree}"
-                              ItemTemplateSelector="{StaticResource DirectoryViewTemplateSelector}">
-                        <TreeView.ItemContainerStyle>
-                            <Style TargetType="{x:Type TreeViewItem}">
-                                <Setter Property="IsExpanded"
-                                        Value="True" />
-                            </Style>
-                        </TreeView.ItemContainerStyle>
-                        <TreeView.Resources>
-                            <HierarchicalDataTemplate x:Key="DirectorySelector"
-                                                      ItemsSource="{Binding Path=Children}">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <imaging:CrispImage Width="16"
-                                                        Height="16"
-                                                        Moniker="{x:Static catalog:KnownMonikers.FolderOpened}" />
-                                    <TextBlock Grid.Column="1"
-                                               Padding="4,2"
-                                               Text="{Binding Current.AssetName}"
-                                               VerticalAlignment="Center" />
-                                </Grid>
-                            </HierarchicalDataTemplate>
-                            <DataTemplate x:Key="FileSelector">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <imaging:CrispImage Width="16"
-                                                        Height="16"
-                                                        Visibility="{Binding Current.FileExistsInProject, Converter={StaticResource BoolToVisibilityConverter}}"
-                                                        Moniker="{x:Static catalog:KnownMonikers.DocumentWarning}">
-                                        <imaging:CrispImage.ToolTip>
-                                            <ToolTip Content="File already exists in the selected project." />
-                                        </imaging:CrispImage.ToolTip>
-                                    </imaging:CrispImage>
-
-                                    <imaging:CrispImage Width="16"
-                                                        Height="16"
-                                                        Margin="-5,-2,0,0"
-                                                        IsEnabled="False"
-                                                        IsHitTestVisible="False"
-                                                        Visibility="{Binding Current.FileExistsInProject, Converter={StaticResource BoolToInverseVisibilityConverter}}"
-                                                        Moniker="{x:Static catalog:KnownMonikers.Document}" />
-
-                                    <imaging:CrispImage Width="16"
-                                                        Height="16"
-                                                        IsEnabled="False"
-                                                        IsHitTestVisible="False"
-                                                        Moniker="{x:Static catalog:KnownMonikers.CSFileNode}" />
-
-                                    <TextBlock Grid.Column="2"
-                                               Padding="4,2"
-                                               Text="{Binding Current.AssetName}"
-                                               VerticalAlignment="Center" />
-                                </Grid>
-                            </DataTemplate>
-                        </TreeView.Resources>
-                    </TreeView>
-                </Grid>
-
-                <Button Content="Export Files to Solution"
-                        Grid.Row="1"
-                        Margin="5,10"
-                        Command="{Binding ExportGeneratedFilesCommand}"
-                        CommandParameter="{Binding ElementName=PrimaryWindow}"
-                        Padding="1,3">
-                    <Button.Style>
-                        <Style TargetType="Button">
+        <Grid Grid.Column="4">
+            <DockPanel>
+                <ToolBar x:Name="EditorToolBar"
+                         DockPanel.Dock="Top">
+                    <ToolBar.Resources>
+                        <Style TargetType="{x:Type imaging:CrispImage}">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding DirectoriesTree.Count}"
-                                             Value="0">
-                                    <Setter Property="IsEnabled"
-                                            Value="False" />
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type ButtonBase}, AncestorLevel=1}, Path=IsEnabled}"
+                                             Value="False">
+                                    <Setter Property="Opacity"
+                                            Value="0.30" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
-                    </Button.Style>
-                </Button>
-            </Grid>
-
-            <GridSplitter Grid.Column="3"
-                          ResizeDirection="Columns"
-                          HorizontalAlignment="Stretch" />
-
-            <Grid Grid.Column="4">
-                <DockPanel>
-                    <ToolBar x:Name="EditorToolBar"
-                             DockPanel.Dock="Top">
-                        <ToolBar.Resources>
-                            <Style TargetType="{x:Type imaging:CrispImage}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type ButtonBase}, AncestorLevel=1}, Path=IsEnabled}"
-                                                 Value="False">
-                                        <Setter Property="Opacity"
-                                                Value="0.30" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ToolBar.Resources>
-                        <Button Command="Cut">
-                            <imaging:CrispImage Width="16"
-                                                Height="16"
-                                                Moniker="{x:Static catalog:KnownMonikers.Cut}">
-                                <imaging:CrispImage.ToolTip>
-                                    <ToolTip Content="Cut (Ctrl+X)" />
-                                </imaging:CrispImage.ToolTip>
-                            </imaging:CrispImage>
-                        </Button>
-                        <Button Command="Copy">
-                            <imaging:CrispImage Width="16"
-                                                Height="16"
-                                                Moniker="{x:Static catalog:KnownMonikers.Copy}">
-                                <imaging:CrispImage.ToolTip>
-                                    <ToolTip Content="Copy (Ctrl+C)" />
-                                </imaging:CrispImage.ToolTip>
-                            </imaging:CrispImage>
-                        </Button>
-                        <Button Command="Paste">
-                            <imaging:CrispImage Width="16"
-                                                Height="16"
-                                                Moniker="{x:Static catalog:KnownMonikers.Paste}">
-                                <imaging:CrispImage.ToolTip>
-                                    <ToolTip Content="Paste (Ctrl+V)" />
-                                </imaging:CrispImage.ToolTip>
-                            </imaging:CrispImage>
-                        </Button>
-                        <Button Command="Delete">
-                            <imaging:CrispImage Width="16"
-                                                Height="16"
-                                                Moniker="{x:Static catalog:KnownMonikers.TestCoveredFailing}">
-                                <imaging:CrispImage.ToolTip>
-                                    <ToolTip Content="Delete (Del)" />
-                                </imaging:CrispImage.ToolTip>
-                            </imaging:CrispImage>
-                        </Button>
-                        <Separator />
-                        <Button Command="Undo">
-                            <imaging:CrispImage Width="16"
-                                                Height="16"
-                                                Moniker="{x:Static catalog:KnownMonikers.Undo}">
-                                <imaging:CrispImage.ToolTip>
-                                    <ToolTip Content="Undo (Ctrl+Z)" />
-                                </imaging:CrispImage.ToolTip>
-                            </imaging:CrispImage>
-                        </Button>
-                        <Button Command="Redo">
-                            <imaging:CrispImage Width="16"
-                                                Height="16"
-                                                Moniker="{x:Static catalog:KnownMonikers.Redo}">
-                                <imaging:CrispImage.ToolTip>
-                                    <ToolTip Content="Redo (Ctrl+Y)" />
-                                </imaging:CrispImage.ToolTip>
-                            </imaging:CrispImage>
-                        </Button>
-                        <Separator />
-                        <CheckBox IsChecked="{Binding ElementName=SyntaxHighliter, Path=WordWrap}">
-                            <imaging:CrispImage Width="16"
-                                                Height="16"
-                                                Moniker="{x:Static catalog:KnownMonikers.WordWrap}" />
-                            <CheckBox.ToolTip>
-                                <ToolTip Content="Word Wrap" />
-                            </CheckBox.ToolTip>
-                        </CheckBox>
-                        <CheckBox IsChecked="{Binding ElementName=SyntaxHighliter, Path=ShowLineNumbers}">
-                            <imaging:CrispImage Width="16"
-                                                Height="16"
-                                                Moniker="{x:Static catalog:KnownMonikers.ThisLine}" />
-                            <CheckBox.ToolTip>
-                                <ToolTip Content="Toggle Line Numbers Visibility" />
-                            </CheckBox.ToolTip>
-                        </CheckBox>
-                        <CheckBox IsChecked="{Binding ElementName=SyntaxHighliter, Path=Options.ShowEndOfLine}">
-                            <imaging:CrispImage Width="16"
-                                                Height="16"
-                                                Moniker="{x:Static catalog:KnownMonikers.DocumentOutline}" />
-                            <CheckBox.ToolTip>
-                                <ToolTip Content="Toggle End Of Line Visibility" />
-                            </CheckBox.ToolTip>
-                        </CheckBox>
-                    </ToolBar>
-                    <controls:BindableTextEditor x:Name="SyntaxHighliter"
-                                                 Text="{Binding ElementName=TreeDirectory, Path=SelectedItem.Current.Code}"
-                                                 WordWrap="True"
-                                                 ShowLineNumbers="True"
-                                                 FontFamily="Consolas"
-                                                 SyntaxHighlighting="C#">
-                        <!--<i:Interaction.Triggers>
+                    </ToolBar.Resources>
+                    <Button Command="Cut">
+                        <imaging:CrispImage Width="16"
+                                            Height="16"
+                                            Moniker="{x:Static catalog:KnownMonikers.Cut}">
+                            <imaging:CrispImage.ToolTip>
+                                <ToolTip Content="Cut (Ctrl+X)" />
+                            </imaging:CrispImage.ToolTip>
+                        </imaging:CrispImage>
+                    </Button>
+                    <Button Command="Copy">
+                        <imaging:CrispImage Width="16"
+                                            Height="16"
+                                            Moniker="{x:Static catalog:KnownMonikers.Copy}">
+                            <imaging:CrispImage.ToolTip>
+                                <ToolTip Content="Copy (Ctrl+C)" />
+                            </imaging:CrispImage.ToolTip>
+                        </imaging:CrispImage>
+                    </Button>
+                    <Button Command="Paste">
+                        <imaging:CrispImage Width="16"
+                                            Height="16"
+                                            Moniker="{x:Static catalog:KnownMonikers.Paste}">
+                            <imaging:CrispImage.ToolTip>
+                                <ToolTip Content="Paste (Ctrl+V)" />
+                            </imaging:CrispImage.ToolTip>
+                        </imaging:CrispImage>
+                    </Button>
+                    <Button Command="Delete">
+                        <imaging:CrispImage Width="16"
+                                            Height="16"
+                                            Moniker="{x:Static catalog:KnownMonikers.TestCoveredFailing}">
+                            <imaging:CrispImage.ToolTip>
+                                <ToolTip Content="Delete (Del)" />
+                            </imaging:CrispImage.ToolTip>
+                        </imaging:CrispImage>
+                    </Button>
+                    <Separator />
+                    <Button Command="Undo">
+                        <imaging:CrispImage Width="16"
+                                            Height="16"
+                                            Moniker="{x:Static catalog:KnownMonikers.Undo}">
+                            <imaging:CrispImage.ToolTip>
+                                <ToolTip Content="Undo (Ctrl+Z)" />
+                            </imaging:CrispImage.ToolTip>
+                        </imaging:CrispImage>
+                    </Button>
+                    <Button Command="Redo">
+                        <imaging:CrispImage Width="16"
+                                            Height="16"
+                                            Moniker="{x:Static catalog:KnownMonikers.Redo}">
+                            <imaging:CrispImage.ToolTip>
+                                <ToolTip Content="Redo (Ctrl+Y)" />
+                            </imaging:CrispImage.ToolTip>
+                        </imaging:CrispImage>
+                    </Button>
+                    <Separator />
+                    <CheckBox IsChecked="{Binding ElementName=SyntaxHighliter, Path=WordWrap}">
+                        <imaging:CrispImage Width="16"
+                                            Height="16"
+                                            Moniker="{x:Static catalog:KnownMonikers.WordWrap}" />
+                        <CheckBox.ToolTip>
+                            <ToolTip Content="Word Wrap" />
+                        </CheckBox.ToolTip>
+                    </CheckBox>
+                    <CheckBox IsChecked="{Binding ElementName=SyntaxHighliter, Path=ShowLineNumbers}">
+                        <imaging:CrispImage Width="16"
+                                            Height="16"
+                                            Moniker="{x:Static catalog:KnownMonikers.ThisLine}" />
+                        <CheckBox.ToolTip>
+                            <ToolTip Content="Toggle Line Numbers Visibility" />
+                        </CheckBox.ToolTip>
+                    </CheckBox>
+                    <CheckBox IsChecked="{Binding ElementName=SyntaxHighliter, Path=Options.ShowEndOfLine}">
+                        <imaging:CrispImage Width="16"
+                                            Height="16"
+                                            Moniker="{x:Static catalog:KnownMonikers.DocumentOutline}" />
+                        <CheckBox.ToolTip>
+                            <ToolTip Content="Toggle End Of Line Visibility" />
+                        </CheckBox.ToolTip>
+                    </CheckBox>
+                </ToolBar>
+                <controls:BindableTextEditor x:Name="SyntaxHighliter"
+                                             Text="{Binding ElementName=TreeDirectory, Path=SelectedItem.Current.Code}"
+                                             WordWrap="True"
+                                             ShowLineNumbers="True"
+                                             FontFamily="Consolas"
+                                             SyntaxHighlighting="C#">
+                    <!--<i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectedItemChanged">
                                 <i:InvokeCommandAction x:Name="SelectionCommand"
                                                        Command="{Binding ShowCodeFileOnItemSelected}"
                                                        CommandParameter="{Binding ElementName=TreeDirectory, Path=SelectedItem}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>-->
-                        <avalonEdit:TextEditor.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Command="Cut" />
-                                <MenuItem Command="Copy" />
-                                <MenuItem Command="Paste" />
-                                <MenuItem Command="Delete" />
-                                <Separator />
-                                <MenuItem Command="Undo" />
-                                <MenuItem Command="Redo" />
-                            </ContextMenu>
-                        </avalonEdit:TextEditor.ContextMenu>
-                    </controls:BindableTextEditor>
-                </DockPanel>
-            </Grid>
-
+                    <avalonEdit:TextEditor.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Command="Cut" />
+                            <MenuItem Command="Copy" />
+                            <MenuItem Command="Paste" />
+                            <MenuItem Command="Delete" />
+                            <Separator />
+                            <MenuItem Command="Undo" />
+                            <MenuItem Command="Redo" />
+                        </ContextMenu>
+                    </avalonEdit:TextEditor.ContextMenu>
+                </controls:BindableTextEditor>
+            </DockPanel>
         </Grid>
     </Grid>
 </Window>

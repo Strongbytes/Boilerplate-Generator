@@ -3,6 +3,7 @@ using BoilerplateGenerator.Contracts.Generators;
 using BoilerplateGenerator.Contracts.RoslynWrappers;
 using BoilerplateGenerator.Contracts.Services;
 using BoilerplateGenerator.Helpers;
+using BoilerplateGenerator.Models.Pagination;
 using BoilerplateGenerator.Models.TreeView;
 using BoilerplateGenerator.Services;
 using Microsoft.VisualStudio.Shell;
@@ -28,68 +29,137 @@ namespace BoilerplateGenerator.ViewModels
         }
 
         #region Properties
-        private bool _getCommandEnabled = true;
-        public bool GetCommandEnabled
+
+        #region CQRS Dependencies
+        private bool _getAllQueryIsEnabled = true;
+        public bool GetAllQueryIsEnabled
         {
             get
             {
-                return _getCommandEnabled;
+                return _getAllQueryIsEnabled;
             }
 
             set
             {
-                if (value == _getCommandEnabled)
+                if (value == _getAllQueryIsEnabled)
                 {
                     return;
                 }
 
-                _getCommandEnabled = value;
+                _getAllQueryIsEnabled = value;
                 NotifyPropertyChanged();
                 NotifyPropertyChanged(nameof(GenerateCodeCommandIsEnabled));
             }
         }
 
-        private bool _postCommandEnabled = true;
-        public bool PostCommandEnabled
+        private bool _getByIdQueryIsEnabled = true;
+        public bool GetByIdQueryIsEnabled
         {
             get
             {
-                return _postCommandEnabled;
+                return _getByIdQueryIsEnabled;
             }
 
             set
             {
-                if (value == _postCommandEnabled)
+                if (value == _getByIdQueryIsEnabled)
                 {
                     return;
                 }
 
-                _postCommandEnabled = value;
+                _getByIdQueryIsEnabled = value;
                 NotifyPropertyChanged();
                 NotifyPropertyChanged(nameof(GenerateCodeCommandIsEnabled));
             }
         }
 
-        private bool _putCommandEnabled = true;
-        public bool PutCommandEnabled
+        private bool _getPaginatedQueryIsEnabled;
+        public bool GetPaginatedQueryIsEnabled
         {
             get
             {
-                return _putCommandEnabled;
+                return _getPaginatedQueryIsEnabled;
             }
 
             set
             {
-                if (value == _putCommandEnabled)
+                if (value == _getPaginatedQueryIsEnabled)
                 {
                     return;
                 }
 
-                _putCommandEnabled = value;
+                _getPaginatedQueryIsEnabled = value;
                 NotifyPropertyChanged();
                 NotifyPropertyChanged(nameof(GenerateCodeCommandIsEnabled));
             }
         }
+
+        private bool _createCommandIsEnabled = true;
+        public bool CreateCommandIsEnabled
+        {
+            get
+            {
+                return _createCommandIsEnabled;
+            }
+
+            set
+            {
+                if (value == _createCommandIsEnabled)
+                {
+                    return;
+                }
+
+                _createCommandIsEnabled = value;
+                NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(GenerateCodeCommandIsEnabled));
+            }
+        }
+
+        private bool _updateCommandIsEnabled = true;
+        public bool UpdateCommandIsEnabled
+        {
+            get
+            {
+                return _updateCommandIsEnabled;
+            }
+
+            set
+            {
+                if (value == _updateCommandIsEnabled)
+                {
+                    return;
+                }
+
+                _updateCommandIsEnabled = value;
+                NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(GenerateCodeCommandIsEnabled));
+            }
+        }
+
+        private bool _deleteCommandIsEnabled = true;
+        public bool DeleteCommandIsEnabled
+        {
+            get
+            {
+                return _deleteCommandIsEnabled;
+            }
+
+            set
+            {
+                if (value == _deleteCommandIsEnabled)
+                {
+                    return;
+                }
+
+                _deleteCommandIsEnabled = value;
+                NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(GenerateCodeCommandIsEnabled));
+            }
+        }
+
+        public bool GenerateCodeCommandIsEnabled => SelectedControllersProject != null && SelectedTargetModuleProject != null
+                                                && (GetByIdQueryIsEnabled || GetAllQueryIsEnabled || GetPaginatedQueryIsEnabled || CreateCommandIsEnabled || UpdateCommandIsEnabled || DeleteCommandIsEnabled);
+        #endregion
 
         private bool _useUnitOfWork = true;
         public bool UseUnitOfWork
@@ -110,28 +180,6 @@ namespace BoilerplateGenerator.ViewModels
                 NotifyPropertyChanged();
             }
         }
-
-        private bool _deleteCommandEnabled = true;
-        public bool DeleteCommandEnabled
-        {
-            get
-            {
-                return _deleteCommandEnabled;
-            }
-
-            set
-            {
-                if (value == _deleteCommandEnabled)
-                {
-                    return;
-                }
-
-                _deleteCommandEnabled = value;
-                NotifyPropertyChanged();
-                NotifyPropertyChanged(nameof(GenerateCodeCommandIsEnabled));
-            }
-        }
-
 
         private Visibility _loaderVisibility = Visibility.Collapsed;
         public Visibility LoaderVisibility
@@ -172,9 +220,6 @@ namespace BoilerplateGenerator.ViewModels
                 NotifyPropertyChanged();
             }
         }
-
-        public bool GenerateCodeCommandIsEnabled => SelectedControllersProject != null && SelectedTargetModuleProject != null
-                                                && (GetCommandEnabled || PostCommandEnabled || PutCommandEnabled || DeleteCommandEnabled);
 
         private IProjectWrapper _selectedProject;
         public IProjectWrapper SelectedTargetModuleProject
@@ -219,6 +264,8 @@ namespace BoilerplateGenerator.ViewModels
         }
 
         public ISolutionWrapper Solution { get; set; }
+
+        public IPaginationRequirements PaginationRequirements { get; } = new PaginationRequirements();
         #endregion
 
         #region Collections
@@ -277,7 +324,7 @@ namespace BoilerplateGenerator.ViewModels
                 _generateCodeCommand = new CommandHandler(async (parameter) =>
                 {
                     DirectoriesTree.Clear();
-                   
+
                     ITreeNode<IBaseGeneratedAsset> rootNode = new TreeNode<IBaseGeneratedAsset>
                     {
                         Current = new GeneratedDirectory(Solution.Name),
@@ -329,16 +376,20 @@ namespace BoilerplateGenerator.ViewModels
 
         #region Business
 
-        public async Task PopulateSolutionProjects()
+        public async Task PopulateUiData()
         {
-            Solution = await _fileManagerService.RetrieveSolution();
-
             ReferencedEntityName = await _fileManagerService.LoadSelectedEntityDetails();
+
+            ViewEntityHierarchyCommand.Execute(null);
+
+            Solution = await _fileManagerService.RetrieveSolution();
 
             foreach (IProjectWrapper item in _fileManagerService.RetrieveAllModules())
             {
                 AvailableModules.Add(item);
             }
+
+            await _fileManagerService.RetrievePaginationRequirements(PaginationRequirements);
         }
         #endregion
 

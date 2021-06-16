@@ -40,7 +40,7 @@ namespace BoilerplateGenerator.Models.RoslynWrappers
 
         public BaseSymbolWrapper(T symbol)
         {
-            Name = symbol.Name;
+            Name = symbol?.Name;
             IsChecked = true;
             IsEnabled = true;
         }
