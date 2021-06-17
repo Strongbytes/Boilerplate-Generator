@@ -37,7 +37,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
 
         protected virtual string HandlerResponseType => $"{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]}";
 
-        public override IEnumerable<string> Usings => new string[]
+        protected override IEnumerable<string> UsingsBuilder => new string[]
         {
            UsingTokens.AutoMapper,
            UsingTokens.MediatR,
@@ -46,7 +46,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
            UsingTokens.SystemCollectionsGeneric,
            _metadataGenerationService.NamespaceByAssetKind(AssetKind.ResponseDomainEntity),
            _metadataGenerationService.NamespaceByAssetKind(AssetKind.IUnitOfWork),
-        }.Union(base.Usings).Distinct().OrderBy(x => x);
+        }.Union(base.UsingsBuilder);
 
         public override IEnumerable<string> BaseTypes => new string[]
         {

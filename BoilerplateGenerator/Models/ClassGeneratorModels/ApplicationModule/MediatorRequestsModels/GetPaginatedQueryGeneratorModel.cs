@@ -21,15 +21,17 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
             _metadataGenerationService = metadataGenerationService;
         }
 
+        public override bool CanBeCreated => _viewModelBase.GetPaginatedQueryIsEnabled;
+
         public override AssetKind GeneratedClassKind => AssetKind.GetPaginatedQuery;
 
-        public override IEnumerable<string> Usings => new string[]
+        protected override IEnumerable<string> UsingsBuilder => new string[]
         {
            UsingTokens.MediatR,
            _viewModelBase.PaginationRequirements.PaginatedDataResponseInterface.Namespace,
            _viewModelBase.PaginationRequirements.PaginatedDataQueryInterface.Namespace,
            _metadataGenerationService.NamespaceByAssetKind(AssetKind.ResponseDomainEntity),
-        }.Union(base.Usings).Distinct().OrderBy(x => x);
+        }.Union(base.UsingsBuilder);
 
         public override IEnumerable<string> BaseTypes => new string[]
         {

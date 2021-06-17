@@ -11,17 +11,22 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
 {
     public class DeleteCommandGeneratorModel : BaseGenericGeneratorModel
     {
+        private readonly IViewModelBase _viewModelBase;
+
         public DeleteCommandGeneratorModel(IViewModelBase viewModelBase, IMetadataGenerationService metadataGenerationService)
             : base(viewModelBase, metadataGenerationService)
         {
+            _viewModelBase = viewModelBase;
         }
+
+        public override bool CanBeCreated => _viewModelBase.DeleteCommandIsEnabled;
 
         public override AssetKind GeneratedClassKind => AssetKind.DeleteCommand;
 
-        public override IEnumerable<string> Usings => new string[]
+        protected override IEnumerable<string> UsingsBuilder => new string[]
         {
            UsingTokens.MediatR,
-        }.Union(base.Usings).Distinct().OrderBy(x => x);
+        }.Union(base.UsingsBuilder);
 
         public override IEnumerable<string> BaseTypes => new string[]
         {

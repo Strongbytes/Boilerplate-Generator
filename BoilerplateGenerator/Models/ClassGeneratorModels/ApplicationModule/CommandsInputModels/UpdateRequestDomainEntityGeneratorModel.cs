@@ -10,17 +10,22 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Com
 {
     public class UpdateRequestDomainEntityGeneratorModel : BaseGenericGeneratorModel
     {
-        public UpdateRequestDomainEntityGeneratorModel(IViewModelBase viewModelBase, IMetadataGenerationService metadataGenerationService) 
+        private readonly IViewModelBase _viewModelBase;
+
+        public UpdateRequestDomainEntityGeneratorModel(IViewModelBase viewModelBase, IMetadataGenerationService metadataGenerationService)
             : base(viewModelBase, metadataGenerationService)
         {
+            _viewModelBase = viewModelBase;
         }
+
+        public override bool CanBeCreated => _viewModelBase.UpdateCommandIsEnabled;
 
         public override AssetKind GeneratedClassKind => AssetKind.UpdateRequestDomainEntity;
 
-        public override IEnumerable<string> Usings => new string[]
+        protected override IEnumerable<string> UsingsBuilder => new string[]
         {
            UsingTokens.SystemComponentModelDataAnnotations,
-        }.Union(base.Usings).Distinct().OrderBy(x => x);
+        }.Union(base.UsingsBuilder);
 
         public override IEnumerable<PropertyDefinitionModel> AvailableProperties => base.AvailableProperties.Where(x => !x.IsPrimaryKey);
     }

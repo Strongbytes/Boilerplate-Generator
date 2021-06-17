@@ -25,7 +25,11 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
             _metadataGenerationService = metadataGenerationService;
         }
 
-        public virtual IEnumerable<string> Usings => new string[] { UsingTokens.System };
+        public virtual bool CanBeCreated => true;
+
+        protected virtual IEnumerable<string> UsingsBuilder => new string[] { UsingTokens.System };
+
+        public IEnumerable<string> Usings => UsingsBuilder.Where(x => !string.IsNullOrEmpty(x)).Distinct().OrderBy(x => x);
 
         public string ClassNamespace => _metadataGenerationService.NamespaceByAssetKind(GeneratedClassKind);
 
@@ -109,7 +113,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
         {
             return await TargetModule.GetExistingFileClass
             (
-                $"{_metadataGenerationService.NamespaceByAssetKind(GeneratedClassKind)}", 
+                $"{_metadataGenerationService.NamespaceByAssetKind(GeneratedClassKind)}",
                 $"{_metadataGenerationService.AssetToClassNameMapping[GeneratedClassKind]}"
             );
         }

@@ -10,6 +10,17 @@ namespace BoilerplateGenerator.ViewModels
     public interface IViewModelBase : INotifyPropertyChanged
     {
         bool UseUnitOfWork { get; set; }
+        bool GetByIdQueryIsEnabled { get; set; }
+
+        bool GetAllQueryIsEnabled { get; set; }
+
+        bool GetPaginatedQueryIsEnabled { get; set; }
+
+        bool CreateCommandIsEnabled { get; set; }
+
+        bool UpdateCommandIsEnabled { get; set; }
+
+        bool DeleteCommandIsEnabled { get; set; }
 
         IProjectWrapper SelectedTargetModuleProject { get; set; }
 

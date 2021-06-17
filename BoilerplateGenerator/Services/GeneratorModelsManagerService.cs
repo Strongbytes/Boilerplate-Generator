@@ -28,7 +28,9 @@ namespace BoilerplateGenerator.Services
 
                 return (from model in generatorModels
                         let args = RetrieveDependencyParameters(model)
-                        select (IGenericGeneratorModel)Activator.CreateInstance(model, args)).ToArray();
+                        let newClass = (IGenericGeneratorModel)Activator.CreateInstance(model, args)
+                        where newClass.CanBeCreated
+                        select newClass).ToArray();
             });
         }
 

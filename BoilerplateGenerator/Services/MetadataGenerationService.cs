@@ -1,6 +1,7 @@
 ﻿using BoilerplateGenerator.Contracts.Services;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.RoslynWrappers;
+using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using BoilerplateGenerator.ViewModels;
 using Pluralize.NET;
 using System;
@@ -52,12 +53,12 @@ namespace BoilerplateGenerator.Services
 
         private string AbsoluteNamespace(AssetKind referencedAsset)
         {
-            string relativeNamespace = AssetToNamespaceMapping[referencedAsset];
+            NamespaceDefinitionModel relativeNamespace = AssetToNamespaceMapping[referencedAsset];
 
             return string.Join(".", new string[]
             {
                 RetrieveBaseNamespace(referencedAsset),
-                relativeNamespace
+                relativeNamespace.IsEnabled ? relativeNamespace.Content : string.Empty
             }.Where(x => !string.IsNullOrEmpty(x)));
         }
 
@@ -84,26 +85,146 @@ namespace BoilerplateGenerator.Services
             { AssetKind.ProfileMapper, $"{BaseEntityPluralizedName}{CommonTokens.Mapper}" },
         };
 
-        private IDictionary<AssetKind, string> AssetToNamespaceMapping => new Dictionary<AssetKind, string>
+        private IDictionary<AssetKind, NamespaceDefinitionModel> AssetToNamespaceMapping => new Dictionary<AssetKind, NamespaceDefinitionModel>
         {
-            { AssetKind.ResponseDomainEntity, $"{NamespaceTokens.Domain}.{NamespaceTokens.Models}" },
-            { AssetKind.Controller, $"{NamespaceTokens.Controllers}" },
-            { AssetKind.CreateRequestDomainEntity, $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Create}.{NamespaceTokens.Models}" },
-            { AssetKind.UpdateRequestDomainEntity, $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Update}.{NamespaceTokens.Models}" },
-            { AssetKind.GetAllQuery, $"{NamespaceTokens.Application}.{NamespaceTokens.Queries}.{CommonTokens.GetAll}{BaseEntityPluralizedName}" },
-            { AssetKind.GetPaginatedQuery, $"{NamespaceTokens.Application}.{NamespaceTokens.Queries}.{CommonTokens.GetPaginated}{BaseEntityPluralizedName}" },
-            { AssetKind.GetByIdQuery, $"{NamespaceTokens.Application}.{NamespaceTokens.Queries}.{CommonTokens.Get}{BaseEntity.Name}{CommonTokens.ById}" },
-            { AssetKind.CreateCommand, $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Create}" },
-            { AssetKind.UpdateCommand, $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Update}" },
-            { AssetKind.DeleteCommand, $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Delete}" },
-            { AssetKind.GetAllQueryHandler, $"{NamespaceTokens.Application}.{NamespaceTokens.Queries}.{CommonTokens.GetAll}{BaseEntityPluralizedName}" },
-            { AssetKind.GetPaginatedQueryHandler, $"{NamespaceTokens.Application}.{NamespaceTokens.Queries}.{CommonTokens.GetPaginated}{BaseEntityPluralizedName}" },
-            { AssetKind.GetByIdQueryHandler, $"{NamespaceTokens.Application}.{NamespaceTokens.Queries}.{CommonTokens.Get}{BaseEntity.Name}{CommonTokens.ById}" },
-            { AssetKind.CreateCommandHandler, $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Create}" },
-            { AssetKind.UpdateCommandHandler, $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Update}" },
-            { AssetKind.DeleteCommandHandler, $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Delete}" },
-            { AssetKind.ProfileMapper, string.Empty },
-            { AssetKind.IUnitOfWork, $"{NamespaceTokens.Domain}" },
+            {
+                AssetKind.ResponseDomainEntity,
+                new NamespaceDefinitionModel
+                {
+                    Content = $"{NamespaceTokens.Domain}.{NamespaceTokens.Models}"
+                }
+            },
+            {
+                AssetKind.Controller,
+                new NamespaceDefinitionModel
+                {
+                    Content = $"{NamespaceTokens.Controllers}"
+                }
+            },
+            {
+                AssetKind.CreateRequestDomainEntity,
+                new NamespaceDefinitionModel
+                {
+                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Create}.{NamespaceTokens.Models}",
+                    IsEnabled = _viewModelBase.CreateCommandIsEnabled
+                }
+            },
+            {
+                AssetKind.UpdateRequestDomainEntity,
+                new NamespaceDefinitionModel
+                {
+                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Update}.{NamespaceTokens.Models}",
+                    IsEnabled = _viewModelBase.UpdateCommandIsEnabled
+                }
+            },
+            {
+                AssetKind.GetAllQuery,
+                new NamespaceDefinitionModel
+                {
+                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Queries}.{CommonTokens.GetAll}{BaseEntityPluralizedName}",
+                    IsEnabled = _viewModelBase.GetAllQueryIsEnabled
+                }
+            },
+            {
+                AssetKind.GetPaginatedQuery,
+                new NamespaceDefinitionModel
+                {
+                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Queries}.{CommonTokens.GetPaginated}{BaseEntityPluralizedName}",
+                    IsEnabled = _viewModelBase.GetPaginatedQueryIsEnabled
+                }
+            },
+            {
+                AssetKind.GetByIdQuery,
+                new NamespaceDefinitionModel
+                {
+                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Queries}.{CommonTokens.Get}{BaseEntity.Name}{CommonTokens.ById}",
+                    IsEnabled = _viewModelBase.GetByIdQueryIsEnabled
+                }
+            },
+            {
+                AssetKind.CreateCommand,
+                new NamespaceDefinitionModel
+                {
+                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Create}",
+                    IsEnabled = _viewModelBase.CreateCommandIsEnabled
+                }
+            },
+            {
+                AssetKind.UpdateCommand,
+                new NamespaceDefinitionModel
+                {
+                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Update}",
+                    IsEnabled = _viewModelBase.UpdateCommandIsEnabled
+                }
+            },
+            {
+                AssetKind.DeleteCommand,
+                new NamespaceDefinitionModel
+                {
+                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Delete}",
+                    IsEnabled = _viewModelBase.DeleteCommandIsEnabled
+                }
+            },
+            {
+                AssetKind.GetAllQueryHandler,
+                new NamespaceDefinitionModel
+                {
+                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Queries}.{CommonTokens.GetAll}{BaseEntityPluralizedName}",
+                    IsEnabled = _viewModelBase.GetAllQueryIsEnabled
+                }
+            },
+            {
+                AssetKind.GetPaginatedQueryHandler,
+                new NamespaceDefinitionModel
+                {
+                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Queries}.{CommonTokens.GetPaginated}{BaseEntityPluralizedName}",
+                    IsEnabled = _viewModelBase.GetPaginatedQueryIsEnabled
+                }
+            },
+            {
+                AssetKind.GetByIdQueryHandler,
+                new NamespaceDefinitionModel
+                {
+                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Queries}.{CommonTokens.Get}{BaseEntity.Name}{CommonTokens.ById}",
+                    IsEnabled = _viewModelBase.GetByIdQueryIsEnabled
+                }
+            },
+            {
+                AssetKind.CreateCommandHandler,
+                new NamespaceDefinitionModel
+                {
+                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Create}",
+                    IsEnabled = _viewModelBase.CreateCommandIsEnabled
+                }
+            },
+            {
+                AssetKind.UpdateCommandHandler,
+                new NamespaceDefinitionModel
+                {
+                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Update}",
+                    IsEnabled = _viewModelBase.UpdateCommandIsEnabled
+                }
+            },
+            {
+                AssetKind.DeleteCommandHandler,
+                new NamespaceDefinitionModel
+                {
+                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Delete}",
+                    IsEnabled = _viewModelBase.UpdateCommandIsEnabled
+                }
+            },
+            {
+                AssetKind.ProfileMapper,
+                new NamespaceDefinitionModel()
+            },
+            { 
+                AssetKind.IUnitOfWork,
+                new NamespaceDefinitionModel
+                {
+                    Content = $"{NamespaceTokens.Domain}",
+                    IsEnabled = _viewModelBase.UseUnitOfWork
+                }
+            },
         };
 
         private string RetrieveBaseNamespace(AssetKind referencedAsset)

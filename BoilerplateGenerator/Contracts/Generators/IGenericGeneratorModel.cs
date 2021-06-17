@@ -1,6 +1,5 @@
 ﻿using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
@@ -10,6 +9,8 @@ namespace BoilerplateGenerator.Contracts.Generators
 {
     public interface IGenericGeneratorModel
     {
+        bool CanBeCreated { get; }
+
         IEnumerable<string> Usings { get; }
 
         string GeneratedClassName { get; }

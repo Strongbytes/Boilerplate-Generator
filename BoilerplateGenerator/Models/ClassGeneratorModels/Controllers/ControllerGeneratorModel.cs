@@ -21,10 +21,9 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
             _metadataGenerationService = metadataGenerationService;
         }
 
-        public override IEnumerable<string> Usings => new string[]
+        protected override IEnumerable<string> UsingsBuilder => new string[]
         {
             UsingTokens.MediatR,
-            UsingTokens.System,
             UsingTokens.SystemCollectionsGeneric,
             UsingTokens.SystemNetMime,
             UsingTokens.SystemThreadingTasks,
@@ -32,7 +31,8 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
             UsingTokens.MicrosoftAspNetCoreMvc,
             _viewModelBase.PaginationRequirements.PaginatedDataResponseInterface.Namespace,
             _viewModelBase.PaginationRequirements.PaginatedDataQueryClass.Namespace,
-        }.Union(_metadataGenerationService.AvailableNamespaces).Distinct().OrderBy(x => x);
+        }.Union(_metadataGenerationService.AvailableNamespaces)
+         .Union(base.UsingsBuilder);
 
         protected override IProjectWrapper TargetModule => _viewModelBase.SelectedControllersProject;
 
@@ -73,6 +73,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
                     new MethodDefinitionModel
                     {
                         Name = $"{CommonTokens.GetAll}",
+                        IsEnabled = _viewModelBase.GetAllQueryIsEnabled,
                         Attributes = new List<AttributeDefinitionModel>
                         {
                             new AttributeDefinitionModel($"{CommonTokens.HttpGet}"),
@@ -86,6 +87,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
                     new MethodDefinitionModel
                     {
                         Name = $"{CommonTokens.GetPaginated}",
+                        IsEnabled = _viewModelBase.GetPaginatedQueryIsEnabled,
                         Attributes = new List<AttributeDefinitionModel>
                         {
                             new AttributeDefinitionModel($"{CommonTokens.HttpGet}"),
@@ -110,6 +112,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
                     new MethodDefinitionModel
                     {
                         Name = $"{CommonTokens.GetById}",
+                        IsEnabled = _viewModelBase.GetByIdQueryIsEnabled,
                         Attributes = new List<AttributeDefinitionModel>
                         {
                             new AttributeDefinitionModel($"{CommonTokens.HttpGet}")
@@ -138,6 +141,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
                     new MethodDefinitionModel
                     {
                         Name = $"{CommonTokens.Create}",
+                        IsEnabled = _viewModelBase.CreateCommandIsEnabled,
                         Attributes = new List<AttributeDefinitionModel>
                         {
                             new AttributeDefinitionModel($"{CommonTokens.HttpPost}"),
@@ -163,6 +167,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
                     new MethodDefinitionModel
                     {
                         Name = $"{CommonTokens.Update}",
+                        IsEnabled = _viewModelBase.UpdateCommandIsEnabled,
                         Attributes = new List<AttributeDefinitionModel>
                         {
                             new AttributeDefinitionModel($"{CommonTokens.HttpPut}")
@@ -196,6 +201,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
                     new MethodDefinitionModel
                     {
                         Name = $"{CommonTokens.Delete}",
+                        IsEnabled = _viewModelBase.DeleteCommandIsEnabled,
                         Attributes = new List<AttributeDefinitionModel>
                         {
                             new AttributeDefinitionModel($"{CommonTokens.HttpDelete}")

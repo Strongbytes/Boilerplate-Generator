@@ -6,13 +6,17 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
 {
     public class GetAllQueryHandlerGeneratorModel : BaseMediatorHandlerGeneratorModel
     {
+        private readonly IViewModelBase _viewModelBase;
         private readonly IMetadataGenerationService _metadataGenerationService;
 
         public GetAllQueryHandlerGeneratorModel(IViewModelBase viewModelBase, IMetadataGenerationService metadataGenerationService)
             : base(viewModelBase, metadataGenerationService)
         {
+            _viewModelBase = viewModelBase;
             _metadataGenerationService = metadataGenerationService;
         }
+
+        public override bool CanBeCreated => _viewModelBase.GetAllQueryIsEnabled;
 
         public override AssetKind GeneratedClassKind => AssetKind.GetAllQueryHandler;
 

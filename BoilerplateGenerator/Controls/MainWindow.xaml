@@ -195,20 +195,25 @@
                                VerticalContentAlignment="Center"
                                HorizontalContentAlignment="Left" />
 
-                        <CheckBox Content="GetAll"
-                                  VerticalContentAlignment="Center"
-                                  IsChecked="{Binding GetAllQueryIsEnabled, Mode=TwoWay}" />
-
-                        <CheckBox Grid.Column="1"
-                                  Content="GetById"
+                        <CheckBox Content="GetById"
+                                  MinHeight="16"
                                   VerticalContentAlignment="Center"
                                   IsChecked="{Binding GetByIdQueryIsEnabled, Mode=TwoWay}" />
 
-                        <CheckBox Grid.Column="1"
-                                  Content="GetPaginated"
-                                  VerticalContentAlignment="Center"
-                                  IsEnabled="{Binding PaginationRequirements.PaginationIsAvailable, Converter={StaticResource NullBooleanToBooleanConverter}}"
-                                  IsChecked="{Binding GetPaginatedQueryIsEnabled, Mode=TwoWay}" />
+                        <RadioButton GroupName="GetEntitiesGroup"
+                                     MinHeight="16"
+                                     Margin="1,0"
+                                     Content="GetAll"
+                                     VerticalContentAlignment="Center"
+                                     IsChecked="{Binding GetAllQueryIsEnabled, Mode=TwoWay}" />
+
+                        <RadioButton GroupName="GetEntitiesGroup"
+                                     MinHeight="16"
+                                     Margin="1,0"
+                                     Content="GetPaginated"
+                                     VerticalContentAlignment="Center"
+                                     IsEnabled="{Binding PaginationRequirements.PaginationIsAvailable, Converter={StaticResource NullBooleanToBooleanConverter}}"
+                                     IsChecked="{Binding GetPaginatedQueryIsEnabled, Mode=TwoWay}" />
                     </StackPanel>
 
                     <StackPanel Grid.Column="1"

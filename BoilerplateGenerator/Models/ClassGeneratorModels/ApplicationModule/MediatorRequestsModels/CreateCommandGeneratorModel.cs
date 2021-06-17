@@ -11,22 +11,26 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
 {
     public class CreateCommandGeneratorModel : BaseGenericGeneratorModel
     {
+        private readonly IViewModelBase _viewModelBase;
         private readonly IMetadataGenerationService _metadataGenerationService;
 
         public CreateCommandGeneratorModel(IViewModelBase viewModelBase, IMetadataGenerationService metadataGenerationService)
             : base(viewModelBase, metadataGenerationService)
         {
+            _viewModelBase = viewModelBase;
             _metadataGenerationService = metadataGenerationService;
         }
 
+        public override bool CanBeCreated => _viewModelBase.CreateCommandIsEnabled;
+
         public override AssetKind GeneratedClassKind => AssetKind.CreateCommand;
 
-        public override IEnumerable<string> Usings => new string[]
+        protected override IEnumerable<string> UsingsBuilder => new string[]
         {
            UsingTokens.MediatR,
            _metadataGenerationService.NamespaceByAssetKind(AssetKind.ResponseDomainEntity),
            _metadataGenerationService.NamespaceByAssetKind(AssetKind.CreateRequestDomainEntity),
-        }.Union(base.Usings).Distinct().OrderBy(x => x);
+        }.Union(base.UsingsBuilder);
 
         public override IEnumerable<string> BaseTypes => new string[]
         {

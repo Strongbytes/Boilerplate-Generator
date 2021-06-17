@@ -69,6 +69,15 @@ namespace BoilerplateGenerator.Services
             });
         }
 
+        private ConstructorDeclarationSyntax GenerateConstructorBody(ConstructorDeclarationSyntax existingConstructor, MethodDefinitionModel constructorDeclaration)
+        {
+            var newConstructor = existingConstructor
+                ?? SyntaxFactory.ConstructorDeclaration(_genericGeneratorModel.GeneratedClassName)
+                                .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
+
+            return newConstructor.WithBody(GenerateMethodBody(GenerateBodyStatements(constructorDeclaration.Body).Union(existingConstructor?.Body?.Statements)));
+        }
+
         private ClassDeclarationSyntax GenerateConstructors(ClassDeclarationSyntax classDeclarationSyntax)
         {
             IEnumerable<ConstructorDeclarationSyntax> existingConstructors = classDeclarationSyntax.RetrieveClassMembers<ConstructorDeclarationSyntax>(SyntaxKind.ConstructorDeclaration);
@@ -76,19 +85,11 @@ namespace BoilerplateGenerator.Services
             foreach (MethodDefinitionModel constructorDeclaration in _genericGeneratorModel.Constructors)
             {
                 ConstructorDeclarationSyntax existingConstructor = existingConstructors.RetrieveExistingMember(constructorDeclaration);
+                ConstructorDeclarationSyntax newConstructor = GenerateConstructorBody(existingConstructor, constructorDeclaration);
 
-                if (existingConstructor != null)
-                {
-                    existingConstructor = existingConstructor.WithBody(GenerateMethodBody(GenerateBodyStatements(constructorDeclaration.Body).Union(existingConstructor.Body.Statements)));
-                    classDeclarationSyntax = classDeclarationSyntax.ReplaceNode(existingConstructor, existingConstructor);
-                    continue;
-                }
-
-                var newConstructor = SyntaxFactory.ConstructorDeclaration(_genericGeneratorModel.GeneratedClassName)
-                                                  .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
-                                                  .WithBody(GenerateMethodBody(GenerateBodyStatements(constructorDeclaration.Body).Union(existingConstructor?.Body?.Statements)));
-
-                classDeclarationSyntax = classDeclarationSyntax.AddMembers(newConstructor);
+                classDeclarationSyntax = existingConstructor == null
+                    ? classDeclarationSyntax.AddMembers(newConstructor)
+                    : classDeclarationSyntax.ReplaceNode(existingConstructor, newConstructor);
             }
 
             return classDeclarationSyntax;
@@ -105,6 +106,7 @@ namespace BoilerplateGenerator.Services
         private MethodDeclarationSyntax[] GenerateMethods()
         {
             return (from methodDeclaration in _genericGeneratorModel.AvailableMethods
+                    where methodDeclaration.IsEnabled
                     select SyntaxFactory.MethodDeclaration(SyntaxFactory.ParseTypeName(methodDeclaration.ReturnType), methodDeclaration.Name)
                                         .AddAttributeLists(GenerateAttributeList(methodDeclaration.Attributes))
                                         .AddModifiers(GenerateModifiers(methodDeclaration.Modifiers))
@@ -247,7 +249,7 @@ namespace BoilerplateGenerator.Services
                 classDeclarationSyntax = GenerateConstructors(classDeclarationSyntax);
             }
 
-            if (_genericGeneratorModel.AvailableMethods != null && _genericGeneratorModel.AvailableMethods.Any())
+            if (_genericGeneratorModel.AvailableMethods != null && _genericGeneratorModel.AvailableMethods.Any(x => x.IsEnabled))
             {
                 classDeclarationSyntax = classDeclarationSyntax.AddMembers(GenerateMethods());
             }

@@ -49,6 +49,7 @@
         IRequest,
         GetPaginated,
         IPaginatedDataResponse,
-        IPaginatedDataQuery
+        IPaginatedDataQuery,
+        IActionResult
     }
 }

@@ -18,10 +18,12 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
             _metadataGenerationService = metadataGenerationService;
         }
 
-        public override IEnumerable<string> Usings => new string[]
+        public override bool CanBeCreated => _viewModelBase.GetPaginatedQueryIsEnabled;
+
+        protected override IEnumerable<string> UsingsBuilder => new string[]
         {
             _viewModelBase.PaginationRequirements.PaginatedDataResponseInterface.Namespace,
-        }.Union(base.Usings).Distinct().OrderBy(x => x);
+        }.Union(base.UsingsBuilder);
 
         public override AssetKind GeneratedClassKind => AssetKind.GetPaginatedQueryHandler;
 

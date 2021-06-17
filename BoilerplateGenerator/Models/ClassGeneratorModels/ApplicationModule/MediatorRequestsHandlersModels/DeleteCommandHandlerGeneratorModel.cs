@@ -6,10 +6,14 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
 {
     public class DeleteCommandHandlerGeneratorModel : BaseMediatorHandlerGeneratorModel
     {
+        private readonly IViewModelBase _viewModelBase;
+
         public DeleteCommandHandlerGeneratorModel(IViewModelBase viewModelBase, IMetadataGenerationService metadataGenerationService)
             : base(viewModelBase, metadataGenerationService)
         {
+            _viewModelBase = viewModelBase;
         }
+        public override bool CanBeCreated => _viewModelBase.DeleteCommandIsEnabled;
 
         public override AssetKind GeneratedClassKind => AssetKind.DeleteCommandHandler;
 
