@@ -7,7 +7,7 @@ namespace BoilerplateGenerator.EqualityComparers
     {
         public bool Equals(StatementSyntax x, StatementSyntax y)
         {
-            return x != null && y != null && x.GetText().ToString() == y.GetText().ToString();
+            return x != null && y != null && x.GetText().ToString().Trim() == y.GetText().ToString().Trim();
         }
 
         public int GetHashCode(StatementSyntax obj)
@@ -17,7 +17,7 @@ namespace BoilerplateGenerator.EqualityComparers
 
             int hash = 17;
 
-            hash = hash * 23 + obj.GetText().ToString().GetHashCode();
+            hash = hash * 23 + obj.GetText().ToString().Trim().GetHashCode();
             return hash;
         }
     }

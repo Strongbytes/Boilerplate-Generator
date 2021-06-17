@@ -71,11 +71,18 @@ namespace BoilerplateGenerator.Services
 
         private ConstructorDeclarationSyntax GenerateConstructorBody(ConstructorDeclarationSyntax existingConstructor, MethodDefinitionModel constructorDeclaration)
         {
-            var newConstructor = existingConstructor
+            ConstructorDeclarationSyntax newConstructor = existingConstructor
                 ?? SyntaxFactory.ConstructorDeclaration(_genericGeneratorModel.GeneratedClassName)
                                 .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
 
-            return newConstructor.WithBody(GenerateMethodBody(GenerateBodyStatements(constructorDeclaration.Body).Union(existingConstructor?.Body?.Statements)));
+            return newConstructor.WithBody
+            (
+                GenerateMethodBody
+                (
+                    GenerateBodyStatements(constructorDeclaration.Body)
+                    .Union(existingConstructor?.Body?.Statements)
+                )
+            );
         }
 
         private ClassDeclarationSyntax GenerateConstructors(ClassDeclarationSyntax classDeclarationSyntax)
