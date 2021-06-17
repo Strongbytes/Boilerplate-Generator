@@ -36,13 +36,13 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
 
         protected override IProjectWrapper TargetModule => _viewModelBase.SelectedControllersProject;
 
-        public override IEnumerable<PropertyDefinitionModel> AvailableProperties => new PropertyDefinitionModel[] { };
+        protected override IEnumerable<PropertyDefinitionModel> AvailablePropertiesBuilder => new PropertyDefinitionModel[] { };
 
         public override AssetKind GeneratedClassKind => AssetKind.Controller;
 
-        public override IEnumerable<string> BaseTypes => new string[] { nameof(CommonTokens.ControllerBase) };
+        protected override IEnumerable<string> BaseTypesBuilder => new string[] { nameof(CommonTokens.ControllerBase) };
 
-        public override IEnumerable<ParameterDefinitionModel> ConstructorParameters => new ParameterDefinitionModel[]
+        protected override IEnumerable<ParameterDefinitionModel> ConstructorParametersBuilder => new ParameterDefinitionModel[]
         {
             new ParameterDefinitionModel
             {
@@ -51,7 +51,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
             }
         };
 
-        public override IEnumerable<AttributeDefinitionModel> Attributes => new List<AttributeDefinitionModel>
+        protected override IEnumerable<AttributeDefinitionModel> AttributesBuilder => new List<AttributeDefinitionModel>
         {
             new AttributeDefinitionModel($"{CommonTokens.ApiController}"),
             new AttributeDefinitionModel($"{CommonTokens.Produces}")
@@ -64,7 +64,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
             }
         };
 
-        public override IEnumerable<MethodDefinitionModel> AvailableMethods
+        protected override IEnumerable<MethodDefinitionModel> AvailableMethodsBuilder
         {
             get
             {

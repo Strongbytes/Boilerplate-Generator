@@ -25,35 +25,191 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
             _metadataGenerationService = metadataGenerationService;
         }
 
+
+        #region Model Builder
+        public abstract AssetKind GeneratedClassKind { get; }
+
         public virtual bool CanBeCreated => true;
+
+        public virtual bool MergeWithExistingClass => false;
+
+        public virtual SyntaxKind RootClassModifier => SyntaxKind.PublicKeyword;
 
         protected virtual IEnumerable<string> UsingsBuilder => new string[] { UsingTokens.System };
 
-        public IEnumerable<string> Usings => UsingsBuilder.Where(x => !string.IsNullOrEmpty(x)).Distinct().OrderBy(x => x);
-
-        public string ClassNamespace => _metadataGenerationService.NamespaceByAssetKind(GeneratedClassKind);
-
-        public string GeneratedClassName => _metadataGenerationService.AssetToClassNameMapping[GeneratedClassKind];
-
-        public virtual IEnumerable<string> BaseTypes { get; } = new string[] { };
-
-        private IEnumerable<PropertyDefinitionModel> _availableProperties;
-        public virtual IEnumerable<PropertyDefinitionModel> AvailableProperties
+        private IEnumerable<PropertyDefinitionModel> _availablePropertiesBuilder;
+        protected virtual IEnumerable<PropertyDefinitionModel> AvailablePropertiesBuilder
         {
             get
             {
                 lock (_locker)
                 {
-                    if (_availableProperties != null)
+                    if (_availablePropertiesBuilder != null)
                     {
-                        return _availableProperties;
+                        return _availablePropertiesBuilder;
                     }
 
-                    _availableProperties = _viewModelBase.EntityTree.First().FilterTreeProperties();
-                    return _availableProperties;
+                    _availablePropertiesBuilder = _viewModelBase.EntityTree.First().FilterTreeProperties();
+                    return _availablePropertiesBuilder;
                 }
             }
         }
+
+        protected virtual IEnumerable<string> BaseTypesBuilder { get; } = Enumerable.Empty<string>();
+
+        protected virtual IEnumerable<AttributeDefinitionModel> AttributesBuilder { get; } = Enumerable.Empty<AttributeDefinitionModel>();
+
+        protected virtual IEnumerable<ParameterDefinitionModel> ConstructorParametersBuilder { get; } = Enumerable.Empty<ParameterDefinitionModel>();
+
+        protected virtual IEnumerable<MethodDefinitionModel> ConstructorsBuilder { get; } = Enumerable.Empty<MethodDefinitionModel>();
+
+        protected virtual IEnumerable<MethodDefinitionModel> AvailableMethodsBuilder { get; } = Enumerable.Empty<MethodDefinitionModel>();
+        #endregion
+
+        #region Public Model Properties
+        private string _classNamespace;
+        public string ClassNamespace
+        {
+            get
+            {
+                if (_classNamespace != null)
+                {
+                    return _classNamespace;
+                }
+
+                _classNamespace = _metadataGenerationService.NamespaceByAssetKind(GeneratedClassKind);
+                return _classNamespace;
+            }
+        }
+
+        private string _generatedClassName;
+        public string GeneratedClassName
+        {
+            get
+            {
+                if (_generatedClassName != null)
+                {
+                    return _generatedClassName;
+                }
+
+                _generatedClassName = _metadataGenerationService.AssetToClassNameMapping[GeneratedClassKind];
+                return _generatedClassName;
+            }
+        }
+
+        public bool FileExistsInProject => TargetModule.GeneratedFileAlreadyExists($"{_metadataGenerationService.NamespaceByAssetKind(GeneratedClassKind)}", $"{_metadataGenerationService.AssetToClassNameMapping[GeneratedClassKind]}");
+
+
+        public string TargetProjectName => TargetModule.Name;
+
+        private IEnumerable<string> _usings;
+        public IEnumerable<string> Usings
+        {
+            get
+            {
+                if (_usings != null)
+                {
+                    return _usings;
+                }
+
+                _usings = UsingsBuilder.Where(x => !string.IsNullOrEmpty(x)).Distinct().OrderBy(x => x).ToArray();
+                return _usings;
+            }
+        }
+
+        private IEnumerable<PropertyDefinitionModel> _availableProperties;
+        public IEnumerable<PropertyDefinitionModel> AvailableProperties
+        {
+            get
+            {
+                if (_availableProperties != null)
+                {
+                    return _availableProperties;
+                }
+
+                _availableProperties = AvailablePropertiesBuilder.ToArray();
+                return _availableProperties;
+            }
+        }
+
+        private IEnumerable<string> _baseTypes;
+        public IEnumerable<string> BaseTypes
+        {
+            get
+            {
+                if (_baseTypes != null)
+                {
+                    return _baseTypes;
+                }
+
+                _baseTypes = BaseTypesBuilder.ToArray();
+                return _baseTypes;
+            }
+        }
+
+        private IEnumerable<ParameterDefinitionModel> _constructorParameters;
+        public IEnumerable<ParameterDefinitionModel> ConstructorParameters
+        {
+            get
+            {
+                if (_constructorParameters != null)
+                {
+                    return _constructorParameters;
+                }
+
+                _constructorParameters = ConstructorParametersBuilder.ToArray();
+                return _constructorParameters;
+            }
+        }
+
+        private IEnumerable<MethodDefinitionModel> _constructors;
+        public IEnumerable<MethodDefinitionModel> Constructors
+        {
+            get
+            {
+                if (_constructors != null)
+                {
+                    return _constructors;
+                }
+
+                _constructors = ConstructorsBuilder.ToArray();
+                return _constructors;
+            }
+        }
+
+        private IEnumerable<MethodDefinitionModel> _availableMethods;
+        public IEnumerable<MethodDefinitionModel> AvailableMethods
+        {
+            get
+            {
+                if (_availableMethods != null)
+                {
+                    return _availableMethods;
+                }
+
+                _availableMethods = AvailableMethodsBuilder.ToArray();
+                return _availableMethods;
+            }
+        }
+
+
+        private IEnumerable<AttributeDefinitionModel> _attributes;
+        public IEnumerable<AttributeDefinitionModel> Attributes
+        {
+            get
+            {
+                if (_attributes != null)
+                {
+                    return _attributes;
+                }
+
+                _attributes = AttributesBuilder.ToArray();
+                return _attributes;
+            }
+        }
+        #endregion
+
+        #region Internal Properties
 
         private PropertyDefinitionModel _baseEntityPrimaryKey;
         protected PropertyDefinitionModel BaseEntityPrimaryKey
@@ -79,18 +235,10 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
             }
         }
 
-        public virtual SyntaxKind RootClassModifier => SyntaxKind.PublicKeyword;
-
         protected virtual IProjectWrapper TargetModule => _viewModelBase.SelectedTargetModuleProject;
+        #endregion
 
-        public string TargetProjectName => TargetModule.Name;
-
-        public abstract AssetKind GeneratedClassKind { get; }
-
-        public virtual bool MergeWithExistingClass { get; }
-
-        public bool FileExistsInProject => TargetModule.GeneratedFileAlreadyExists($"{_metadataGenerationService.NamespaceByAssetKind(GeneratedClassKind)}", $"{_metadataGenerationService.AssetToClassNameMapping[GeneratedClassKind]}");
-
+        #region Methods
         public async Task ExportFile(string content)
         {
             await TargetModule.ExportFile
@@ -101,14 +249,6 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
             );
         }
 
-        public virtual IEnumerable<ParameterDefinitionModel> ConstructorParameters { get; } = Enumerable.Empty<ParameterDefinitionModel>();
-
-        public virtual IEnumerable<MethodDefinitionModel> Constructors { get; } = Enumerable.Empty<MethodDefinitionModel>();
-
-        public virtual IEnumerable<MethodDefinitionModel> AvailableMethods { get; } = Enumerable.Empty<MethodDefinitionModel>();
-
-        public virtual IEnumerable<AttributeDefinitionModel> Attributes { get; } = Enumerable.Empty<AttributeDefinitionModel>();
-
         public async Task<CompilationUnitSyntax> LoadClassFromExistingFile()
         {
             return await TargetModule.GetExistingFileClass
@@ -117,5 +257,6 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
                 $"{_metadataGenerationService.AssetToClassNameMapping[GeneratedClassKind]}"
             );
         }
+        #endregion
     }
 }

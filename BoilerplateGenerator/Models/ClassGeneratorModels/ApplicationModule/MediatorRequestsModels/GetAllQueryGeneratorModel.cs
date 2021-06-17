@@ -31,11 +31,11 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
            _metadataGenerationService.NamespaceByAssetKind(AssetKind.ResponseDomainEntity),
         }.Union(base.UsingsBuilder);
 
-        public override IEnumerable<string> BaseTypes => new string[]
+        protected override IEnumerable<string> BaseTypesBuilder => new string[]
         {
             $"{CommonTokens.IRequest}<{CommonTokens.IEnumerable}<{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]}>>"
         };
 
-        public override IEnumerable<PropertyDefinitionModel> AvailableProperties => new PropertyDefinitionModel[] { };
+        protected override IEnumerable<PropertyDefinitionModel> AvailablePropertiesBuilder => new PropertyDefinitionModel[] { };
     }
 }

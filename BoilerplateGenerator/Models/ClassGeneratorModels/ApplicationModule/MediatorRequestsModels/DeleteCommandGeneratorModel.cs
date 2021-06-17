@@ -28,12 +28,12 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
            UsingTokens.MediatR,
         }.Union(base.UsingsBuilder);
 
-        public override IEnumerable<string> BaseTypes => new string[]
+        protected override IEnumerable<string> BaseTypesBuilder => new string[]
         {
             $"{CommonTokens.IRequest}<{CommonTokens.Unit}>"
         };
 
-        public override IEnumerable<PropertyDefinitionModel> AvailableProperties => new PropertyDefinitionModel[]
+        protected override IEnumerable<PropertyDefinitionModel> AvailablePropertiesBuilder => new PropertyDefinitionModel[]
         {
             new PropertyDefinitionModel
             {
@@ -43,7 +43,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
             }
         };
 
-        public override IEnumerable<ParameterDefinitionModel> ConstructorParameters => new ParameterDefinitionModel[]
+        protected override IEnumerable<ParameterDefinitionModel> ConstructorParametersBuilder => new ParameterDefinitionModel[]
         {
             new ParameterDefinitionModel
             {

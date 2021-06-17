@@ -48,12 +48,12 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
            _metadataGenerationService.NamespaceByAssetKind(AssetKind.IUnitOfWork),
         }.Union(base.UsingsBuilder);
 
-        public override IEnumerable<string> BaseTypes => new string[]
+        protected override IEnumerable<string> BaseTypesBuilder => new string[]
         {
             $"{CommonTokens.IRequestHandler}<{RequestHandlerClassName}, {HandlerResponseType}>"
         };
 
-        public override IEnumerable<ParameterDefinitionModel> ConstructorParameters => new ParameterDefinitionModel[]
+        protected override IEnumerable<ParameterDefinitionModel> ConstructorParametersBuilder => new ParameterDefinitionModel[]
         {
             new ParameterDefinitionModel
             {
@@ -68,9 +68,9 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
             }
         };
 
-        public override IEnumerable<PropertyDefinitionModel> AvailableProperties => new PropertyDefinitionModel[] { };
+        protected override IEnumerable<PropertyDefinitionModel> AvailablePropertiesBuilder => new PropertyDefinitionModel[] { };
 
-        public override IEnumerable<MethodDefinitionModel> AvailableMethods
+        protected override IEnumerable<MethodDefinitionModel> AvailableMethodsBuilder
         {
             get
             {

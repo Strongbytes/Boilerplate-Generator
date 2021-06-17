@@ -332,11 +332,14 @@ namespace BoilerplateGenerator.ViewModels
                         Current = new GeneratedDirectory(Solution.Name),
                     };
 
-                    foreach (IGenericGeneratorModel availableModel in await _generatorModelsManagerService.RetrieveAvailableGeneratorModels().ConfigureAwait(false))
+                    await Task.Run(async () =>
                     {
-                        IGeneratedClass generatedClass = await new ClassGenerationService(availableModel).GetGeneratedClass().ConfigureAwait(false);
-                        rootNode.GenerateDirectoryClassTree(generatedClass);
-                    }
+                        foreach (IGenericGeneratorModel availableModel in await _generatorModelsManagerService.RetrieveAvailableGeneratorModels().ConfigureAwait(false))
+                        {
+                            IGeneratedClass generatedClass = await new ClassGenerationService(availableModel).GetGeneratedClass().ConfigureAwait(false);
+                            rootNode.GenerateDirectoryClassTree(generatedClass);
+                        }
+                    }).ConfigureAwait(false);
 
                     await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 

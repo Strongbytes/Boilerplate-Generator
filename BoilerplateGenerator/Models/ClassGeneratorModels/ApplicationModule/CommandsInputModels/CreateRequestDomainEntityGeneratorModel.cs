@@ -27,6 +27,6 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Com
            UsingTokens.SystemComponentModelDataAnnotations,
         }.Union(base.UsingsBuilder);
 
-        public override IEnumerable<PropertyDefinitionModel> AvailableProperties => base.AvailableProperties.Where(x => !x.IsPrimaryKey);
+        protected override IEnumerable<PropertyDefinitionModel> AvailablePropertiesBuilder => base.AvailablePropertiesBuilder.Where(x => !x.IsPrimaryKey);
     }
 }
