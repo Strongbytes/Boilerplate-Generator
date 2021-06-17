@@ -80,7 +80,7 @@ namespace BoilerplateGenerator.Services
                 GenerateMethodBody
                 (
                     GenerateBodyStatements(constructorDeclaration.Body)
-                    .Union(existingConstructor?.Body?.Statements)
+                    .Union(existingConstructor?.Body?.Statements ?? Enumerable.Empty<StatementSyntax>())
                 )
             );
         }
