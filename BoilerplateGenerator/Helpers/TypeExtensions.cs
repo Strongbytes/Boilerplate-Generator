@@ -53,7 +53,9 @@ namespace BoilerplateGenerator.Helpers
 
         public static string ToTypeAlias(this ITypeSymbol dotNetTypeName)
         {
-            switch (dotNetTypeName.Name)
+            string recognizedType = dotNetTypeName.ToDisplayString().Replace("System.", string.Empty);
+
+            switch (recognizedType)
             {
                 case "Boolean":
                     return "bool";
@@ -86,7 +88,7 @@ namespace BoilerplateGenerator.Helpers
                 case "String":
                     return "string";
 
-                default: return dotNetTypeName.Name;
+                default: return recognizedType;
             }
         }
     }

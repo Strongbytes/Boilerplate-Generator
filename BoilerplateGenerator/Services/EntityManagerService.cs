@@ -32,11 +32,12 @@ namespace BoilerplateGenerator.Services
         private string _parentProjectName;
 
         private INamedTypeSymbol _entityClassType;
+
+        private ICollection<INamedTypeSymbol> _visitedClasses;
         #endregion
 
         #region Properties
         public bool IsEntityClassTypeValid => _entityClassType != null;
-
         #endregion
 
         public EntityManagerService(DTE2 packageAutomation, VisualStudioWorkspace visualStudioWorkspace)
@@ -140,43 +141,82 @@ namespace BoilerplateGenerator.Services
                     Current = new EntityClassWrapper(_entityClassType),
                 };
 
+                _visitedClasses = new HashSet<INamedTypeSymbol>
+                {
+                    _entityClassType
+                };
+
                 PopulateClassProperties(_entityClassType, rootNode);
-                PopulateParentClasses(rootNode);
+                PopulateParentClasses(_entityClassType, rootNode);
 
                 return rootNode;
             }).ConfigureAwait(false);
         }
 
-        private void PopulateParentClasses(ITreeNode<IBaseSymbolWrapper> rootNode)
+        private void PopulateParentClasses(INamedTypeSymbol referencedClass, ITreeNode<IBaseSymbolWrapper> rootNode)
         {
-            while (_entityClassType.BaseType != null && !_entityClassType.BaseType.Name.Equals(nameof(Object)))
+            while (referencedClass.BaseType != null && !referencedClass.BaseType.Name.Equals(nameof(Object)))
             {
                 EntityHierarchyTreeNode childNode = new EntityHierarchyTreeNode
                 {
-                    Current = new EntityClassWrapper(_entityClassType.BaseType),
+                    Current = new EntityClassWrapper(referencedClass.BaseType),
                     Parent = rootNode
                 };
 
-                PopulateClassProperties(_entityClassType.BaseType, childNode);
+                _visitedClasses.Add(referencedClass.BaseType);
+
+                PopulateClassProperties(referencedClass.BaseType, childNode);
                 rootNode.Children.Add(childNode);
 
                 rootNode = childNode;
-                _entityClassType = _entityClassType.BaseType;
+                referencedClass = referencedClass.BaseType;
             }
         }
 
-        public void PopulateClassProperties(INamedTypeSymbol referencedClass, ITreeNode<IBaseSymbolWrapper> parent)
+        private void PopulateClassProperties(INamedTypeSymbol referencedClass, ITreeNode<IBaseSymbolWrapper> parent)
         {
-            foreach (EntityHierarchyTreeNode child in from ISymbol member in referencedClass.GetMembers()
-                                                      where member.Kind == SymbolKind.Property
-                                                      let property = member as IPropertySymbol
-                                                      where property.Type.Name != nameof(ICollection)
-                                                      select new EntityHierarchyTreeNode
-                                                      {
-                                                          Current = new EntityPropertyWrapper(property),
-                                                          Parent = parent
-                                                      })
+            foreach (ISymbol member in referencedClass.GetMembers())
             {
+                if (member.Kind != SymbolKind.Property)
+                {
+                    continue;
+                }
+
+                IPropertySymbol property = member as IPropertySymbol;
+
+                if (property.Type.Name == nameof(ICollection))
+                {
+                    continue;
+                }
+
+                if (property.Type is INamedTypeSymbol innerClass 
+                    && innerClass.BaseType != null 
+                    && innerClass.BaseType.Name == referencedClass.BaseType.Name)
+                {
+                    if (_visitedClasses.Contains(innerClass))
+                    {
+                        continue;
+                    }
+
+                    _visitedClasses.Add(innerClass);
+
+                    EntityHierarchyTreeNode childNode = new EntityHierarchyTreeNode
+                    {
+                        Current = new EntityClassWrapper(innerClass),
+                        Parent = parent
+                    };
+
+                    PopulateClassProperties(innerClass, childNode);
+                    parent.Children.Add(childNode);
+                    continue;
+                }
+
+                EntityHierarchyTreeNode child = new EntityHierarchyTreeNode
+                {
+                    Current = new EntityPropertyWrapper(property),
+                    Parent = parent
+                };
+
                 parent.Children.Add(child);
             }
         }

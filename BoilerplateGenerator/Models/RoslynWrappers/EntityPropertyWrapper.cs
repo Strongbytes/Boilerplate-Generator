@@ -17,10 +17,13 @@ namespace BoilerplateGenerator.Models.RoslynWrappers
 
         public bool IsRequired => Attributes.Contains(nameof(CommonTokens.Required));
 
+        public string ParentName { get; }
+
         public override bool IsEnabled => !IsPrimaryKey;
 
         public EntityPropertyWrapper(IPropertySymbol symbol) : base(symbol)
         {
+            ParentName = symbol.ContainingSymbol.Name;
             Type = symbol.Type.ToTypeAlias();
             Attributes = symbol.GetAttributes().Select(x => x.AttributeClass.Name.Split(new string[] { nameof(CommonTokens.Attribute) }, StringSplitOptions.RemoveEmptyEntries).First()).ToArray();
         }

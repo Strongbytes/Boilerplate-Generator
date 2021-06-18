@@ -8,7 +8,7 @@ namespace BoilerplateGenerator.Models.SyntaxDefinitionModels
 {
     public class PropertyDefinitionModel
     {
-        private readonly IDictionary<string, string> LookupAttributes = new Dictionary<string, string> 
+        private readonly IDictionary<string, string> _lookupAttributes = new Dictionary<string, string>
         {
             { nameof(CommonTokens.Key), nameof(CommonTokens.Required) },
             { nameof(CommonTokens.Required), nameof(CommonTokens.Required) },
@@ -28,18 +28,30 @@ namespace BoilerplateGenerator.Models.SyntaxDefinitionModels
         {
         }
 
-        public PropertyDefinitionModel(EntityPropertyWrapper entityPropertyWrapper)
+        public PropertyDefinitionModel(EntityPropertyWrapper entityPropertyWrapper, bool resolveNameConflict = false)
         {
-            Name = entityPropertyWrapper.Name;
             ReturnType = entityPropertyWrapper.Type;
             IsPrimaryKey = entityPropertyWrapper.IsPrimaryKey;
+            Name = GenerateName(entityPropertyWrapper, resolveNameConflict);
 
             foreach (string attribute in from attribute in entityPropertyWrapper.Attributes
-                                         where LookupAttributes.Keys.Contains(attribute)
-                                         select LookupAttributes[attribute])
+                                         where _lookupAttributes.Keys.Contains(attribute)
+                                         select _lookupAttributes[attribute])
             {
                 Attributes.Add(new AttributeDefinitionModel(attribute));
             }
+        }
+
+        private string GenerateName(EntityPropertyWrapper entityPropertyWrapper, bool nameConflictDetected)
+        {
+            // TODO: Declare a naming convention in case of name conflicts. For now we will just append the parent name
+
+            if (IsPrimaryKey)
+            {
+                return entityPropertyWrapper.Name;
+            }
+
+            return nameConflictDetected ? $"{entityPropertyWrapper.ParentName}{entityPropertyWrapper.Name}" : entityPropertyWrapper.Name;
         }
     }
 }

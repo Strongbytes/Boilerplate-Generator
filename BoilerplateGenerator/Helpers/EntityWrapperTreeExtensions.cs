@@ -70,16 +70,16 @@ namespace BoilerplateGenerator.Helpers
             symbolWrapper.IsPropertyChanging = false;
         }
 
-        public static IEnumerable<PropertyDefinitionModel> FilterTreeProperties(this ITreeNode<IBaseSymbolWrapper> rootNode)
+        public static IEnumerable<PropertyDefinitionModel> FilterTreeProperties(this ITreeNode<IBaseSymbolWrapper> rootNode, bool appendParentClassName = false)
         {
-            List<PropertyDefinitionModel> symbols = new List<PropertyDefinitionModel>();
+            List<PropertyDefinitionModel> propertyDefinitions = new List<PropertyDefinitionModel>();
 
             foreach (ITreeNode<IBaseSymbolWrapper> treeNode in rootNode.Children)
             {
                 switch (treeNode.Current.GetType().Name)
                 {
                     case nameof(EntityClassWrapper):
-                        symbols.AddRange(FilterTreeProperties(treeNode));
+                        propertyDefinitions.AddRange(FilterTreeProperties(treeNode, true));
                         break;
 
                     default:
@@ -93,12 +93,12 @@ namespace BoilerplateGenerator.Helpers
                             break;
                         }
 
-                        symbols.Add(new PropertyDefinitionModel(entityPropertyWrapper));
+                        propertyDefinitions.Add(new PropertyDefinitionModel(entityPropertyWrapper, appendParentClassName));
                         break;
                 }
             }
 
-            return symbols;
+            return propertyDefinitions;
         }
     }
 }

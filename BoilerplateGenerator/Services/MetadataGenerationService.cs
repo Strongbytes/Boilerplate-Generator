@@ -82,7 +82,7 @@ namespace BoilerplateGenerator.Services
             { AssetKind.CreateCommandHandler, $"{CommonTokens.Create}{BaseEntity.Name}{CommonTokens.CommandHandler}" },
             { AssetKind.UpdateCommandHandler, $"{CommonTokens.Update}{BaseEntity.Name}{CommonTokens.CommandHandler}" },
             { AssetKind.DeleteCommandHandler, $"{CommonTokens.Delete}{BaseEntity.Name}{CommonTokens.CommandHandler}" },
-            { AssetKind.ProfileMapper, $"{BaseEntityPluralizedName}{CommonTokens.Mapper}" },
+            { AssetKind.ProfileMapper, $"{_viewModelBase.SelectedTargetModuleProject.Name.Split(new char[] {'.' }, StringSplitOptions.RemoveEmptyEntries).Last()}{CommonTokens.Mapper}" },
         };
 
         private IDictionary<AssetKind, NamespaceDefinitionModel> AssetToNamespaceMapping => new Dictionary<AssetKind, NamespaceDefinitionModel>
@@ -217,7 +217,7 @@ namespace BoilerplateGenerator.Services
                 AssetKind.ProfileMapper,
                 new NamespaceDefinitionModel()
             },
-            { 
+            {
                 AssetKind.IUnitOfWork,
                 new NamespaceDefinitionModel
                 {
