@@ -2,6 +2,9 @@
 
 ### [Download from Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=Strongbytes.boilerplate-code-generator)
 
+## Release 1.5
+* Generate hierarchy properties from inner classes referenced by main entity;
+
 ## Release 1.4
 * Generate GetPaginated Query;
 * Generate specific Operations, Commands and Queries, based on selected options;
