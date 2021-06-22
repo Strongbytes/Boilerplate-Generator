@@ -2,8 +2,9 @@
 using BoilerplateGenerator.Contracts.Generators;
 using BoilerplateGenerator.Contracts.RoslynWrappers;
 using BoilerplateGenerator.Contracts.Services;
+using BoilerplateGenerator.ExtraFeatures.Pagination;
+using BoilerplateGenerator.ExtraFeatures.UnitOfWork;
 using BoilerplateGenerator.Helpers;
-using BoilerplateGenerator.Models.Pagination;
 using BoilerplateGenerator.Models.TreeView;
 using BoilerplateGenerator.Services;
 using Microsoft.VisualStudio.Shell;
@@ -21,12 +22,29 @@ namespace BoilerplateGenerator.ViewModels
     {
         private readonly IEntityManagerService _fileManagerService;
         private readonly IGeneratorModelsManagerService _generatorModelsManagerService;
+        private readonly IPaginationRequirements _paginationRequirements;
+        private readonly IUnitOfWorkRequirements _unitOfWorkRequirements;
 
-        public ViewModelBase(IEntityManagerService fileManagerService, IGeneratorModelsManagerService generatorModelsManagerService)
+        public ViewModelBase
+        (
+            IEntityManagerService fileManagerService, 
+            IGeneratorModelsManagerService generatorModelsManagerService, 
+            IPaginationRequirements paginationRequirements,
+            IUnitOfWorkRequirements unitOfWorkRequirements
+        )
         {
             _fileManagerService = fileManagerService;
             _generatorModelsManagerService = generatorModelsManagerService;
-            PaginationRequirements.PropertyChanged += (sender, eventArgs) => NotifyPropertyChanged(nameof(GetPaginatedQueryIsEnabled));
+
+            _paginationRequirements = paginationRequirements;
+            _paginationRequirements.PropertyChanged += (sender, eventArgs) => NotifyPropertyChanged(nameof(GetPaginatedQueryIsEnabled));
+
+            _unitOfWorkRequirements = unitOfWorkRequirements;
+            _unitOfWorkRequirements.PropertyChanged += (sender, eventArgs) =>
+            {
+                NotifyPropertyChanged(nameof(UnitOfWorkIsEnabled));
+                NotifyPropertyChanged(nameof(UseUnitOfWork));
+            };
         }
 
         #region Properties
@@ -80,7 +98,7 @@ namespace BoilerplateGenerator.ViewModels
             get
             {
                 
-                return _getPaginatedQueryIsEnabled && PaginationRequirements.PaginationIsAvailable.HasValue;
+                return _getPaginatedQueryIsEnabled && _paginationRequirements.FeatureIsAvailable.HasValue;
             }
 
             set
@@ -163,12 +181,20 @@ namespace BoilerplateGenerator.ViewModels
                                                 && (GetByIdQueryIsEnabled || GetAllQueryIsEnabled || GetPaginatedQueryIsEnabled || CreateCommandIsEnabled || UpdateCommandIsEnabled || DeleteCommandIsEnabled);
         #endregion
 
+        public bool UnitOfWorkIsEnabled
+        {
+            get
+            {
+                return _unitOfWorkRequirements.FeatureIsAvailable.HasValue;
+            }
+        }
+
         private bool _useUnitOfWork = true;
         public bool UseUnitOfWork
         {
             get
             {
-                return _useUnitOfWork;
+                return _useUnitOfWork && UnitOfWorkIsEnabled;
             }
 
             set
@@ -286,8 +312,6 @@ namespace BoilerplateGenerator.ViewModels
         }
 
         public ISolutionWrapper Solution { get; set; }
-
-        public IPaginationRequirements PaginationRequirements { get; } = new PaginationRequirements();
         #endregion
 
         #region Collections
@@ -414,7 +438,9 @@ namespace BoilerplateGenerator.ViewModels
                 AvailableModules.Add(item);
             }
 
-            await _fileManagerService.RetrievePaginationRequirements(PaginationRequirements);
+            await _paginationRequirements.RetrieveFeatureRequirements().ConfigureAwait(false);
+
+            await _unitOfWorkRequirements.RetrieveFeatureRequirements().ConfigureAwait(false);
         }
         #endregion
 

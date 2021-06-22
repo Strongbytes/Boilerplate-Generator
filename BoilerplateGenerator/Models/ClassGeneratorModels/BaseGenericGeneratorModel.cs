@@ -54,7 +54,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
 
         protected virtual IEnumerable<ParameterDefinitionModel> InjectedDependenciesBuilder { get; } = Enumerable.Empty<ParameterDefinitionModel>();
 
-        protected virtual IEnumerable<MethodDefinitionModel> ConstructorsBuilder { get; } = Enumerable.Empty<MethodDefinitionModel>();
+        protected virtual IEnumerable<ConstructorDefinitionModel> ConstructorsBuilder { get; } = Enumerable.Empty<ConstructorDefinitionModel>();
 
         protected virtual IEnumerable<MethodDefinitionModel> AvailableMethodsBuilder { get; } = Enumerable.Empty<MethodDefinitionModel>();
         #endregion
@@ -141,8 +141,8 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
             }
         }
 
-        private IEnumerable<MethodDefinitionModel> _constructors;
-        public IEnumerable<MethodDefinitionModel> DefinedConstructors
+        private IEnumerable<ConstructorDefinitionModel> _constructors;
+        public IEnumerable<ConstructorDefinitionModel> DefinedConstructors
         {
             get
             {

@@ -41,13 +41,13 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule
 
         protected override IEnumerable<PropertyDefinitionModel> AvailablePropertiesBuilder => Enumerable.Empty<PropertyDefinitionModel>();
 
-        protected override IEnumerable<MethodDefinitionModel> ConstructorsBuilder
+        protected override IEnumerable<ConstructorDefinitionModel> ConstructorsBuilder
         {
             get
             {
-                return new MethodDefinitionModel[]
+                return new ConstructorDefinitionModel[]
                 {
-                    new MethodDefinitionModel
+                    new ConstructorDefinitionModel
                     {
                         Body = ConstructorBody,
                         MemberConflictResolutionKind = MemberConflictResolutionKind.Merge
@@ -60,7 +60,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule
         {
             get
             {
-                string referencedEntityName = _viewModelBase.EntityTree.First().Current.Name;
+                string referencedEntityName = _viewModelBase.EntityTree.PrimaryEntityName();
 
                 ICollection<string> statements = new List<string>
                 {

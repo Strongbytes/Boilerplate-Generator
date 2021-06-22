@@ -30,7 +30,7 @@ namespace BoilerplateGenerator.Contracts.Generators
 
         IEnumerable<ParameterDefinitionModel> InjectedDependencies { get; }
 
-        IEnumerable<MethodDefinitionModel> DefinedConstructors { get; }
+        IEnumerable<ConstructorDefinitionModel> DefinedConstructors { get; }
 
         IEnumerable<MethodDefinitionModel> DefinedMethods { get; }
 

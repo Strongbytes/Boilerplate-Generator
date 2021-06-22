@@ -169,13 +169,14 @@
                 <Separator VerticalAlignment="Top"
                            Margin="0" />
 
-                <CheckBox Content="Use Unit of Work"
+                <CheckBox Content="Use Unit of Work and Entity Repository"
                           Margin="5"
                           IsChecked="{Binding UseUnitOfWork, Mode=TwoWay}"
+                          IsEnabled="{Binding UnitOfWorkIsEnabled}"
                           VerticalContentAlignment="Center"
                           HorizontalContentAlignment="Left">
                     <CheckBox.ToolTip>
-                        <ToolTip Content="When this option is enabled all CQRS Handlers will reference IUnitOfWork from the same Target Module" />
+                        <ToolTip Content="When this option is enabled all CQRS Handlers will reference IUnitOfWork from the same Target Module. Also, a new Repository will be added to the existing Unit of Work (if not already there)" />
                     </CheckBox.ToolTip>
                 </CheckBox>
 
@@ -185,7 +186,7 @@
                           VerticalContentAlignment="Center"
                           HorizontalContentAlignment="Left">
                     <CheckBox.ToolTip>
-                        <ToolTip Content="When this option is enabled AutoMapper mappings will be added to the existing AutoMapper Profile." />
+                        <ToolTip Content="When this option is enabled AutoMapper mappings will be added to the existing AutoMapper Profile, or, if no AutoMapper Profile is found inside the Target Module, a new Profile is created." />
                     </CheckBox.ToolTip>
                 </CheckBox>
 

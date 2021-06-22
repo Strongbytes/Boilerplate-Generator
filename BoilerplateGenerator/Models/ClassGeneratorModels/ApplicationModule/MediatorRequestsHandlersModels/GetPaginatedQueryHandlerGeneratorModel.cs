@@ -1,4 +1,5 @@
 ﻿using BoilerplateGenerator.Contracts.Services;
+using BoilerplateGenerator.ExtraFeatures.Pagination;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.ViewModels;
 using System.Collections.Generic;
@@ -10,19 +11,26 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
     {
         private readonly IViewModelBase _viewModelBase;
         private readonly IMetadataGenerationService _metadataGenerationService;
+        private readonly IPaginationRequirements _paginationRequirements;
 
-        public GetPaginatedQueryHandlerGeneratorModel(IViewModelBase viewModelBase, IMetadataGenerationService metadataGenerationService)
+        public GetPaginatedQueryHandlerGeneratorModel
+        (
+            IViewModelBase viewModelBase, 
+            IMetadataGenerationService metadataGenerationService, 
+            IPaginationRequirements paginationRequirements
+        )
             : base(viewModelBase, metadataGenerationService)
         {
             _viewModelBase = viewModelBase;
             _metadataGenerationService = metadataGenerationService;
+            _paginationRequirements = paginationRequirements;
         }
 
         public override bool CanBeCreated => _viewModelBase.GetPaginatedQueryIsEnabled;
 
         protected override IEnumerable<string> UsingsBuilder => new string[]
         {
-            _viewModelBase.PaginationRequirements.PaginatedDataResponseInterface.Namespace,
+            _paginationRequirements.PaginatedDataResponseInterface.Namespace,
         }.Union(base.UsingsBuilder);
 
         public override AssetKind Kind => AssetKind.GetPaginatedQueryHandler;

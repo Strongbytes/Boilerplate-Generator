@@ -4,6 +4,7 @@ using BoilerplateGenerator.Models.RoslynWrappers;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using Microsoft.CodeAnalysis;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace BoilerplateGenerator.Helpers
@@ -99,6 +100,16 @@ namespace BoilerplateGenerator.Helpers
             }
 
             return propertyDefinitions;
+        }
+
+        public static string PrimaryEntityName(this ObservableCollection<ITreeNode<IBaseSymbolWrapper>> entityTree)
+        {
+            return entityTree.First().Current.Name;
+        }
+
+        public static string PrimaryEntityNamespace(this ObservableCollection<ITreeNode<IBaseSymbolWrapper>> entityTree)
+        {
+            return entityTree.First().Current.Namespace;
         }
     }
 }

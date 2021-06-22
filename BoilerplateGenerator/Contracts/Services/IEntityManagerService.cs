@@ -1,6 +1,6 @@
 ﻿using BoilerplateGenerator.Collections;
 using BoilerplateGenerator.Contracts.RoslynWrappers;
-using BoilerplateGenerator.Models.Pagination;
+using Microsoft.CodeAnalysis;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -20,6 +20,6 @@ namespace BoilerplateGenerator.Contracts.Services
 
         Task<ITreeNode<IBaseSymbolWrapper>> PopulateClassHierarchy();
 
-        Task RetrievePaginationRequirements(IPaginationRequirements paginationRequirements);
+        Task<INamedTypeSymbol[]> RetrieveAllAvailableProjectTypes();
     }
 }

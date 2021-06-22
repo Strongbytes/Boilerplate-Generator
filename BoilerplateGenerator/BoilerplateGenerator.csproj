@@ -54,6 +54,9 @@
     <Compile Include="EqualityComparers\BaseTypeSyntaxComparer.cs" />
     <Compile Include="EqualityComparers\StatementSyntaxComparer.cs" />
     <Compile Include="EqualityComparers\ParameterDefinitionModelComparer.cs" />
+    <Compile Include="ExtraFeatures\IBaseFeatureRequirements.cs" />
+    <Compile Include="ExtraFeatures\UnitOfWork\IUnitOfWorkRequirements.cs" />
+    <Compile Include="ExtraFeatures\UnitOfWork\UnitOfWorkRequirements.cs" />
     <Compile Include="Helpers\EntityWrapperTreeExtensions.cs" />
     <Compile Include="Helpers\GeneratedAssetsTreeExtensions.cs" />
     <Compile Include="Helpers\MemberSyntaxHelper.cs" />
@@ -79,13 +82,16 @@
     <Compile Include="Models\ClassGeneratorModels\DomainEntity\ResponseDomainEntityGeneratorModel.cs" />
     <Compile Include="Contracts\RoslynWrappers\IProjectWrapper.cs" />
     <Compile Include="Contracts\RoslynWrappers\ISolutionWrapper.cs" />
+    <Compile Include="Models\ClassGeneratorModels\Infrastructure\EntityRepositoryImplementationGeneratorModel.cs" />
+    <Compile Include="Models\ClassGeneratorModels\Infrastructure\EntityRepositoryInterfaceGeneratorModel.cs" />
     <Compile Include="Models\Enums\MemberConflictResolutionKind.cs" />
     <Compile Include="Models\Enums\NamespaceTokens.cs" />
-    <Compile Include="Models\Pagination\IPaginationRequirements.cs" />
-    <Compile Include="Models\Pagination\PaginationRequirements.cs" />
+    <Compile Include="ExtraFeatures\Pagination\IPaginationRequirements.cs" />
+    <Compile Include="ExtraFeatures\Pagination\PaginationRequirements.cs" />
     <Compile Include="Models\RoslynWrappers\EntityInterfaceWrapper.cs" />
     <Compile Include="Models\RoslynWrappers\SolutionWrapper.cs" />
     <Compile Include="Models\SyntaxDefinitionModels\CompilationUnitDefinitionModel.cs" />
+    <Compile Include="Models\SyntaxDefinitionModels\ConstructorDefinitionModel.cs" />
     <Compile Include="Models\SyntaxDefinitionModels\NamespaceDefinitionModel.cs" />
     <Compile Include="Models\TreeView\GeneratedDirectory.cs" />
     <Compile Include="Models\TreeView\GeneratedCompilationUnit.cs" />
@@ -205,9 +211,7 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\ClassGeneratorModels\Infrastructure\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

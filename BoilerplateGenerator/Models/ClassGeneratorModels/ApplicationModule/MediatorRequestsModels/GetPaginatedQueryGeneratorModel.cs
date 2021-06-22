@@ -1,4 +1,5 @@
 ﻿using BoilerplateGenerator.Contracts.Services;
+using BoilerplateGenerator.ExtraFeatures.Pagination;
 using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
@@ -13,12 +14,19 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
     {
         private readonly IViewModelBase _viewModelBase;
         private readonly IMetadataGenerationService _metadataGenerationService;
+        private readonly IPaginationRequirements _paginationRequirements;
 
-        public GetPaginatedQueryGeneratorModel(IViewModelBase viewModelBase, IMetadataGenerationService metadataGenerationService)
+        public GetPaginatedQueryGeneratorModel
+        (
+            IViewModelBase viewModelBase, 
+            IMetadataGenerationService metadataGenerationService, 
+            IPaginationRequirements paginationRequirements
+        )
             : base(viewModelBase, metadataGenerationService)
         {
             _viewModelBase = viewModelBase;
             _metadataGenerationService = metadataGenerationService;
+            _paginationRequirements = paginationRequirements;
         }
 
         public override bool CanBeCreated => _viewModelBase.GetPaginatedQueryIsEnabled;
@@ -28,8 +36,8 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
         protected override IEnumerable<string> UsingsBuilder => new string[]
         {
            UsingTokens.MediatR,
-           _viewModelBase.PaginationRequirements.PaginatedDataResponseInterface.Namespace,
-           _viewModelBase.PaginationRequirements.PaginatedDataQueryInterface.Namespace,
+           _paginationRequirements.PaginatedDataResponseInterface.Namespace,
+           _paginationRequirements.PaginatedDataQueryInterface.Namespace,
            _metadataGenerationService.NamespaceByAssetKind(AssetKind.ResponseDomainEntity),
         }.Union(base.UsingsBuilder);
 
@@ -45,8 +53,8 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
         {
             new PropertyDefinitionModel
             {
-                ReturnType = _viewModelBase.PaginationRequirements.PaginatedDataQueryInterface.Name,
-                Name = _viewModelBase.PaginationRequirements.PaginatedDataQueryClass.Name,
+                ReturnType = _paginationRequirements.PaginatedDataQueryInterface.Name,
+                Name = _paginationRequirements.PaginatedDataQueryClass.Name,
                 Modifiers = new SyntaxKind [] { SyntaxKind.InternalKeyword }
             }
         };
@@ -55,8 +63,8 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
         {
             new ParameterDefinitionModel
             {
-                ReturnType = _viewModelBase.PaginationRequirements.PaginatedDataQueryInterface.Name,
-                Name = _viewModelBase.PaginationRequirements.PaginatedDataQueryClass.Name.ToLowerCamelCase(),
+                ReturnType = _paginationRequirements.PaginatedDataQueryInterface.Name,
+                Name = _paginationRequirements.PaginatedDataQueryClass.Name.ToLowerCamelCase(),
                 MapToClassProperty = true
             },
         };

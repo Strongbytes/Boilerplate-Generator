@@ -21,5 +21,7 @@
         DeleteCommandHandler,
         ProfileMapper,
         IUnitOfWork,
+        EntityRepositoryInterface,
+        EntityRepositoryImplementation,
     }
 }

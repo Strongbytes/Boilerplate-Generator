@@ -8,5 +8,7 @@
         Application,
         Commands,
         Queries,
+        Repositories,
+        Infrastructure,
     }
 }

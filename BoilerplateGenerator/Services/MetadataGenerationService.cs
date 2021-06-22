@@ -83,6 +83,8 @@ namespace BoilerplateGenerator.Services
             { AssetKind.UpdateCommandHandler, $"{CommonTokens.Update}{BaseEntity.Name}{CommonTokens.CommandHandler}" },
             { AssetKind.DeleteCommandHandler, $"{CommonTokens.Delete}{BaseEntity.Name}{CommonTokens.CommandHandler}" },
             { AssetKind.ProfileMapper, $"{_viewModelBase.SelectedTargetModuleProject.Name.Split(new char[] {'.' }, StringSplitOptions.RemoveEmptyEntries).Last()}{CommonTokens.Mapper}" },
+            { AssetKind.EntityRepositoryInterface, $"{CommonTokens.I}{BaseEntityPluralizedName}{CommonTokens.Repository}" },
+            { AssetKind.EntityRepositoryImplementation, $"{BaseEntityPluralizedName}{CommonTokens.Repository}" },
         };
 
         private IDictionary<AssetKind, NamespaceDefinitionModel> AssetToNamespaceMapping => new Dictionary<AssetKind, NamespaceDefinitionModel>
@@ -225,6 +227,22 @@ namespace BoilerplateGenerator.Services
                 new NamespaceDefinitionModel
                 {
                     Content = $"{NamespaceTokens.Domain}",
+                    IsEnabled = _viewModelBase.UseUnitOfWork
+                }
+            },
+            {
+                AssetKind.EntityRepositoryInterface,
+                new NamespaceDefinitionModel
+                {
+                    Content = $"{NamespaceTokens.Domain}.{NamespaceTokens.Repositories}",
+                    IsEnabled = _viewModelBase.UseUnitOfWork
+                }
+            },
+            {
+                AssetKind.EntityRepositoryImplementation,
+                new NamespaceDefinitionModel
+                {
+                    Content = $"{NamespaceTokens.Infrastructure}.{NamespaceTokens.Repositories}",
                     IsEnabled = _viewModelBase.UseUnitOfWork
                 }
             },

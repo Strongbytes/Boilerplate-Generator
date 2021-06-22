@@ -51,6 +51,14 @@
         IPaginatedDataResponse,
         IPaginatedDataQuery,
         IActionResult,
-        Profile
+        Profile,
+        I,
+        Repository,
+        IBaseRepository,
+        Context,
+        BaseRepository,
+        IBaseUnitOfWork,
+        DbContext,
+        DbContextOptions
     }
 }

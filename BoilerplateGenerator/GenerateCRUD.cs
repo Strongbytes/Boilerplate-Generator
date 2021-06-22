@@ -1,5 +1,7 @@
 ﻿using BoilerplateGenerator.Contracts.Services;
 using BoilerplateGenerator.Controls;
+using BoilerplateGenerator.ExtraFeatures.Pagination;
+using BoilerplateGenerator.ExtraFeatures.UnitOfWork;
 using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Services;
 using BoilerplateGenerator.ViewModels;
@@ -59,6 +61,8 @@ namespace BoilerplateGenerator
             services.AddSingleton(typeof(VisualStudioWorkspace), _package.GetVisualStudioWorkspace());
             services.AddSingleton(typeof(IMetadataGenerationService), typeof(MetadataGenerationService));
             services.AddSingleton(typeof(IGeneratorModelsManagerService), typeof(GeneratorModelsManagerService));
+            services.AddSingleton(typeof(IPaginationRequirements), typeof(PaginationRequirements));
+            services.AddSingleton(typeof(IUnitOfWorkRequirements), typeof(UnitOfWorkRequirements));
             services.AddSingleton<MainWindow>();
 
             _serviceProvider = services.BuildServiceProvider();
