@@ -16,6 +16,6 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
 
         public override bool CanBeCreated => _viewModelBase.CreateCommandIsEnabled;
 
-        public override AssetKind GeneratedClassKind => AssetKind.CreateCommandHandler;
+        public override AssetKind GeneratedAssetKind => AssetKind.CreateCommandHandler;
     }
 }

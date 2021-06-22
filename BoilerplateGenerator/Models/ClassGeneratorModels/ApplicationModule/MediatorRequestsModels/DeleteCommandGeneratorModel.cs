@@ -21,7 +21,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
 
         public override bool CanBeCreated => _viewModelBase.DeleteCommandIsEnabled;
 
-        public override AssetKind GeneratedClassKind => AssetKind.DeleteCommand;
+        public override AssetKind GeneratedAssetKind => AssetKind.DeleteCommand;
 
         protected override IEnumerable<string> UsingsBuilder => new string[]
         {

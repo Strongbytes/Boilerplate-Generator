@@ -23,7 +23,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
 
         public override bool CanBeCreated => _viewModelBase.GetPaginatedQueryIsEnabled;
 
-        public override AssetKind GeneratedClassKind => AssetKind.GetPaginatedQuery;
+        public override AssetKind GeneratedAssetKind => AssetKind.GetPaginatedQuery;
 
         protected override IEnumerable<string> UsingsBuilder => new string[]
         {

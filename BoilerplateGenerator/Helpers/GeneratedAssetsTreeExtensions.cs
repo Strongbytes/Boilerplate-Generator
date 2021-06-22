@@ -8,21 +8,21 @@ namespace BoilerplateGenerator.Helpers
 {
     public static class GeneratedAssetsTreeExtensions
     {
-        public static async Task ExportGeneratedFiles(this ITreeNode<IBaseGeneratedAsset> treeNode)
+        public static async Task ExportGeneratedAssets(this ITreeNode<IBaseGeneratedAsset> treeNode)
         {
-            if (treeNode.Current is GeneratedClass generatedClass)
+            if (treeNode.Current is GeneratedCompilationUnit generatedClass)
             {
-                await generatedClass.ExportFile().ConfigureAwait(false);
+                await generatedClass.ExportAssetAsFile().ConfigureAwait(false);
                 return;
             }
 
             foreach (ITreeNode<IBaseGeneratedAsset> node in treeNode.Children)
             {
-                await ExportGeneratedFiles(node).ConfigureAwait(false);
+                await ExportGeneratedAssets(node).ConfigureAwait(false);
             }
         }
 
-        public static void GenerateDirectoryClassTree(this ITreeNode<IBaseGeneratedAsset> rootNode, IGeneratedClass generatedClass)
+        public static void GenerateAssetsDirectoryTree(this ITreeNode<IBaseGeneratedAsset> rootNode, IGeneratedCompilationUnit generatedClass)
         {
             foreach (string directory in generatedClass.ParentDirectoryHierarchy)
             {

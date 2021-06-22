@@ -11,36 +11,36 @@ namespace BoilerplateGenerator.Contracts.Generators
     {
         bool CanBeCreated { get; }
 
-        IEnumerable<string> Usings { get; }
+        string GeneratedAssetName { get; }
 
-        string GeneratedClassName { get; }
+        AssetKind GeneratedAssetKind { get; }
 
         string TargetProjectName { get; }
 
-        string ClassNamespace { get; }
+        string ContainingNamespace { get; }
 
         bool FileExistsInProject { get; }
 
-        bool MergeWithExistingClass { get; }
+        bool MergeWithExistingAsset { get; }
 
-        SyntaxKind RootClassModifier { get; }
+        SyntaxKind AccessModifier { get; }
 
-        AssetKind GeneratedClassKind { get; }
+        IEnumerable<string> Usings { get; }
 
         IEnumerable<string> BaseTypes { get; }
 
-        IEnumerable<PropertyDefinitionModel> AvailableProperties { get; }
+        IEnumerable<PropertyDefinitionModel> DefinedProperties { get; }
 
         IEnumerable<ParameterDefinitionModel> ConstructorParameters { get; }
 
-        IEnumerable<MethodDefinitionModel> Constructors { get; }
+        IEnumerable<MethodDefinitionModel> DefinedConstructors { get; }
 
-        IEnumerable<MethodDefinitionModel> AvailableMethods { get; }
+        IEnumerable<MethodDefinitionModel> DefinedMethods { get; }
 
-        IEnumerable<AttributeDefinitionModel> Attributes { get; }
+        IEnumerable<AttributeDefinitionModel> DefinedAttributes { get; }
 
-        Task<CompilationUnitSyntax> LoadClassFromExistingFile();
+        Task<CompilationUnitSyntax> LoadExistingAssetFromFile();
 
-        Task ExportFile(string content);
+        Task ExportAssetAsFile(string content);
     }
 }

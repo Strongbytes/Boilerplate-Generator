@@ -22,7 +22,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
 
         public override bool CanBeCreated => _viewModelBase.GetAllQueryIsEnabled;
 
-        public override AssetKind GeneratedClassKind => AssetKind.GetAllQuery;
+        public override AssetKind GeneratedAssetKind => AssetKind.GetAllQuery;
 
         protected override IEnumerable<string> UsingsBuilder => new string[]
         {

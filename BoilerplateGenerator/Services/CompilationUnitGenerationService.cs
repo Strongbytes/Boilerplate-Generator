@@ -13,38 +13,38 @@ using System.Threading.Tasks;
 
 namespace BoilerplateGenerator.Services
 {
-    public class ClassGenerationService : IClassGenerationService
+    public class CompilationUnitGenerationService : ICompilationUnitGenerationService
     {
         private readonly IGenericGeneratorModel _genericGeneratorModel;
         private CompilationUnitSyntax _compilationUnit;
 
         private BlockSyntax NotImplementedBody => SyntaxFactory.Block(SyntaxFactory.ParseStatement("throw new NotImplementedException();"));
 
-        public ClassGenerationService(IGenericGeneratorModel genericGeneratorModel)
+        public CompilationUnitGenerationService(IGenericGeneratorModel genericGeneratorModel)
         {
             _genericGeneratorModel = genericGeneratorModel;
         }
 
         private async Task<CompilationUnitSyntax> RetrieveCompilationUnit()
         {
-            if (_genericGeneratorModel.MergeWithExistingClass)
+            if (_genericGeneratorModel.MergeWithExistingAsset)
             {
-                return await _genericGeneratorModel.LoadClassFromExistingFile().ConfigureAwait(false);
+                return await _genericGeneratorModel.LoadExistingAssetFromFile().ConfigureAwait(false);
             }
 
             return SyntaxFactory.CompilationUnit();
         }
 
-        public async Task<IGeneratedClass> GetGeneratedClass()
+        public async Task<IGeneratedCompilationUnit> GetGeneratedCompilationUnit()
         {
             _compilationUnit = await RetrieveCompilationUnit();
 
             string generatedCode = await Task.Run(() => _compilationUnit.WithUsings(GenerateUsings())
                                                                         .WithMembers(GenerateClassWithNamespace())
-                                                                        .NormalizeWhitespace()
+                                                                        .NormalizeWhitespace(elasticTrivia: true)
                                                                         .ToFullString()).ConfigureAwait(false);
 
-            return new GeneratedClass(_genericGeneratorModel, generatedCode);
+            return new GeneratedCompilationUnit(_genericGeneratorModel, generatedCode);
         }
 
         private SyntaxList<UsingDirectiveSyntax> GenerateUsings()
@@ -58,7 +58,7 @@ namespace BoilerplateGenerator.Services
         private NamespaceDeclarationSyntax RetrieveNamespaceDeclaration()
         {
             return _compilationUnit.DescendantNodes().OfType<NamespaceDeclarationSyntax>().FirstOrDefault()
-                ?? SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(_genericGeneratorModel.ClassNamespace));
+                ?? SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(_genericGeneratorModel.ContainingNamespace));
         }
 
         private SyntaxList<MemberDeclarationSyntax> GenerateClassWithNamespace()
@@ -72,7 +72,7 @@ namespace BoilerplateGenerator.Services
         private ConstructorDeclarationSyntax GenerateConstructorBody(ConstructorDeclarationSyntax existingConstructor, MethodDefinitionModel constructorDeclaration)
         {
             ConstructorDeclarationSyntax newConstructor = existingConstructor
-                ?? SyntaxFactory.ConstructorDeclaration(_genericGeneratorModel.GeneratedClassName)
+                ?? SyntaxFactory.ConstructorDeclaration(_genericGeneratorModel.GeneratedAssetName)
                                 .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
 
             return newConstructor.WithBody
@@ -89,7 +89,7 @@ namespace BoilerplateGenerator.Services
         {
             IEnumerable<ConstructorDeclarationSyntax> existingConstructors = classDeclarationSyntax.RetrieveClassMembers<ConstructorDeclarationSyntax>(SyntaxKind.ConstructorDeclaration);
 
-            foreach (MethodDefinitionModel constructorDeclaration in _genericGeneratorModel.Constructors)
+            foreach (MethodDefinitionModel constructorDeclaration in _genericGeneratorModel.DefinedConstructors)
             {
                 ConstructorDeclarationSyntax existingConstructor = existingConstructors.RetrieveExistingMember(constructorDeclaration);
                 ConstructorDeclarationSyntax newConstructor = GenerateConstructorBody(existingConstructor, constructorDeclaration);
@@ -104,7 +104,7 @@ namespace BoilerplateGenerator.Services
 
         private ConstructorDeclarationSyntax GenerateConstructorWithParameters()
         {
-            return SyntaxFactory.ConstructorDeclaration(_genericGeneratorModel.GeneratedClassName)
+            return SyntaxFactory.ConstructorDeclaration(_genericGeneratorModel.GeneratedAssetName)
                                 .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
                                 .AddParameterListParameters(GenerateParameters(_genericGeneratorModel.ConstructorParameters))
                                 .WithBody(GenerateMethodBody(_genericGeneratorModel.ConstructorParameters));
@@ -112,7 +112,7 @@ namespace BoilerplateGenerator.Services
 
         private MethodDeclarationSyntax[] GenerateMethods()
         {
-            return (from methodDeclaration in _genericGeneratorModel.AvailableMethods
+            return (from methodDeclaration in _genericGeneratorModel.DefinedMethods
                     where methodDeclaration.IsEnabled
                     select SyntaxFactory.MethodDeclaration(SyntaxFactory.ParseTypeName(methodDeclaration.ReturnType), methodDeclaration.Name)
                                         .AddAttributeLists(GenerateAttributeList(methodDeclaration.Attributes))
@@ -226,10 +226,15 @@ namespace BoilerplateGenerator.Services
         private ClassDeclarationSyntax RetrieveBaseClassDeclaration()
         {
             return _compilationUnit.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault()
-                ?? SyntaxFactory.ClassDeclaration(_genericGeneratorModel.GeneratedClassName)
-                                .AddModifiers(SyntaxFactory.Token(_genericGeneratorModel.RootClassModifier))
-                                .AddAttributeLists(GenerateAttributeList(_genericGeneratorModel.Attributes));
+                ?? SyntaxFactory.ClassDeclaration(_genericGeneratorModel.GeneratedAssetName)
+                                .AddModifiers(SyntaxFactory.Token(_genericGeneratorModel.AccessModifier))
+                                .AddAttributeLists(GenerateAttributeList(_genericGeneratorModel.DefinedAttributes));
         }
+
+        //private SyntaxList<MemberDeclarationSyntax> GenerateInterfaceDeclaration()
+        //{
+        //    InterfaceDeclarationSyntax interfaceDeclarationSyntax 
+        //}
 
         private SyntaxList<MemberDeclarationSyntax> GenerateClassDeclaration()
         {
@@ -237,10 +242,10 @@ namespace BoilerplateGenerator.Services
 
             if (_genericGeneratorModel.BaseTypes != null && _genericGeneratorModel.BaseTypes.Any())
             {
-                classDeclarationSyntax = GenerateBaseTypes(classDeclarationSyntax);
+                classDeclarationSyntax = classDeclarationSyntax.WithBaseList(GenerateBaseTypes(classDeclarationSyntax));
             }
 
-            if (_genericGeneratorModel.AvailableProperties != null && _genericGeneratorModel.AvailableProperties.Any())
+            if (_genericGeneratorModel.DefinedProperties != null && _genericGeneratorModel.DefinedProperties.Any())
             {
                 classDeclarationSyntax = classDeclarationSyntax.AddMembers(GenerateProperties());
             }
@@ -251,12 +256,12 @@ namespace BoilerplateGenerator.Services
                                                                .AddMembers(GenerateConstructorWithParameters());
             }
 
-            if (_genericGeneratorModel.Constructors != null && _genericGeneratorModel.Constructors.Any())
+            if (_genericGeneratorModel.DefinedConstructors != null && _genericGeneratorModel.DefinedConstructors.Any())
             {
                 classDeclarationSyntax = GenerateConstructors(classDeclarationSyntax);
             }
 
-            if (_genericGeneratorModel.AvailableMethods != null && _genericGeneratorModel.AvailableMethods.Any(x => x.IsEnabled))
+            if (_genericGeneratorModel.DefinedMethods != null && _genericGeneratorModel.DefinedMethods.Any(x => x.IsEnabled))
             {
                 classDeclarationSyntax = classDeclarationSyntax.AddMembers(GenerateMethods());
             }
@@ -264,28 +269,25 @@ namespace BoilerplateGenerator.Services
             return SyntaxFactory.List(new MemberDeclarationSyntax[] { classDeclarationSyntax });
         }
 
-        private ClassDeclarationSyntax GenerateBaseTypes(ClassDeclarationSyntax classDeclarationSyntax)
+        private BaseListSyntax GenerateBaseTypes(ClassDeclarationSyntax classDeclarationSyntax)
         {
             BaseListSyntax baseList = classDeclarationSyntax.BaseList ?? SyntaxFactory.BaseList();
 
-            return classDeclarationSyntax.WithBaseList
+            return baseList.WithTypes
             (
-                baseList.WithTypes
+                baseList.Types.AddRange
                 (
-                    baseList.Types.AddRange
-                    (
-                        from baseType in _genericGeneratorModel.BaseTypes
-                        let newNode = SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(baseType))
-                        where !baseList.Types.Contains(newNode, new BaseTypeSyntaxComparer())
-                        select newNode
-                    )
+                    from baseType in _genericGeneratorModel.BaseTypes
+                    let newNode = SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(baseType))
+                    where !baseList.Types.Contains(newNode, new BaseTypeSyntaxComparer())
+                    select newNode
                 )
             );
         }
 
         private PropertyDeclarationSyntax[] GenerateProperties()
         {
-            return (from propertyDefinition in _genericGeneratorModel.AvailableProperties
+            return (from propertyDefinition in _genericGeneratorModel.DefinedProperties
                     select SyntaxFactory.PropertyDeclaration(SyntaxFactory.ParseTypeName(propertyDefinition.ReturnType), propertyDefinition.Name)
                                         .AddModifiers(GenerateModifiers(propertyDefinition.Modifiers))
                                         .AddAttributeLists(GenerateAttributeList(propertyDefinition.Attributes))

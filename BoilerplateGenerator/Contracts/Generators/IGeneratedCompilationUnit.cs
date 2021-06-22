@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace BoilerplateGenerator.Contracts.Generators
 {
-    public interface IGeneratedClass : IBaseGeneratedAsset
+    public interface IGeneratedCompilationUnit : IBaseGeneratedAsset
     {
         string Code { get; set; }
 
@@ -11,6 +11,6 @@ namespace BoilerplateGenerator.Contracts.Generators
 
         bool FileExistsInProject { get; }
 
-        Task ExportFile();
+        Task ExportAssetAsFile();
     }
 }

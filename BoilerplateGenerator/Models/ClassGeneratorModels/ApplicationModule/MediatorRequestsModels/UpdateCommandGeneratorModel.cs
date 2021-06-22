@@ -23,7 +23,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
 
         public override bool CanBeCreated => _viewModelBase.UpdateCommandIsEnabled;
 
-        public override AssetKind GeneratedClassKind => AssetKind.UpdateCommand;
+        public override AssetKind GeneratedAssetKind => AssetKind.UpdateCommand;
 
         protected override IEnumerable<string> UsingsBuilder => new string[]
         {

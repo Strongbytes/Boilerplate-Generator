@@ -20,7 +20,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Com
 
         public override bool CanBeCreated => _viewModelBase.CreateCommandIsEnabled;
 
-        public override AssetKind GeneratedClassKind => AssetKind.CreateRequestDomainEntity;
+        public override AssetKind GeneratedAssetKind => AssetKind.CreateRequestDomainEntity;
 
         protected override IEnumerable<string> UsingsBuilder => new string[]
         {

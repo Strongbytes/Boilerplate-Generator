@@ -16,6 +16,6 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
 
         public override bool CanBeCreated => _viewModelBase.GetByIdQueryIsEnabled;
 
-        public override AssetKind GeneratedClassKind => AssetKind.GetByIdQueryHandler;
+        public override AssetKind GeneratedAssetKind => AssetKind.GetByIdQueryHandler;
     }
 }

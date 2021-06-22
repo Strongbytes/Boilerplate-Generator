@@ -27,13 +27,13 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
 
 
         #region Model Builder
-        public abstract AssetKind GeneratedClassKind { get; }
+        public abstract AssetKind GeneratedAssetKind { get; }
 
         public virtual bool CanBeCreated => true;
 
-        public virtual bool MergeWithExistingClass => false;
+        public virtual bool MergeWithExistingAsset => false;
 
-        public virtual SyntaxKind RootClassModifier => SyntaxKind.PublicKeyword;
+        public virtual SyntaxKind AccessModifier => SyntaxKind.PublicKeyword;
 
         protected virtual IEnumerable<string> UsingsBuilder => new string[] { UsingTokens.System };
 
@@ -68,7 +68,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
 
         #region Public Model Properties
         private string _classNamespace;
-        public string ClassNamespace
+        public string ContainingNamespace
         {
             get
             {
@@ -77,13 +77,13 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
                     return _classNamespace;
                 }
 
-                _classNamespace = _metadataGenerationService.NamespaceByAssetKind(GeneratedClassKind);
+                _classNamespace = _metadataGenerationService.NamespaceByAssetKind(GeneratedAssetKind);
                 return _classNamespace;
             }
         }
 
         private string _generatedClassName;
-        public string GeneratedClassName
+        public string GeneratedAssetName
         {
             get
             {
@@ -92,12 +92,12 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
                     return _generatedClassName;
                 }
 
-                _generatedClassName = _metadataGenerationService.AssetToClassNameMapping[GeneratedClassKind];
+                _generatedClassName = _metadataGenerationService.AssetToClassNameMapping[GeneratedAssetKind];
                 return _generatedClassName;
             }
         }
 
-        public bool FileExistsInProject => TargetModule.GeneratedFileAlreadyExists($"{_metadataGenerationService.NamespaceByAssetKind(GeneratedClassKind)}", $"{_metadataGenerationService.AssetToClassNameMapping[GeneratedClassKind]}");
+        public bool FileExistsInProject => TargetModule.GeneratedFileAlreadyExists($"{_metadataGenerationService.NamespaceByAssetKind(GeneratedAssetKind)}", $"{_metadataGenerationService.AssetToClassNameMapping[GeneratedAssetKind]}");
 
 
         public string TargetProjectName => TargetModule.Name;
@@ -118,7 +118,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
         }
 
         private IEnumerable<PropertyDefinitionModel> _availableProperties;
-        public IEnumerable<PropertyDefinitionModel> AvailableProperties
+        public IEnumerable<PropertyDefinitionModel> DefinedProperties
         {
             get
             {
@@ -163,7 +163,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
         }
 
         private IEnumerable<MethodDefinitionModel> _constructors;
-        public IEnumerable<MethodDefinitionModel> Constructors
+        public IEnumerable<MethodDefinitionModel> DefinedConstructors
         {
             get
             {
@@ -178,7 +178,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
         }
 
         private IEnumerable<MethodDefinitionModel> _availableMethods;
-        public IEnumerable<MethodDefinitionModel> AvailableMethods
+        public IEnumerable<MethodDefinitionModel> DefinedMethods
         {
             get
             {
@@ -194,7 +194,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
 
 
         private IEnumerable<AttributeDefinitionModel> _attributes;
-        public IEnumerable<AttributeDefinitionModel> Attributes
+        public IEnumerable<AttributeDefinitionModel> DefinedAttributes
         {
             get
             {
@@ -239,22 +239,22 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
         #endregion
 
         #region Methods
-        public async Task ExportFile(string content)
+        public async Task ExportAssetAsFile(string content)
         {
             await TargetModule.ExportFile
             (
-                $"{_metadataGenerationService.NamespaceByAssetKind(GeneratedClassKind)}",
-                $"{_metadataGenerationService.AssetToClassNameMapping[GeneratedClassKind]}",
+                $"{_metadataGenerationService.NamespaceByAssetKind(GeneratedAssetKind)}",
+                $"{_metadataGenerationService.AssetToClassNameMapping[GeneratedAssetKind]}",
                 content
             );
         }
 
-        public async Task<CompilationUnitSyntax> LoadClassFromExistingFile()
+        public async Task<CompilationUnitSyntax> LoadExistingAssetFromFile()
         {
             return await TargetModule.GetExistingFileClass
             (
-                $"{_metadataGenerationService.NamespaceByAssetKind(GeneratedClassKind)}",
-                $"{_metadataGenerationService.AssetToClassNameMapping[GeneratedClassKind]}"
+                $"{_metadataGenerationService.NamespaceByAssetKind(GeneratedAssetKind)}",
+                $"{_metadataGenerationService.AssetToClassNameMapping[GeneratedAssetKind]}"
             );
         }
         #endregion

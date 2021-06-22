@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 
 namespace BoilerplateGenerator.Contracts.Services
 {
-    public interface IClassGenerationService
+    public interface ICompilationUnitGenerationService
     {
-        Task<IGeneratedClass> GetGeneratedClass();
+        Task<IGeneratedCompilationUnit> GetGeneratedCompilationUnit();
     }
 }

@@ -25,7 +25,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
             _viewModelBase.PaginationRequirements.PaginatedDataResponseInterface.Namespace,
         }.Union(base.UsingsBuilder);
 
-        public override AssetKind GeneratedClassKind => AssetKind.GetPaginatedQueryHandler;
+        public override AssetKind GeneratedAssetKind => AssetKind.GetPaginatedQueryHandler;
 
         protected override string HandlerResponseType => $"{CommonTokens.IPaginatedDataResponse}<{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]}>";
     }

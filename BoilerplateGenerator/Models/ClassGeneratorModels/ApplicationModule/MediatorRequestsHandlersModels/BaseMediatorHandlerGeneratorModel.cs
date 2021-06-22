@@ -21,7 +21,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
             _metadataGenerationService = metadataGenerationService;
         }
 
-        private string RequestHandlerClassName => _metadataGenerationService.AssetToClassNameMapping[AssetToMediatorRequestKind[GeneratedClassKind]];
+        private string RequestHandlerClassName => _metadataGenerationService.AssetToClassNameMapping[AssetToMediatorRequestKind[GeneratedAssetKind]];
 
         protected IDictionary<AssetKind, AssetKind> AssetToMediatorRequestKind => new Dictionary<AssetKind, AssetKind>
         {
@@ -33,7 +33,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
             { AssetKind.UpdateCommandHandler, AssetKind.UpdateCommand },
         };
 
-        public override SyntaxKind RootClassModifier => SyntaxKind.InternalKeyword;
+        public override SyntaxKind AccessModifier => SyntaxKind.InternalKeyword;
 
         protected virtual string HandlerResponseType => $"{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]}";
 

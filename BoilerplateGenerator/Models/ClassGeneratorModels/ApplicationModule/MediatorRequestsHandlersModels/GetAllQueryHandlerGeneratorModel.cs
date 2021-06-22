@@ -18,7 +18,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
 
         public override bool CanBeCreated => _viewModelBase.GetAllQueryIsEnabled;
 
-        public override AssetKind GeneratedClassKind => AssetKind.GetAllQueryHandler;
+        public override AssetKind GeneratedAssetKind => AssetKind.GetAllQueryHandler;
 
         protected override string HandlerResponseType => $"{CommonTokens.IEnumerable}<{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]}>";
     }

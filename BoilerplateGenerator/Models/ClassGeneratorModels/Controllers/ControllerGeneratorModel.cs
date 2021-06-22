@@ -38,7 +38,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
 
         protected override IEnumerable<PropertyDefinitionModel> AvailablePropertiesBuilder => new PropertyDefinitionModel[] { };
 
-        public override AssetKind GeneratedClassKind => AssetKind.Controller;
+        public override AssetKind GeneratedAssetKind => AssetKind.Controller;
 
         protected override IEnumerable<string> BaseTypesBuilder => new string[] { nameof(CommonTokens.ControllerBase) };
 

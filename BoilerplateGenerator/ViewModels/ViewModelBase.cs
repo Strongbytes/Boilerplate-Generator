@@ -356,8 +356,8 @@ namespace BoilerplateGenerator.ViewModels
                     {
                         foreach (IGenericGeneratorModel availableModel in await _generatorModelsManagerService.RetrieveAvailableGeneratorModels().ConfigureAwait(false))
                         {
-                            IGeneratedClass generatedClass = await new ClassGenerationService(availableModel).GetGeneratedClass().ConfigureAwait(false);
-                            rootNode.GenerateDirectoryClassTree(generatedClass);
+                            IGeneratedCompilationUnit generatedAsset = await new CompilationUnitGenerationService(availableModel).GetGeneratedCompilationUnit().ConfigureAwait(false);
+                            rootNode.GenerateAssetsDirectoryTree(generatedAsset);
                         }
                     }).ConfigureAwait(false);
 
@@ -383,7 +383,7 @@ namespace BoilerplateGenerator.ViewModels
 
                 _exportGeneratedFilesCommand = new CommandHandler(async (parameter) =>
                 {
-                    await DirectoriesTree.First().ExportGeneratedFiles().ConfigureAwait(false);
+                    await DirectoriesTree.First().ExportGeneratedAssets().ConfigureAwait(false);
 
                     if (!(parameter is Window mainWindow))
                     {

@@ -9,25 +9,25 @@ using System.Threading.Tasks;
 
 namespace BoilerplateGenerator.Models.TreeView
 {
-    public class GeneratedClass : IGeneratedClass
+    public class GeneratedCompilationUnit : IGeneratedCompilationUnit
     {
         private readonly IGenericGeneratorModel _genericGeneratorModel;
 
-        public GeneratedClass(IGenericGeneratorModel genericGeneratorModel, string generatedCode)
+        public GeneratedCompilationUnit(IGenericGeneratorModel genericGeneratorModel, string generatedCode)
         {
             _genericGeneratorModel = genericGeneratorModel;
             Code = generatedCode;
         }
 
-        public AssetKind AssetKind => _genericGeneratorModel.GeneratedClassKind;
+        public AssetKind AssetKind => _genericGeneratorModel.GeneratedAssetKind;
 
         public string Code { get; set; }
 
-        public string AssetName => $"{_genericGeneratorModel.GeneratedClassName}.cs";
+        public string AssetName => $"{_genericGeneratorModel.GeneratedAssetName}.cs";
 
         public bool FileExistsInProject => _genericGeneratorModel.FileExistsInProject;
 
-        public async Task ExportFile() => await _genericGeneratorModel.ExportFile(Code);
+        public async Task ExportAssetAsFile() => await _genericGeneratorModel.ExportAssetAsFile(Code);
 
         public IEnumerable<string> ParentDirectoryHierarchy
         {
@@ -38,8 +38,8 @@ namespace BoilerplateGenerator.Models.TreeView
                     _genericGeneratorModel.TargetProjectName 
                 }.Union
                 (
-                    _genericGeneratorModel.ClassNamespace.Replace(_genericGeneratorModel.TargetProjectName, string.Empty)
-                                                         .Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries)
+                    _genericGeneratorModel.ContainingNamespace.Replace(_genericGeneratorModel.TargetProjectName, string.Empty)
+                                                              .Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries)
                 );
             }
         }

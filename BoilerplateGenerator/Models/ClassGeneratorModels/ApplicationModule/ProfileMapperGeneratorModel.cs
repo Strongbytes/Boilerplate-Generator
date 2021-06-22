@@ -20,13 +20,13 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule
             _metadataGenerationService = metadataGenerationService;
         }
 
-        public override bool MergeWithExistingClass => FileExistsInProject;
+        public override bool MergeWithExistingAsset => FileExistsInProject;
 
         public override bool CanBeCreated => _viewModelBase.GenerateAutoMapperProfile;
 
         protected override IEnumerable<string> BaseTypesBuilder => new string[] { nameof(CommonTokens.Profile) };
 
-        public override AssetKind GeneratedClassKind => AssetKind.ProfileMapper;
+        public override AssetKind GeneratedAssetKind => AssetKind.ProfileMapper;
 
         protected override IEnumerable<string> UsingsBuilder => new string[]
         {
