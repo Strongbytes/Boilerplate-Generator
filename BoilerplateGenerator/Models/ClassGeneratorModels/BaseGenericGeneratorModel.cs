@@ -5,7 +5,6 @@ using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using BoilerplateGenerator.ViewModels;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,13 +26,11 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
 
 
         #region Model Builder
-        public abstract AssetKind GeneratedAssetKind { get; }
+        public abstract AssetKind Kind { get; }
 
         public virtual bool CanBeCreated => true;
 
         public virtual bool MergeWithExistingAsset => false;
-
-        public virtual SyntaxKind AccessModifier => SyntaxKind.PublicKeyword;
 
         protected virtual IEnumerable<string> UsingsBuilder => new string[] { UsingTokens.System };
 
@@ -55,11 +52,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
             }
         }
 
-        protected virtual IEnumerable<string> BaseTypesBuilder { get; } = Enumerable.Empty<string>();
-
-        protected virtual IEnumerable<AttributeDefinitionModel> AttributesBuilder { get; } = Enumerable.Empty<AttributeDefinitionModel>();
-
-        protected virtual IEnumerable<ParameterDefinitionModel> ConstructorParametersBuilder { get; } = Enumerable.Empty<ParameterDefinitionModel>();
+        protected virtual IEnumerable<ParameterDefinitionModel> InjectedDependenciesBuilder { get; } = Enumerable.Empty<ParameterDefinitionModel>();
 
         protected virtual IEnumerable<MethodDefinitionModel> ConstructorsBuilder { get; } = Enumerable.Empty<MethodDefinitionModel>();
 
@@ -67,38 +60,39 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
         #endregion
 
         #region Public Model Properties
-        private string _classNamespace;
-        public string ContainingNamespace
+        private string _namespace;
+        public string Namespace
         {
             get
             {
-                if (_classNamespace != null)
+                if (_namespace != null)
                 {
-                    return _classNamespace;
+                    return _namespace;
                 }
 
-                _classNamespace = _metadataGenerationService.NamespaceByAssetKind(GeneratedAssetKind);
-                return _classNamespace;
+                _namespace = _metadataGenerationService.NamespaceByAssetKind(Kind);
+                return _namespace;
             }
         }
 
-        private string _generatedClassName;
-        public string GeneratedAssetName
+        private string _name;
+        public string Name
         {
             get
             {
-                if (_generatedClassName != null)
+                if (_name != null)
                 {
-                    return _generatedClassName;
+                    return _name;
                 }
 
-                _generatedClassName = _metadataGenerationService.AssetToClassNameMapping[GeneratedAssetKind];
-                return _generatedClassName;
+                _name = _metadataGenerationService.AssetToCompilationUnitNameMapping[Kind];
+                return _name;
             }
         }
 
-        public bool FileExistsInProject => TargetModule.GeneratedFileAlreadyExists($"{_metadataGenerationService.NamespaceByAssetKind(GeneratedAssetKind)}", $"{_metadataGenerationService.AssetToClassNameMapping[GeneratedAssetKind]}");
+        public virtual CompilationUnitDefinitionModel CompilationUnitDefinition { get; } = new CompilationUnitDefinitionModel();
 
+        public bool FileExistsInProject => TargetModule.GeneratedFileAlreadyExists($"{_metadataGenerationService.NamespaceByAssetKind(Kind)}", $"{_metadataGenerationService.AssetToCompilationUnitNameMapping[Kind]}");
 
         public string TargetProjectName => TargetModule.Name;
 
@@ -132,33 +126,18 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
             }
         }
 
-        private IEnumerable<string> _baseTypes;
-        public IEnumerable<string> BaseTypes
+        private IEnumerable<ParameterDefinitionModel> _injectedDependencies;
+        public IEnumerable<ParameterDefinitionModel> InjectedDependencies
         {
             get
             {
-                if (_baseTypes != null)
+                if (_injectedDependencies != null)
                 {
-                    return _baseTypes;
+                    return _injectedDependencies;
                 }
 
-                _baseTypes = BaseTypesBuilder.ToArray();
-                return _baseTypes;
-            }
-        }
-
-        private IEnumerable<ParameterDefinitionModel> _constructorParameters;
-        public IEnumerable<ParameterDefinitionModel> ConstructorParameters
-        {
-            get
-            {
-                if (_constructorParameters != null)
-                {
-                    return _constructorParameters;
-                }
-
-                _constructorParameters = ConstructorParametersBuilder.ToArray();
-                return _constructorParameters;
+                _injectedDependencies = InjectedDependenciesBuilder.ToArray();
+                return _injectedDependencies;
             }
         }
 
@@ -189,22 +168,6 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
 
                 _availableMethods = AvailableMethodsBuilder.ToArray();
                 return _availableMethods;
-            }
-        }
-
-
-        private IEnumerable<AttributeDefinitionModel> _attributes;
-        public IEnumerable<AttributeDefinitionModel> DefinedAttributes
-        {
-            get
-            {
-                if (_attributes != null)
-                {
-                    return _attributes;
-                }
-
-                _attributes = AttributesBuilder.ToArray();
-                return _attributes;
             }
         }
         #endregion
@@ -243,8 +206,8 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
         {
             await TargetModule.ExportFile
             (
-                $"{_metadataGenerationService.NamespaceByAssetKind(GeneratedAssetKind)}",
-                $"{_metadataGenerationService.AssetToClassNameMapping[GeneratedAssetKind]}",
+                $"{_metadataGenerationService.NamespaceByAssetKind(Kind)}",
+                $"{_metadataGenerationService.AssetToCompilationUnitNameMapping[Kind]}",
                 content
             );
         }
@@ -253,8 +216,8 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
         {
             return await TargetModule.GetExistingFileClass
             (
-                $"{_metadataGenerationService.NamespaceByAssetKind(GeneratedAssetKind)}",
-                $"{_metadataGenerationService.AssetToClassNameMapping[GeneratedAssetKind]}"
+                $"{_metadataGenerationService.NamespaceByAssetKind(Kind)}",
+                $"{_metadataGenerationService.AssetToCompilationUnitNameMapping[Kind]}"
             );
         }
         #endregion

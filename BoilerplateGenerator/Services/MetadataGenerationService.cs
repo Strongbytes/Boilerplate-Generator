@@ -64,7 +64,7 @@ namespace BoilerplateGenerator.Services
 
         public IEnumerable<string> AvailableNamespaces => AssetToNamespaceMapping.Keys.Select(AbsoluteNamespace);
 
-        public IDictionary<AssetKind, string> AssetToClassNameMapping => new Dictionary<AssetKind, string>
+        public IDictionary<AssetKind, string> AssetToCompilationUnitNameMapping => new Dictionary<AssetKind, string>
         {
             { AssetKind.ResponseDomainEntity, $"{BaseEntity.Name}{CommonTokens.DomainModel}" },
             { AssetKind.Controller, $"{BaseEntityPluralizedName}{CommonTokens.Controller}" },

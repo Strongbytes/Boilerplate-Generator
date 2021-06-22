@@ -19,11 +19,11 @@ namespace BoilerplateGenerator.Models.TreeView
             Code = generatedCode;
         }
 
-        public AssetKind AssetKind => _genericGeneratorModel.GeneratedAssetKind;
+        public AssetKind AssetKind => _genericGeneratorModel.Kind;
 
         public string Code { get; set; }
 
-        public string AssetName => $"{_genericGeneratorModel.GeneratedAssetName}.cs";
+        public string AssetName => $"{_genericGeneratorModel.Name}.cs";
 
         public bool FileExistsInProject => _genericGeneratorModel.FileExistsInProject;
 
@@ -38,7 +38,7 @@ namespace BoilerplateGenerator.Models.TreeView
                     _genericGeneratorModel.TargetProjectName 
                 }.Union
                 (
-                    _genericGeneratorModel.ContainingNamespace.Replace(_genericGeneratorModel.TargetProjectName, string.Empty)
+                    _genericGeneratorModel.Namespace.Replace(_genericGeneratorModel.TargetProjectName, string.Empty)
                                                               .Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries)
                 );
             }

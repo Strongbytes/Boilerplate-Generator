@@ -21,7 +21,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
             _metadataGenerationService = metadataGenerationService;
         }
 
-        private string RequestHandlerClassName => _metadataGenerationService.AssetToClassNameMapping[AssetToMediatorRequestKind[GeneratedAssetKind]];
+        private string RequestHandlerClassName => _metadataGenerationService.AssetToCompilationUnitNameMapping[AssetToMediatorRequestKind[Kind]];
 
         protected IDictionary<AssetKind, AssetKind> AssetToMediatorRequestKind => new Dictionary<AssetKind, AssetKind>
         {
@@ -33,9 +33,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
             { AssetKind.UpdateCommandHandler, AssetKind.UpdateCommand },
         };
 
-        public override SyntaxKind AccessModifier => SyntaxKind.InternalKeyword;
-
-        protected virtual string HandlerResponseType => $"{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]}";
+        protected virtual string HandlerResponseType => $"{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.ResponseDomainEntity]}";
 
         protected override IEnumerable<string> UsingsBuilder => new string[]
         {
@@ -48,12 +46,16 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
            _metadataGenerationService.NamespaceByAssetKind(AssetKind.IUnitOfWork),
         }.Union(base.UsingsBuilder);
 
-        protected override IEnumerable<string> BaseTypesBuilder => new string[]
+        public override CompilationUnitDefinitionModel CompilationUnitDefinition => new CompilationUnitDefinitionModel
         {
-            $"{CommonTokens.IRequestHandler}<{RequestHandlerClassName}, {HandlerResponseType}>"
+            AccessModifier = SyntaxKind.InternalKeyword,
+            DefinedInheritanceTypes = new string[]
+            {
+                $"{CommonTokens.IRequestHandler}<{RequestHandlerClassName}, {HandlerResponseType}>"
+            }
         };
 
-        protected override IEnumerable<ParameterDefinitionModel> ConstructorParametersBuilder => new ParameterDefinitionModel[]
+        protected override IEnumerable<ParameterDefinitionModel> InjectedDependenciesBuilder => new ParameterDefinitionModel[]
         {
             new ParameterDefinitionModel
             {

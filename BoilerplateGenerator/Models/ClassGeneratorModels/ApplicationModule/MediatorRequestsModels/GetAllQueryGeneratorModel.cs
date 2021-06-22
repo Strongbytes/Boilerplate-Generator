@@ -22,7 +22,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
 
         public override bool CanBeCreated => _viewModelBase.GetAllQueryIsEnabled;
 
-        public override AssetKind GeneratedAssetKind => AssetKind.GetAllQuery;
+        public override AssetKind Kind => AssetKind.GetAllQuery;
 
         protected override IEnumerable<string> UsingsBuilder => new string[]
         {
@@ -31,9 +31,12 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
            _metadataGenerationService.NamespaceByAssetKind(AssetKind.ResponseDomainEntity),
         }.Union(base.UsingsBuilder);
 
-        protected override IEnumerable<string> BaseTypesBuilder => new string[]
+        public override CompilationUnitDefinitionModel CompilationUnitDefinition => new CompilationUnitDefinitionModel
         {
-            $"{CommonTokens.IRequest}<{CommonTokens.IEnumerable}<{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]}>>"
+            DefinedInheritanceTypes = new string[]
+            {
+                $"{CommonTokens.IRequest}<{CommonTokens.IEnumerable}<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.ResponseDomainEntity]}>>"
+            }
         };
 
         protected override IEnumerable<PropertyDefinitionModel> AvailablePropertiesBuilder => new PropertyDefinitionModel[] { };

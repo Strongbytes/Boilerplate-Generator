@@ -19,6 +19,6 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.DomainEntity
            UsingTokens.SystemComponentModelDataAnnotations,
         }.Union(base.UsingsBuilder);
 
-        public override AssetKind GeneratedAssetKind => AssetKind.ResponseDomainEntity;
+        public override AssetKind Kind => AssetKind.ResponseDomainEntity;
     }
 }

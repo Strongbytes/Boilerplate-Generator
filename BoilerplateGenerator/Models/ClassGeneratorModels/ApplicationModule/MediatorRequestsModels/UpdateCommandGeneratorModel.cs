@@ -23,7 +23,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
 
         public override bool CanBeCreated => _viewModelBase.UpdateCommandIsEnabled;
 
-        public override AssetKind GeneratedAssetKind => AssetKind.UpdateCommand;
+        public override AssetKind Kind => AssetKind.UpdateCommand;
 
         protected override IEnumerable<string> UsingsBuilder => new string[]
         {
@@ -32,16 +32,19 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
            _metadataGenerationService.NamespaceByAssetKind(AssetKind.UpdateRequestDomainEntity),
         }.Union(base.UsingsBuilder);
 
-        protected override IEnumerable<string> BaseTypesBuilder => new string[]
+        public override CompilationUnitDefinitionModel CompilationUnitDefinition => new CompilationUnitDefinitionModel
         {
-            $"{CommonTokens.IRequest}<{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]}>"
+            DefinedInheritanceTypes = new string[]
+            {
+                $"{CommonTokens.IRequest}<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.ResponseDomainEntity]}>"
+            }
         };
 
         protected override IEnumerable<PropertyDefinitionModel> AvailablePropertiesBuilder => new PropertyDefinitionModel[]
         {
             new PropertyDefinitionModel
             {
-                ReturnType = $"{_metadataGenerationService.AssetToClassNameMapping[AssetKind.UpdateRequestDomainEntity]}",
+                ReturnType = $"{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.UpdateRequestDomainEntity]}",
                 Name = $"{CommonTokens.Model}",
                 Modifiers = new SyntaxKind [] { SyntaxKind.InternalKeyword }
             },
@@ -53,7 +56,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
             }
         };
 
-        protected override IEnumerable<ParameterDefinitionModel> ConstructorParametersBuilder => new ParameterDefinitionModel[]
+        protected override IEnumerable<ParameterDefinitionModel> InjectedDependenciesBuilder => new ParameterDefinitionModel[]
         {
             new ParameterDefinitionModel
             {
@@ -63,7 +66,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
             },
             new ParameterDefinitionModel
             {
-                ReturnType = $"{_metadataGenerationService.AssetToClassNameMapping[AssetKind.UpdateRequestDomainEntity]}",
+                ReturnType = $"{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.UpdateRequestDomainEntity]}",
                 Name = $"{nameof(CommonTokens.Model).ToLowerCamelCase()}",
                 MapToClassProperty = true
             }

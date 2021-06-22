@@ -21,16 +21,19 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
 
         public override bool CanBeCreated => _viewModelBase.DeleteCommandIsEnabled;
 
-        public override AssetKind GeneratedAssetKind => AssetKind.DeleteCommand;
+        public override AssetKind Kind => AssetKind.DeleteCommand;
 
         protected override IEnumerable<string> UsingsBuilder => new string[]
         {
            UsingTokens.MediatR,
         }.Union(base.UsingsBuilder);
 
-        protected override IEnumerable<string> BaseTypesBuilder => new string[]
+        public override CompilationUnitDefinitionModel CompilationUnitDefinition => new CompilationUnitDefinitionModel
         {
-            $"{CommonTokens.IRequest}<{CommonTokens.Unit}>"
+            DefinedInheritanceTypes = new string[]
+            {
+                $"{CommonTokens.IRequest}<{CommonTokens.Unit}>"
+            }
         };
 
         protected override IEnumerable<PropertyDefinitionModel> AvailablePropertiesBuilder => new PropertyDefinitionModel[]
@@ -43,7 +46,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
             }
         };
 
-        protected override IEnumerable<ParameterDefinitionModel> ConstructorParametersBuilder => new ParameterDefinitionModel[]
+        protected override IEnumerable<ParameterDefinitionModel> InjectedDependenciesBuilder => new ParameterDefinitionModel[]
         {
             new ParameterDefinitionModel
             {

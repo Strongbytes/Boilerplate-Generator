@@ -7,6 +7,7 @@ using BoilerplateGenerator.Models.TreeView;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -40,7 +41,7 @@ namespace BoilerplateGenerator.Services
             _compilationUnit = await RetrieveCompilationUnit();
 
             string generatedCode = await Task.Run(() => _compilationUnit.WithUsings(GenerateUsings())
-                                                                        .WithMembers(GenerateClassWithNamespace())
+                                                                        .WithMembers(GenerateCompilationUnitWithNamespace())
                                                                         .NormalizeWhitespace(elasticTrivia: true)
                                                                         .ToFullString()).ConfigureAwait(false);
 
@@ -58,35 +59,54 @@ namespace BoilerplateGenerator.Services
         private NamespaceDeclarationSyntax RetrieveNamespaceDeclaration()
         {
             return _compilationUnit.DescendantNodes().OfType<NamespaceDeclarationSyntax>().FirstOrDefault()
-                ?? SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(_genericGeneratorModel.ContainingNamespace));
+                ?? SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(_genericGeneratorModel.Namespace));
         }
 
-        private SyntaxList<MemberDeclarationSyntax> GenerateClassWithNamespace()
+        private SyntaxList<MemberDeclarationSyntax> GenerateCompilationUnitWithNamespace()
         {
             return SyntaxFactory.List(new MemberDeclarationSyntax[]
             {
-                RetrieveNamespaceDeclaration().WithMembers(GenerateClassDeclaration())
+                RetrieveNamespaceDeclaration().WithMembers(RetrieveCompilationUnitBasedOnType())
             });
+        }
+
+        private SyntaxList<MemberDeclarationSyntax> RetrieveCompilationUnitBasedOnType()
+        {
+            switch (_genericGeneratorModel.CompilationUnitDefinition.Type)
+            {
+                case SyntaxKind.ClassDeclaration:
+                    return GenerateCompilationUnitDeclaration<ClassDeclarationSyntax>();
+
+                case SyntaxKind.InterfaceDeclaration:
+                    return GenerateCompilationUnitDeclaration<InterfaceDeclarationSyntax>();
+
+                default:
+                    throw new Exception("Not a valid Compilation Unit Type");
+            }
         }
 
         private ConstructorDeclarationSyntax GenerateConstructorBody(ConstructorDeclarationSyntax existingConstructor, MethodDefinitionModel constructorDeclaration)
         {
             ConstructorDeclarationSyntax newConstructor = existingConstructor
-                ?? SyntaxFactory.ConstructorDeclaration(_genericGeneratorModel.GeneratedAssetName)
+                ?? SyntaxFactory.ConstructorDeclaration(_genericGeneratorModel.Name)
                                 .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
 
             return newConstructor.WithBody
             (
                 GenerateMethodBody
                 (
-                    GenerateBodyStatements(constructorDeclaration.Body)
-                    .Union(existingConstructor?.Body?.Statements ?? Enumerable.Empty<StatementSyntax>())
+                    GenerateBodyStatements(constructorDeclaration.Body).Union(existingConstructor?.Body?.Statements ?? Enumerable.Empty<StatementSyntax>())
                 )
             );
         }
 
-        private ClassDeclarationSyntax GenerateConstructors(ClassDeclarationSyntax classDeclarationSyntax)
+        private TypeDeclarationSyntax GenerateConstructors(TypeDeclarationSyntax typeDeclarationSyntax)
         {
+            if (!(typeDeclarationSyntax is ClassDeclarationSyntax classDeclarationSyntax))
+            {
+                return typeDeclarationSyntax;
+            }
+
             IEnumerable<ConstructorDeclarationSyntax> existingConstructors = classDeclarationSyntax.RetrieveClassMembers<ConstructorDeclarationSyntax>(SyntaxKind.ConstructorDeclaration);
 
             foreach (MethodDefinitionModel constructorDeclaration in _genericGeneratorModel.DefinedConstructors)
@@ -102,12 +122,12 @@ namespace BoilerplateGenerator.Services
             return classDeclarationSyntax;
         }
 
-        private ConstructorDeclarationSyntax GenerateConstructorWithParameters()
+        private ConstructorDeclarationSyntax GenerateConstructorWithInjectedDependencies()
         {
-            return SyntaxFactory.ConstructorDeclaration(_genericGeneratorModel.GeneratedAssetName)
+            return SyntaxFactory.ConstructorDeclaration(_genericGeneratorModel.Name)
                                 .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
-                                .AddParameterListParameters(GenerateParameters(_genericGeneratorModel.ConstructorParameters))
-                                .WithBody(GenerateMethodBody(_genericGeneratorModel.ConstructorParameters));
+                                .AddParameterListParameters(GenerateParameters(_genericGeneratorModel.InjectedDependencies))
+                                .WithBody(GenerateMethodBody(_genericGeneratorModel.InjectedDependencies));
         }
 
         private MethodDeclarationSyntax[] GenerateMethods()
@@ -223,53 +243,48 @@ namespace BoilerplateGenerator.Services
                    select SyntaxFactory.ParseStatement(statement);
         }
 
-        private ClassDeclarationSyntax RetrieveBaseClassDeclaration()
+        private T RetrieveExistingTypeDeclaration<T>() where T : TypeDeclarationSyntax
         {
-            return _compilationUnit.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault()
-                ?? SyntaxFactory.ClassDeclaration(_genericGeneratorModel.GeneratedAssetName)
-                                .AddModifiers(SyntaxFactory.Token(_genericGeneratorModel.AccessModifier))
-                                .AddAttributeLists(GenerateAttributeList(_genericGeneratorModel.DefinedAttributes));
+            return (T)(_compilationUnit.DescendantNodes().OfType<T>().FirstOrDefault()
+                ?? SyntaxFactory.TypeDeclaration(_genericGeneratorModel.CompilationUnitDefinition.Type, _genericGeneratorModel.Name)
+                         .AddModifiers(SyntaxFactory.Token(_genericGeneratorModel.CompilationUnitDefinition.AccessModifier))
+                         .AddAttributeLists(GenerateAttributeList(_genericGeneratorModel.CompilationUnitDefinition.DefinedAttributes)));
         }
 
-        //private SyntaxList<MemberDeclarationSyntax> GenerateInterfaceDeclaration()
-        //{
-        //    InterfaceDeclarationSyntax interfaceDeclarationSyntax 
-        //}
-
-        private SyntaxList<MemberDeclarationSyntax> GenerateClassDeclaration()
+        private SyntaxList<MemberDeclarationSyntax> GenerateCompilationUnitDeclaration<T>() where T : TypeDeclarationSyntax
         {
-            ClassDeclarationSyntax classDeclarationSyntax = RetrieveBaseClassDeclaration();
+            T classDeclarationSyntax = RetrieveExistingTypeDeclaration<T>();
 
-            if (_genericGeneratorModel.BaseTypes != null && _genericGeneratorModel.BaseTypes.Any())
+            if (_genericGeneratorModel.CompilationUnitDefinition.DefinedInheritanceTypes != null && _genericGeneratorModel.CompilationUnitDefinition.DefinedInheritanceTypes.Any())
             {
-                classDeclarationSyntax = classDeclarationSyntax.WithBaseList(GenerateBaseTypes(classDeclarationSyntax));
+                classDeclarationSyntax = (T)classDeclarationSyntax.WithBaseList(GenerateBaseTypes(classDeclarationSyntax));
             }
 
             if (_genericGeneratorModel.DefinedProperties != null && _genericGeneratorModel.DefinedProperties.Any())
             {
-                classDeclarationSyntax = classDeclarationSyntax.AddMembers(GenerateProperties());
+                classDeclarationSyntax = (T)classDeclarationSyntax.AddMembers(GenerateProperties());
             }
 
-            if (_genericGeneratorModel.ConstructorParameters != null && _genericGeneratorModel.ConstructorParameters.Any())
+            if (_genericGeneratorModel.InjectedDependencies != null && _genericGeneratorModel.InjectedDependencies.Any())
             {
-                classDeclarationSyntax = classDeclarationSyntax.AddMembers(GenerateFields(_genericGeneratorModel.ConstructorParameters))
-                                                               .AddMembers(GenerateConstructorWithParameters());
+                classDeclarationSyntax = (T)classDeclarationSyntax.AddMembers(GenerateFields(_genericGeneratorModel.InjectedDependencies))
+                                                                  .AddMembers(GenerateConstructorWithInjectedDependencies());
             }
 
             if (_genericGeneratorModel.DefinedConstructors != null && _genericGeneratorModel.DefinedConstructors.Any())
             {
-                classDeclarationSyntax = GenerateConstructors(classDeclarationSyntax);
+                classDeclarationSyntax = (T)GenerateConstructors(classDeclarationSyntax);
             }
 
             if (_genericGeneratorModel.DefinedMethods != null && _genericGeneratorModel.DefinedMethods.Any(x => x.IsEnabled))
             {
-                classDeclarationSyntax = classDeclarationSyntax.AddMembers(GenerateMethods());
+                classDeclarationSyntax = (T)classDeclarationSyntax.AddMembers(GenerateMethods());
             }
 
             return SyntaxFactory.List(new MemberDeclarationSyntax[] { classDeclarationSyntax });
         }
 
-        private BaseListSyntax GenerateBaseTypes(ClassDeclarationSyntax classDeclarationSyntax)
+        private BaseListSyntax GenerateBaseTypes(TypeDeclarationSyntax classDeclarationSyntax)
         {
             BaseListSyntax baseList = classDeclarationSyntax.BaseList ?? SyntaxFactory.BaseList();
 
@@ -277,7 +292,7 @@ namespace BoilerplateGenerator.Services
             (
                 baseList.Types.AddRange
                 (
-                    from baseType in _genericGeneratorModel.BaseTypes
+                    from baseType in _genericGeneratorModel.CompilationUnitDefinition.DefinedInheritanceTypes
                     let newNode = SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(baseType))
                     where !baseList.Types.Contains(newNode, new BaseTypeSyntaxComparer())
                     select newNode

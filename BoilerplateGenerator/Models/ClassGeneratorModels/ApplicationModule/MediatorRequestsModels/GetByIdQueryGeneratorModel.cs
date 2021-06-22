@@ -22,7 +22,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
         }
         public override bool CanBeCreated => _viewModelBase.GetByIdQueryIsEnabled;
 
-        public override AssetKind GeneratedAssetKind => AssetKind.GetByIdQuery;
+        public override AssetKind Kind => AssetKind.GetByIdQuery;
 
         protected override IEnumerable<string> UsingsBuilder => new string[]
         {
@@ -30,9 +30,12 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
            _metadataGenerationService.NamespaceByAssetKind(AssetKind.ResponseDomainEntity),
         }.Union(base.UsingsBuilder);
 
-        protected override IEnumerable<string> BaseTypesBuilder => new string[]
+        public override CompilationUnitDefinitionModel CompilationUnitDefinition => new CompilationUnitDefinitionModel
         {
-            $"{CommonTokens.IRequest}<{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]}>"
+            DefinedInheritanceTypes = new string[]
+            {
+                $"{CommonTokens.IRequest}<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.ResponseDomainEntity]}>"
+            }
         };
 
         protected override IEnumerable<PropertyDefinitionModel> AvailablePropertiesBuilder => new PropertyDefinitionModel[]
@@ -45,7 +48,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
             }
         };
 
-        protected override IEnumerable<ParameterDefinitionModel> ConstructorParametersBuilder => new ParameterDefinitionModel[]
+        protected override IEnumerable<ParameterDefinitionModel> InjectedDependenciesBuilder => new ParameterDefinitionModel[]
         {
             new ParameterDefinitionModel
             {

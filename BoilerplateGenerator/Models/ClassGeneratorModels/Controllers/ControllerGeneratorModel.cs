@@ -38,29 +38,31 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
 
         protected override IEnumerable<PropertyDefinitionModel> AvailablePropertiesBuilder => new PropertyDefinitionModel[] { };
 
-        public override AssetKind GeneratedAssetKind => AssetKind.Controller;
+        public override AssetKind Kind => AssetKind.Controller;
 
-        protected override IEnumerable<string> BaseTypesBuilder => new string[] { nameof(CommonTokens.ControllerBase) };
+        public override CompilationUnitDefinitionModel CompilationUnitDefinition => new CompilationUnitDefinitionModel
+        {
+            DefinedInheritanceTypes = new string[] { nameof(CommonTokens.ControllerBase) },
+            DefinedAttributes = new List<AttributeDefinitionModel>
+            {
+                new AttributeDefinitionModel($"{CommonTokens.ApiController}"),
+                new AttributeDefinitionModel($"{CommonTokens.Produces}")
+                {
+                    Values = new string[] { "MediaTypeNames.Application.Json" }
+                },
+                new AttributeDefinitionModel($"{CommonTokens.Route}")
+                {
+                    Values = new string[] { "\"api/[controller]\"" }
+                }
+            }
+        };
 
-        protected override IEnumerable<ParameterDefinitionModel> ConstructorParametersBuilder => new ParameterDefinitionModel[]
+        protected override IEnumerable<ParameterDefinitionModel> InjectedDependenciesBuilder => new ParameterDefinitionModel[]
         {
             new ParameterDefinitionModel
             {
                 ReturnType = $"{CommonTokens.IMediator}",
                 Name = $"{nameof(CommonTokens.Mediator).ToLowerCamelCase()}"
-            }
-        };
-
-        protected override IEnumerable<AttributeDefinitionModel> AttributesBuilder => new List<AttributeDefinitionModel>
-        {
-            new AttributeDefinitionModel($"{CommonTokens.ApiController}"),
-            new AttributeDefinitionModel($"{CommonTokens.Produces}")
-            {
-                Values = new string[] { "MediaTypeNames.Application.Json" }
-            },
-            new AttributeDefinitionModel($"{CommonTokens.Route}")
-            {
-                Values = new string[] { "\"api/[controller]\"" }
             }
         };
 
@@ -79,7 +81,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
                             new AttributeDefinitionModel($"{CommonTokens.HttpGet}"),
                             new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
                             {
-                                Values = new string[] { $"typeof({CommonTokens.IEnumerable}<{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]}>)", StatusCodeTokens.Status200OK }
+                                Values = new string[] { $"typeof({CommonTokens.IEnumerable}<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.ResponseDomainEntity]}>)", StatusCodeTokens.Status200OK }
                             }
                         },
                         Body = GetAllQueryBody
@@ -95,7 +97,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
                             {
                                 Values = new string[]
                                 {
-                                    $"typeof({CommonTokens.IPaginatedDataResponse}<{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]}>)", StatusCodeTokens.Status200OK 
+                                    $"typeof({CommonTokens.IPaginatedDataResponse}<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.ResponseDomainEntity]}>)", StatusCodeTokens.Status200OK 
                                 }
                             }
                         },
@@ -125,7 +127,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
                             },
                             new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
                             {
-                                Values = new string[] { $"typeof({_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]})", StatusCodeTokens.Status200OK }
+                                Values = new string[] { $"typeof({_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.ResponseDomainEntity]})", StatusCodeTokens.Status200OK }
                             }
                         },
                         Parameters = new ParameterDefinitionModel[]
@@ -151,14 +153,14 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
                             },
                             new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
                             {
-                                Values = new string[] { $"typeof({_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]})", StatusCodeTokens.Status201Created }
+                                Values = new string[] { $"typeof({_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.ResponseDomainEntity]})", StatusCodeTokens.Status201Created }
                             }
                         },
                         Parameters = new ParameterDefinitionModel[]
                         {
                             new ParameterDefinitionModel
                             {
-                                ReturnType = _metadataGenerationService.AssetToClassNameMapping[AssetKind.CreateRequestDomainEntity],
+                                ReturnType = _metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.CreateRequestDomainEntity],
                                 Name = $"{nameof(CommonTokens.Model).ToLowerCamelCase()}"
                             }
                         },
@@ -180,7 +182,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
                             },
                             new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
                             {
-                                Values = new string[] { $"typeof({_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]})", StatusCodeTokens.Status200OK }
+                                Values = new string[] { $"typeof({_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.ResponseDomainEntity]})", StatusCodeTokens.Status200OK }
                             }
                         },
                         Parameters = new ParameterDefinitionModel[]
@@ -192,7 +194,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
                             },
                             new ParameterDefinitionModel
                             {
-                                ReturnType = _metadataGenerationService.AssetToClassNameMapping[AssetKind.UpdateRequestDomainEntity],
+                                ReturnType = _metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.UpdateRequestDomainEntity],
                                 Name = $"{nameof(CommonTokens.Model).ToLowerCamelCase()}"
                             },
                         },
@@ -233,7 +235,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
             {
                 return new string[]
                 {
-                    $"return Ok(await _mediator.Send(new {_metadataGenerationService.AssetToClassNameMapping[AssetKind.GetAllQuery]}()));"
+                    $"return Ok(await _mediator.Send(new {_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.GetAllQuery]}()));"
                 };
             }
         }
@@ -244,7 +246,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
             {
                 return new string[]
                 {
-                    $"return Ok(await _mediator.Send(new {_metadataGenerationService.AssetToClassNameMapping[AssetKind.GetPaginatedQuery]}({_viewModelBase.PaginationRequirements.PaginatedDataQueryClass.Name.ToLowerCamelCase()})));"
+                    $"return Ok(await _mediator.Send(new {_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.GetPaginatedQuery]}({_viewModelBase.PaginationRequirements.PaginatedDataQueryClass.Name.ToLowerCamelCase()})));"
                 };
             }
         }
@@ -255,7 +257,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
             {
                 return new string[]
                 {
-                    $"return Ok(await _mediator.Send(new {_metadataGenerationService.AssetToClassNameMapping[AssetKind.GetByIdQuery]}({BaseEntityPrimaryKey.Name.ToLowerCamelCase()})));"
+                    $"return Ok(await _mediator.Send(new {_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.GetByIdQuery]}({BaseEntityPrimaryKey.Name.ToLowerCamelCase()})));"
                 };
             }
         }
@@ -266,7 +268,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
             {
                 return new string[]
                 {
-                    $"{_metadataGenerationService.AssetToClassNameMapping[AssetKind.ResponseDomainEntity]} newEntity = await _mediator.Send(new {_metadataGenerationService.AssetToClassNameMapping[AssetKind.CreateCommand]}({nameof(CommonTokens.Model).ToLowerCamelCase()}));",
+                    $"{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.ResponseDomainEntity]} newEntity = await _mediator.Send(new {_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.CreateCommand]}({nameof(CommonTokens.Model).ToLowerCamelCase()}));",
                     $"var routeValue = new {{ {BaseEntityPrimaryKey.Name.ToLowerCamelCase()} = newEntity.{BaseEntityPrimaryKey.Name} }};",
                     $"return CreatedAtAction(nameof({$"{CommonTokens.GetById}"}), routeValue, newEntity);"
                 };
@@ -279,7 +281,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
             {
                 return new string[]
                 {
-                    $"return Ok(await _mediator.Send(new {_metadataGenerationService.AssetToClassNameMapping[AssetKind.UpdateCommand]}({BaseEntityPrimaryKey.Name.ToLowerCamelCase()}, {nameof(CommonTokens.Model).ToLowerCamelCase()})));"
+                    $"return Ok(await _mediator.Send(new {_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.UpdateCommand]}({BaseEntityPrimaryKey.Name.ToLowerCamelCase()}, {nameof(CommonTokens.Model).ToLowerCamelCase()})));"
                 };
             }
         }
@@ -290,7 +292,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
             {
                 return new string[]
                 {
-                    $"await _mediator.Send(new {_metadataGenerationService.AssetToClassNameMapping[AssetKind.DeleteCommand]}({BaseEntityPrimaryKey.Name.ToLowerCamelCase()}));",
+                    $"await _mediator.Send(new {_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.DeleteCommand]}({BaseEntityPrimaryKey.Name.ToLowerCamelCase()}));",
                     "return NoContent();"
                 };
             }

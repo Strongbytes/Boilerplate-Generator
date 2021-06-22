@@ -85,6 +85,7 @@
     <Compile Include="Models\Pagination\PaginationRequirements.cs" />
     <Compile Include="Models\RoslynWrappers\EntityInterfaceWrapper.cs" />
     <Compile Include="Models\RoslynWrappers\SolutionWrapper.cs" />
+    <Compile Include="Models\SyntaxDefinitionModels\CompilationUnitDefinitionModel.cs" />
     <Compile Include="Models\SyntaxDefinitionModels\NamespaceDefinitionModel.cs" />
     <Compile Include="Models\TreeView\GeneratedDirectory.cs" />
     <Compile Include="Models\TreeView\GeneratedCompilationUnit.cs" />
