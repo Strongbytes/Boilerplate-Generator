@@ -170,12 +170,22 @@
                            Margin="0" />
 
                 <CheckBox Content="Use Unit of Work"
-                          Margin="5,10"
+                          Margin="5"
                           IsChecked="{Binding UseUnitOfWork, Mode=TwoWay}"
                           VerticalContentAlignment="Center"
                           HorizontalContentAlignment="Left">
                     <CheckBox.ToolTip>
-                        <ToolTip Content="Enabling this option all CQRS Handlers will reference IUnitOfWork from the same Target Module" />
+                        <ToolTip Content="When this option is enabled all CQRS Handlers will reference IUnitOfWork from the same Target Module" />
+                    </CheckBox.ToolTip>
+                </CheckBox>
+
+                <CheckBox Content="Generate AutoMapper Mappings"
+                          Margin="5"
+                          IsChecked="{Binding GenerateAutoMapperProfile, Mode=TwoWay}"
+                          VerticalContentAlignment="Center"
+                          HorizontalContentAlignment="Left">
+                    <CheckBox.ToolTip>
+                        <ToolTip Content="When this option is enabled AutoMapper mappings will be added to the existing AutoMapper Profile." />
                     </CheckBox.ToolTip>
                 </CheckBox>
 

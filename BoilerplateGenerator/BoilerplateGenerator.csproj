@@ -51,6 +51,7 @@
     <Compile Include="Converters\NullBooleanToBooleanConverter.cs" />
     <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="EqualityComparers\NamedTypeSymbolComparer.cs" />
+    <Compile Include="EqualityComparers\BaseTypeSyntaxComparer.cs" />
     <Compile Include="EqualityComparers\StatementSyntaxComparer.cs" />
     <Compile Include="EqualityComparers\ParameterDefinitionModelComparer.cs" />
     <Compile Include="Helpers\EntityWrapperTreeExtensions.cs" />

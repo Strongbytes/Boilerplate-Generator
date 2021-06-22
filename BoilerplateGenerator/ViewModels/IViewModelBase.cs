@@ -10,6 +10,9 @@ namespace BoilerplateGenerator.ViewModels
     public interface IViewModelBase : INotifyPropertyChanged
     {
         bool UseUnitOfWork { get; set; }
+
+        bool GenerateAutoMapperProfile { get; set; }
+
         bool GetByIdQueryIsEnabled { get; set; }
 
         bool GetAllQueryIsEnabled { get; set; }

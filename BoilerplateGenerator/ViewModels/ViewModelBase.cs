@@ -74,7 +74,7 @@ namespace BoilerplateGenerator.ViewModels
             }
         }
 
-        private bool _getPaginatedQueryIsEnabled = true;
+        private bool _getPaginatedQueryIsEnabled;
         public bool GetPaginatedQueryIsEnabled
         {
             get
@@ -179,6 +179,26 @@ namespace BoilerplateGenerator.ViewModels
                 }
 
                 _useUnitOfWork = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private bool _generateAutoMapperProfile = true;
+        public bool GenerateAutoMapperProfile
+        {
+            get
+            {
+                return _generateAutoMapperProfile;
+            }
+
+            set
+            {
+                if (value == _generateAutoMapperProfile)
+                {
+                    return;
+                }
+
+                _generateAutoMapperProfile = value;
                 NotifyPropertyChanged();
             }
         }

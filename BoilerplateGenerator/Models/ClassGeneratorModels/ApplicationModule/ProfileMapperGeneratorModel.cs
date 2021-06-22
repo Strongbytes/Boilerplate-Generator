@@ -22,6 +22,10 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule
 
         public override bool MergeWithExistingClass => FileExistsInProject;
 
+        public override bool CanBeCreated => _viewModelBase.GenerateAutoMapperProfile;
+
+        protected override IEnumerable<string> BaseTypesBuilder => new string[] { nameof(CommonTokens.Profile) };
+
         public override AssetKind GeneratedClassKind => AssetKind.ProfileMapper;
 
         protected override IEnumerable<string> UsingsBuilder => new string[]

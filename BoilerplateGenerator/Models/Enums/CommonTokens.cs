@@ -50,6 +50,7 @@
         GetPaginated,
         IPaginatedDataResponse,
         IPaginatedDataQuery,
-        IActionResult
+        IActionResult,
+        Profile
     }
 }

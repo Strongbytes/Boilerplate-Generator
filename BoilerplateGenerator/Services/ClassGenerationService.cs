@@ -237,7 +237,7 @@ namespace BoilerplateGenerator.Services
 
             if (_genericGeneratorModel.BaseTypes != null && _genericGeneratorModel.BaseTypes.Any())
             {
-                classDeclarationSyntax = classDeclarationSyntax.AddBaseListTypes(GenerateBaseTypes());
+                classDeclarationSyntax = GenerateBaseTypes(classDeclarationSyntax);
             }
 
             if (_genericGeneratorModel.AvailableProperties != null && _genericGeneratorModel.AvailableProperties.Any())
@@ -264,10 +264,23 @@ namespace BoilerplateGenerator.Services
             return SyntaxFactory.List(new MemberDeclarationSyntax[] { classDeclarationSyntax });
         }
 
-        private BaseTypeSyntax[] GenerateBaseTypes()
+        private ClassDeclarationSyntax GenerateBaseTypes(ClassDeclarationSyntax classDeclarationSyntax)
         {
-            return (from baseType in _genericGeneratorModel.BaseTypes
-                    select SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(baseType))).ToArray();
+            BaseListSyntax baseList = classDeclarationSyntax.BaseList ?? SyntaxFactory.BaseList();
+
+            return classDeclarationSyntax.WithBaseList
+            (
+                baseList.WithTypes
+                (
+                    baseList.Types.AddRange
+                    (
+                        from baseType in _genericGeneratorModel.BaseTypes
+                        let newNode = SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(baseType))
+                        where !baseList.Types.Contains(newNode, new BaseTypeSyntaxComparer())
+                        select newNode
+                    )
+                )
+            );
         }
 
         private PropertyDeclarationSyntax[] GenerateProperties()

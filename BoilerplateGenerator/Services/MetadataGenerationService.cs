@@ -215,7 +215,10 @@ namespace BoilerplateGenerator.Services
             },
             {
                 AssetKind.ProfileMapper,
-                new NamespaceDefinitionModel()
+                new NamespaceDefinitionModel
+                {
+                    IsEnabled = _viewModelBase.GenerateAutoMapperProfile
+                }
             },
             {
                 AssetKind.IUnitOfWork,

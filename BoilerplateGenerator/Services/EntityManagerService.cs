@@ -191,7 +191,7 @@ namespace BoilerplateGenerator.Services
 
                 if (property.Type is INamedTypeSymbol innerClass 
                     && innerClass.BaseType != null 
-                    && innerClass.BaseType.Name == referencedClass.BaseType.Name)
+                    && innerClass.BaseType.MetadataName == referencedClass.BaseType.MetadataName)
                 {
                     if (_visitedClasses.Contains(innerClass))
                     {
