@@ -176,7 +176,14 @@
                           VerticalContentAlignment="Center"
                           HorizontalContentAlignment="Left">
                     <CheckBox.ToolTip>
-                        <ToolTip Content="When this option is enabled all CQRS Handlers will reference IUnitOfWork from the same Target Module. Also, a new Repository will be added to the existing Unit of Work (if not already there)" />
+                        <TextBlock>
+                            When this option is enabled all CQRS Handlers will reference IUnitOfWork from the selected "Target Module".
+                            <LineBreak /> 
+                            Also, a new Repository will be added to the existing Unit of Work (if not already there)
+                            <LineBreak />
+                            <LineBreak />
+                            NOTE: When this option is disabled or not selected all CQRS Handlers will reference the default DbContext.
+                        </TextBlock>
                     </CheckBox.ToolTip>
                 </CheckBox>
 
@@ -186,7 +193,11 @@
                           VerticalContentAlignment="Center"
                           HorizontalContentAlignment="Left">
                     <CheckBox.ToolTip>
-                        <ToolTip Content="When this option is enabled AutoMapper mapping configurations will be added to the existing AutoMapper Profile, or, if no AutoMapper Profile is found inside the Target Module, a new Profile is created." />
+                        <TextBlock>
+                            When this option is enabled AutoMapper mapping configurations will be added to the existing AutoMapper Profile.
+                            <LineBreak />
+                            If no AutoMapper Profile is found inside the Target Module, a new Profile is created.
+                        </TextBlock>
                     </CheckBox.ToolTip>
                 </CheckBox>
 

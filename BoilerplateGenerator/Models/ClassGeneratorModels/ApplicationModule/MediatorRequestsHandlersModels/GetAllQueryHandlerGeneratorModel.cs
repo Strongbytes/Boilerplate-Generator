@@ -1,4 +1,5 @@
 ﻿using BoilerplateGenerator.Contracts.Services;
+using BoilerplateGenerator.ExtraFeatures.UnitOfWork;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.ViewModels;
 
@@ -9,8 +10,13 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
         private readonly IViewModelBase _viewModelBase;
         private readonly IMetadataGenerationService _metadataGenerationService;
 
-        public GetAllQueryHandlerGeneratorModel(IViewModelBase viewModelBase, IMetadataGenerationService metadataGenerationService)
-            : base(viewModelBase, metadataGenerationService)
+        public GetAllQueryHandlerGeneratorModel
+        (
+            IViewModelBase viewModelBase,
+            IMetadataGenerationService metadataGenerationService,
+            IUnitOfWorkRequirements unitOfWorkRequirements
+        )
+            : base(viewModelBase, metadataGenerationService, unitOfWorkRequirements)
         {
             _viewModelBase = viewModelBase;
             _metadataGenerationService = metadataGenerationService;

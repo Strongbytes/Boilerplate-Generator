@@ -1,5 +1,6 @@
 ﻿using BoilerplateGenerator.Contracts.Services;
 using BoilerplateGenerator.ExtraFeatures.Pagination;
+using BoilerplateGenerator.ExtraFeatures.UnitOfWork;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.ViewModels;
 using System.Collections.Generic;
@@ -15,11 +16,12 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
 
         public GetPaginatedQueryHandlerGeneratorModel
         (
-            IViewModelBase viewModelBase, 
-            IMetadataGenerationService metadataGenerationService, 
-            IPaginationRequirements paginationRequirements
+            IViewModelBase viewModelBase,
+            IMetadataGenerationService metadataGenerationService,
+            IPaginationRequirements paginationRequirements,
+            IUnitOfWorkRequirements unitOfWorkRequirements
         )
-            : base(viewModelBase, metadataGenerationService)
+            : base(viewModelBase, metadataGenerationService, unitOfWorkRequirements)
         {
             _viewModelBase = viewModelBase;
             _metadataGenerationService = metadataGenerationService;

@@ -1,4 +1,5 @@
 ﻿using BoilerplateGenerator.Contracts.Services;
+using BoilerplateGenerator.ExtraFeatures.UnitOfWork;
 using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
@@ -13,12 +14,19 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
     {
         private readonly IViewModelBase _viewModelBase;
         private readonly IMetadataGenerationService _metadataGenerationService;
+        private readonly IUnitOfWorkRequirements _unitOfWorkRequirements;
 
-        protected BaseMediatorHandlerGeneratorModel(IViewModelBase viewModelBase, IMetadataGenerationService metadataGenerationService)
+        protected BaseMediatorHandlerGeneratorModel
+        (
+            IViewModelBase viewModelBase, 
+            IMetadataGenerationService metadataGenerationService,
+            IUnitOfWorkRequirements unitOfWorkRequirements
+        )
             : base(viewModelBase, metadataGenerationService)
         {
             _viewModelBase = viewModelBase;
             _metadataGenerationService = metadataGenerationService;
+            _unitOfWorkRequirements = unitOfWorkRequirements;
         }
 
         private string RequestHandlerClassName => _metadataGenerationService.AssetToCompilationUnitNameMapping[AssetToMediatorRequestKind[Kind]];
@@ -43,7 +51,9 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
            UsingTokens.SystemThreadingTasks,
            UsingTokens.SystemCollectionsGeneric,
            _metadataGenerationService.NamespaceByAssetKind(AssetKind.ResponseDomainEntity),
-           _metadataGenerationService.NamespaceByAssetKind(AssetKind.UnitOfWorkInterface),
+           _viewModelBase.UseUnitOfWork 
+            ? _metadataGenerationService.NamespaceByAssetKind(AssetKind.UnitOfWorkInterface)
+            : _unitOfWorkRequirements.DbContextClass.Namespace
         }.Union(base.UsingsBuilder);
 
         public override CompilationUnitDefinitionModel CompilationUnitDefinition => new CompilationUnitDefinitionModel
@@ -62,6 +72,12 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
                 ReturnType = $"{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.UnitOfWorkInterface]}",
                 Name = $"{nameof(CommonTokens.UnitOfWork).ToLowerCamelCase()}",
                 IsEnabled = _viewModelBase.UseUnitOfWork
+            },
+            new ParameterDefinitionModel
+            {
+                ReturnType = _unitOfWorkRequirements.DbContextClass.Name,
+                Name = $"{nameof(CommonTokens.Context).ToLowerCamelCase()}",
+                IsEnabled = !_viewModelBase.UseUnitOfWork
             },
             new ParameterDefinitionModel
             {
