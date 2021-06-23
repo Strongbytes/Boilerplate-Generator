@@ -34,13 +34,13 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
 
         protected virtual IEnumerable<string> UsingsBuilder => new string[] { UsingTokens.System };
 
-        protected virtual IEnumerable<PropertyDefinitionModel> AvailablePropertiesBuilder { get; } = Enumerable.Empty<PropertyDefinitionModel>();
+        protected virtual IEnumerable<PropertyDefinitionModel> DefinedPropertiesBuilder { get; } = Enumerable.Empty<PropertyDefinitionModel>();
 
         protected virtual IEnumerable<ParameterDefinitionModel> InjectedDependenciesBuilder { get; } = Enumerable.Empty<ParameterDefinitionModel>();
 
-        protected virtual IEnumerable<ConstructorDefinitionModel> ConstructorsBuilder { get; } = Enumerable.Empty<ConstructorDefinitionModel>();
+        protected virtual IEnumerable<ConstructorDefinitionModel> DefinedConstructorsBuilder { get; } = Enumerable.Empty<ConstructorDefinitionModel>();
 
-        protected virtual IEnumerable<MethodDefinitionModel> AvailableMethodsBuilder { get; } = Enumerable.Empty<MethodDefinitionModel>();
+        protected virtual IEnumerable<MethodDefinitionModel> DefinedMethodsBuilder { get; } = Enumerable.Empty<MethodDefinitionModel>();
         #endregion
 
         #region Public Model Properties
@@ -95,18 +95,18 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
             }
         }
 
-        private IEnumerable<PropertyDefinitionModel> _availableProperties;
+        private IEnumerable<PropertyDefinitionModel> _definedProperties;
         public IEnumerable<PropertyDefinitionModel> DefinedProperties
         {
             get
             {
-                if (_availableProperties != null)
+                if (_definedProperties != null)
                 {
-                    return _availableProperties;
+                    return _definedProperties;
                 }
 
-                _availableProperties = AvailablePropertiesBuilder.ToArray();
-                return _availableProperties;
+                _definedProperties = DefinedPropertiesBuilder.ToArray();
+                return _definedProperties;
             }
         }
 
@@ -125,33 +125,33 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
             }
         }
 
-        private IEnumerable<ConstructorDefinitionModel> _constructors;
+        private IEnumerable<ConstructorDefinitionModel> _definedConstructors;
         public IEnumerable<ConstructorDefinitionModel> DefinedConstructors
         {
             get
             {
-                if (_constructors != null)
+                if (_definedConstructors != null)
                 {
-                    return _constructors;
+                    return _definedConstructors;
                 }
 
-                _constructors = ConstructorsBuilder.ToArray();
-                return _constructors;
+                _definedConstructors = DefinedConstructorsBuilder.ToArray();
+                return _definedConstructors;
             }
         }
 
-        private IEnumerable<MethodDefinitionModel> _availableMethods;
+        private IEnumerable<MethodDefinitionModel> _definedMethods;
         public IEnumerable<MethodDefinitionModel> DefinedMethods
         {
             get
             {
-                if (_availableMethods != null)
+                if (_definedMethods != null)
                 {
-                    return _availableMethods;
+                    return _definedMethods;
                 }
 
-                _availableMethods = AvailableMethodsBuilder.ToArray();
-                return _availableMethods;
+                _definedMethods = DefinedMethodsBuilder.ToArray();
+                return _definedMethods;
             }
         }
         #endregion

@@ -25,6 +25,11 @@ namespace BoilerplateGenerator.Helpers
 
             foreach (BaseMethodDeclarationSyntax classMember in classMembers.Where(x => x.ParameterList.Parameters.Count == methodDefinitionModel.Parameters.Count()))
             {
+                if (classMember is MethodDeclarationSyntax methodDeclarationSyntax && methodDeclarationSyntax.Identifier.Text != methodDefinitionModel.Name)
+                {
+                    continue;
+                }
+
                 var differentParameters = methodDefinitionModel.Parameters.Except(classMember.ParameterList.Parameters.Select(x => new ParameterDefinitionModel
                 {
                     Name = x.Identifier.Text,

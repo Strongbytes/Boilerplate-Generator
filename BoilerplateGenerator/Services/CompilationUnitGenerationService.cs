@@ -145,16 +145,44 @@ namespace BoilerplateGenerator.Services
                                 .WithBody(GenerateParametersAssignmentMethodBody(_genericGeneratorModel.InjectedDependencies));
         }
 
-        private MethodDeclarationSyntax[] GenerateMethods()
+        private MethodDeclarationSyntax GenerateMethod(MethodDeclarationSyntax existingMethod, MethodDefinitionModel methodDeclaration)
         {
-            return (from methodDeclaration in _genericGeneratorModel.DefinedMethods
-                    where methodDeclaration.IsEnabled
-                    select SyntaxFactory.MethodDeclaration(SyntaxFactory.ParseTypeName(methodDeclaration.ReturnType), methodDeclaration.Name)
-                                        .AddAttributeLists(GenerateAttributeList(methodDeclaration.Attributes))
-                                        .AddModifiers(GenerateModifiers(methodDeclaration.Modifiers))
-                                        .AddParameterListParameters(GenerateParameters(methodDeclaration.Parameters))
-                                        .WithBody(GenerateMethodBody(GenerateBodyStatements(methodDeclaration.Body))))
-                                        .ToArray();
+            MethodDeclarationSyntax newMethod = existingMethod
+                ?? SyntaxFactory.MethodDeclaration(SyntaxFactory.ParseTypeName(methodDeclaration.ReturnType), methodDeclaration.Name)
+                                .AddAttributeLists(GenerateAttributeList(methodDeclaration.Attributes))
+                                .AddModifiers(GenerateModifiers(methodDeclaration.Modifiers))
+                                .AddParameterListParameters(GenerateParameters(methodDeclaration.Parameters))
+                                .W‌​ithAdditionalAnnotat‌​ions(Formatter.Annot‌​ation);
+
+            return newMethod.WithBody
+            (
+                GenerateMethodBody
+                (
+                    GenerateBodyStatements(methodDeclaration.Body).Union(existingMethod?.Body?.Statements ?? Enumerable.Empty<StatementSyntax>())
+                )
+            );
+        }
+
+        private TypeDeclarationSyntax GenerateMethods(TypeDeclarationSyntax typeDeclarationSyntax)
+        {
+            if (!(typeDeclarationSyntax is ClassDeclarationSyntax classDeclarationSyntax))
+            {
+                return typeDeclarationSyntax;
+            }
+
+            IEnumerable<MethodDeclarationSyntax> existingMethods = classDeclarationSyntax.RetrieveClassMembers<MethodDeclarationSyntax>(SyntaxKind.MethodDeclaration);
+
+            foreach (MethodDefinitionModel methodDeclaration in _genericGeneratorModel.DefinedMethods.Where(x => x.IsEnabled))
+            {
+                MethodDeclarationSyntax existingMethod = existingMethods.RetrieveExistingMember(methodDeclaration);
+                MethodDeclarationSyntax newMethod = GenerateMethod(existingMethod, methodDeclaration);
+
+                classDeclarationSyntax = existingMethod == null
+                    ? classDeclarationSyntax.AddMembers(newMethod)
+                    : classDeclarationSyntax.ReplaceNode(existingMethod, newMethod.WithTriviaFrom(existingMethod));
+            }
+
+            return classDeclarationSyntax;
         }
 
         private SyntaxToken[] GenerateModifiers(IEnumerable<SyntaxKind> modifiers)
@@ -230,11 +258,11 @@ namespace BoilerplateGenerator.Services
         {
             return SyntaxFactory.Block(from parameter in parameters
                                        where parameter.IsEnabled
-                                       let leftAssignment = parameter.MapToClassProperty 
-                                           ? $"{parameter.Name.ToUpperCamelCase()}" 
+                                       let leftAssignment = parameter.MapToClassProperty
+                                           ? $"{parameter.Name.ToUpperCamelCase()}"
                                            : $"_{parameter.Name}"
-                                       let rightAssignment = parameter.ThrowExceptionWhenNull 
-                                            ? $"{parameter.Name} ?? throw new ArgumentNullException(nameof({parameter.Name}))" 
+                                       let rightAssignment = parameter.ThrowExceptionWhenNull
+                                            ? $"{parameter.Name} ?? throw new ArgumentNullException(nameof({parameter.Name}))"
                                             : parameter.Name
                                        select SyntaxFactory.ParseStatement($"{leftAssignment} = {rightAssignment};"));
         }
@@ -296,7 +324,7 @@ namespace BoilerplateGenerator.Services
 
             if (_genericGeneratorModel.DefinedMethods != null && _genericGeneratorModel.DefinedMethods.Any(x => x.IsEnabled))
             {
-                typeDeclarationSyntax = (T)typeDeclarationSyntax.AddMembers(GenerateMethods());
+                typeDeclarationSyntax = (T)GenerateMethods(typeDeclarationSyntax);
             }
 
             return SyntaxFactory.List(new MemberDeclarationSyntax[] { typeDeclarationSyntax });

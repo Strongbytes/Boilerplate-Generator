@@ -6,7 +6,10 @@ dotnet_diagnostic.VSTHRD200.severity = none
 dotnet_diagnostic.VSTHRD100.severity = none
 
 # S112: General exceptions should never be thrown
-dotnet_diagnostic.S112.severity = silent
+dotnet_diagnostic.S112.severity = none
+
+# S3168: "async" methods should not return "void"
+dotnet_diagnostic.S3168.severity = none
 
 # VSTHRD101: Avoid unsupported async delegates
 dotnet_diagnostic.VSTHRD101.severity = none
@@ -20,6 +23,3 @@ dotnet_naming_symbols.private_fields.applicable_accessibilities = private
 
 dotnet_naming_style.prefix_underscore.capitalization = camel_case
 dotnet_naming_style.prefix_underscore.required_prefix = _
-
-# S3168: "async" methods should not return "void"
-dotnet_diagnostic.S3168.severity = none

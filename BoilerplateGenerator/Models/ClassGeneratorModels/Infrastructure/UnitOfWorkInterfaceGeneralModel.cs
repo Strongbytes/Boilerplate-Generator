@@ -50,7 +50,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Infrastructure
             }
         };
 
-        protected override IEnumerable<PropertyDefinitionModel> AvailablePropertiesBuilder => new PropertyDefinitionModel[]
+        protected override IEnumerable<PropertyDefinitionModel> DefinedPropertiesBuilder => new PropertyDefinitionModel[]
         {
             new PropertyDefinitionModel
             {

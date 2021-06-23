@@ -128,7 +128,7 @@ namespace BoilerplateGenerator.Services
             {
                 ITreeNode<IBaseSymbolWrapper> rootNode = new EntityHierarchyTreeNode
                 {
-                    Current = new EntityClassWrapper(_entityClassType),
+                    Current = new EntityClassWrapper(_entityClassType, isBaseTypeInheritance: true),
                 };
 
                 _visitedClasses = new HashSet<INamedTypeSymbol>
@@ -137,19 +137,19 @@ namespace BoilerplateGenerator.Services
                 };
 
                 PopulateClassProperties(_entityClassType, rootNode);
-                PopulateParentClasses(_entityClassType, rootNode);
+                PopulateBaseTypeInheritance(_entityClassType, rootNode);
 
                 return rootNode;
             }).ConfigureAwait(false);
         }
 
-        private void PopulateParentClasses(INamedTypeSymbol referencedClass, ITreeNode<IBaseSymbolWrapper> rootNode)
+        private void PopulateBaseTypeInheritance(INamedTypeSymbol referencedClass, ITreeNode<IBaseSymbolWrapper> rootNode)
         {
             while (referencedClass.BaseType != null && !referencedClass.BaseType.Name.Equals(nameof(Object)))
             {
                 EntityHierarchyTreeNode childNode = new EntityHierarchyTreeNode
                 {
-                    Current = new EntityClassWrapper(referencedClass.BaseType),
+                    Current = new EntityClassWrapper(referencedClass.BaseType, isBaseTypeInheritance: true),
                     Parent = rootNode
                 };
 
@@ -179,8 +179,8 @@ namespace BoilerplateGenerator.Services
                     continue;
                 }
 
-                if (property.Type is INamedTypeSymbol innerClass 
-                    && innerClass.BaseType != null 
+                if (property.Type is INamedTypeSymbol innerClass
+                    && innerClass.BaseType != null
                     && innerClass.BaseType.MetadataName == referencedClass.BaseType.MetadataName)
                 {
                     if (_visitedClasses.Contains(innerClass))

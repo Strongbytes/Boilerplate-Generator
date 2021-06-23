@@ -40,7 +40,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Infrastructure
            $"{_viewModelBase.EntityTree.PrimaryEntityNamespace()}",
         };
 
-        protected override IEnumerable<PropertyDefinitionModel> AvailablePropertiesBuilder => new PropertyDefinitionModel[]
+        protected override IEnumerable<PropertyDefinitionModel> DefinedPropertiesBuilder => new PropertyDefinitionModel[]
         {
             new PropertyDefinitionModel
             {

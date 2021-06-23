@@ -54,7 +54,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Infrastructure
             }
         };
 
-        protected override IEnumerable<PropertyDefinitionModel> AvailablePropertiesBuilder => new PropertyDefinitionModel[]
+        protected override IEnumerable<PropertyDefinitionModel> DefinedPropertiesBuilder => new PropertyDefinitionModel[]
         {
             new PropertyDefinitionModel
             {
@@ -75,7 +75,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Infrastructure
             }
         };
 
-        protected override IEnumerable<ConstructorDefinitionModel> ConstructorsBuilder
+        protected override IEnumerable<ConstructorDefinitionModel> DefinedConstructorsBuilder
         {
             get
             {

@@ -40,11 +40,11 @@ namespace BoilerplateGenerator.Models.SyntaxDefinitionModels
         {
         }
 
-        public PropertyDefinitionModel(EntityPropertyWrapper entityPropertyWrapper, bool resolveNameConflict = false)
+        public PropertyDefinitionModel(EntityPropertyWrapper entityPropertyWrapper, bool appendParentClassName)
         {
             ReturnType = entityPropertyWrapper.Type;
             IsPrimaryKey = entityPropertyWrapper.IsPrimaryKey;
-            Name = GenerateName(entityPropertyWrapper, resolveNameConflict);
+            Name = GenerateName(entityPropertyWrapper, appendParentClassName);
 
             foreach (string attribute in from attribute in entityPropertyWrapper.Attributes
                                          where _lookupAttributes.Keys.Contains(attribute)
@@ -54,16 +54,9 @@ namespace BoilerplateGenerator.Models.SyntaxDefinitionModels
             }
         }
 
-        private string GenerateName(EntityPropertyWrapper entityPropertyWrapper, bool nameConflictDetected)
+        private string GenerateName(EntityPropertyWrapper entityPropertyWrapper, bool appendParentClassName)
         {
-            // TODO: Declare a naming convention in case of name conflicts. For now we will just append the parent name
-
-            if (IsPrimaryKey)
-            {
-                return entityPropertyWrapper.Name;
-            }
-
-            return nameConflictDetected ? $"{entityPropertyWrapper.ParentName}{entityPropertyWrapper.Name}" : entityPropertyWrapper.Name;
+            return appendParentClassName ? $"{entityPropertyWrapper.ParentName}{entityPropertyWrapper.Name}" : entityPropertyWrapper.Name;
         }
     }
 }

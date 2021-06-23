@@ -43,12 +43,27 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Infrastructure
             }
         };
 
-        protected override IEnumerable<MethodDefinitionModel> AvailableMethodsBuilder => new MethodDefinitionModel[]
+        protected override IEnumerable<MethodDefinitionModel> DefinedMethodsBuilder => new MethodDefinitionModel[]
         {
             new MethodDefinitionModel
             {
+                Name = $"{CommonTokens.Load}",
+                Modifiers = new SyntaxKind[] { SyntaxKind.ProtectedKeyword, SyntaxKind.OverrideKeyword },
+                ReturnType = $"{nameof(CommonTokens.Void).ToLowerCamelCase()}",
+                Parameters = new ParameterDefinitionModel[]
+                {
+                    new ParameterDefinitionModel
+                    {
+                        Name = $"{nameof(CommonTokens.Builder).ToLowerCamelCase()}",
+                        ReturnType = $"{CommonTokens.ContainerBuilder}",
+                    }
+                },
+                Body = GetLoadBody
+            },
+            new MethodDefinitionModel
+            {
                 Name = $"{CommonTokens.RegisterUnitOfWorkRepositories}",
-                Modifiers = new SyntaxKind[] { SyntaxKind.PrivateKeyword, SyntaxKind.StaticKeyword },
+                Modifiers = new SyntaxKind[] { SyntaxKind.PrivateKeyword },
                 ReturnType = $"{nameof(CommonTokens.Void).ToLowerCamelCase()}",
                 Parameters = new ParameterDefinitionModel[]
                 {
@@ -70,6 +85,12 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Infrastructure
             $@"builder.RegisterType<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.UnitOfWorkImplementation]}>()
                         .As<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.UnitOfWorkInterface]}>()
                         .InstancePerLifetimeScope();",
+        };
+
+        public IEnumerable<string> GetLoadBody => new string[]
+        {
+            $"base.Load({nameof(CommonTokens.Builder).ToLowerCamelCase()});",
+            $"{CommonTokens.RegisterUnitOfWorkRepositories}({nameof(CommonTokens.Builder).ToLowerCamelCase()});",
         };
     }
 }

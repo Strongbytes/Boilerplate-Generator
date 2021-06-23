@@ -4,8 +4,11 @@ namespace BoilerplateGenerator.Models.RoslynWrappers
 {
     public class EntityClassWrapper : BaseSymbolWrapper<INamedTypeSymbol>
     {
-        public EntityClassWrapper(INamedTypeSymbol symbol) : base(symbol)
+        public bool IsBaseTypeInheritance { get; private set; }
+
+        public EntityClassWrapper(INamedTypeSymbol symbol, bool isBaseTypeInheritance = false) : base(symbol)
         {
+            IsBaseTypeInheritance = isBaseTypeInheritance;
         }
     }
 }

@@ -86,7 +86,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
             }
         };
 
-        protected override IEnumerable<MethodDefinitionModel> AvailableMethodsBuilder
+        protected override IEnumerable<MethodDefinitionModel> DefinedMethodsBuilder
         {
             get
             {

@@ -6,7 +6,6 @@ using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using BoilerplateGenerator.ViewModels;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace BoilerplateGenerator.Models.ClassGeneratorModels.Infrastructure
 {
@@ -53,7 +52,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Infrastructure
             }
         };
 
-        protected override IEnumerable<ConstructorDefinitionModel> ConstructorsBuilder
+        protected override IEnumerable<ConstructorDefinitionModel> DefinedConstructorsBuilder
         {
             get
             {

@@ -72,7 +72,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
             }
         };
 
-        protected override IEnumerable<MethodDefinitionModel> AvailableMethodsBuilder => new MethodDefinitionModel[]
+        protected override IEnumerable<MethodDefinitionModel> DefinedMethodsBuilder => new MethodDefinitionModel[]
         {
             new MethodDefinitionModel
             {

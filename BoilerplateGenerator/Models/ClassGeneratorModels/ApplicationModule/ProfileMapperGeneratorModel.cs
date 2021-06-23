@@ -40,7 +40,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule
            _metadataGenerationService.NamespaceByAssetKind(AssetKind.UpdateRequestDomainEntity),
         };
 
-        protected override IEnumerable<ConstructorDefinitionModel> ConstructorsBuilder
+        protected override IEnumerable<ConstructorDefinitionModel> DefinedConstructorsBuilder
         {
             get
             {

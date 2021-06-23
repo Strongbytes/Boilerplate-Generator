@@ -3,6 +3,7 @@ using BoilerplateGenerator.Contracts.RoslynWrappers;
 using BoilerplateGenerator.Models.RoslynWrappers;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using Microsoft.CodeAnalysis;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -71,7 +72,7 @@ namespace BoilerplateGenerator.Helpers
             symbolWrapper.IsPropertyChanging = false;
         }
 
-        public static IEnumerable<PropertyDefinitionModel> FilterTreeProperties(this ITreeNode<IBaseSymbolWrapper> rootNode, bool appendParentClassName = false)
+        public static IEnumerable<PropertyDefinitionModel> FilterTreeProperties(this ITreeNode<IBaseSymbolWrapper> rootNode)
         {
             List<PropertyDefinitionModel> propertyDefinitions = new List<PropertyDefinitionModel>();
 
@@ -80,10 +81,15 @@ namespace BoilerplateGenerator.Helpers
                 switch (treeNode.Current.GetType().Name)
                 {
                     case nameof(EntityClassWrapper):
-                        propertyDefinitions.AddRange(FilterTreeProperties(treeNode, true));
+                        propertyDefinitions.AddRange(FilterTreeProperties(treeNode));
                         break;
 
                     default:
+                        if (!(treeNode.Parent.Current is EntityClassWrapper entityClassWrapper))
+                        {
+                            throw new Exception("Not a valid Tree Node");
+                        }
+
                         if (!(treeNode.Current is EntityPropertyWrapper entityPropertyWrapper))
                         {
                             break;
@@ -94,12 +100,12 @@ namespace BoilerplateGenerator.Helpers
                             break;
                         }
 
-                        propertyDefinitions.Add(new PropertyDefinitionModel(entityPropertyWrapper, appendParentClassName));
+                        propertyDefinitions.Add(new PropertyDefinitionModel(entityPropertyWrapper, !entityClassWrapper.IsBaseTypeInheritance));
                         break;
                 }
             }
 
-            return propertyDefinitions;
+            return propertyDefinitions.OrderByDescending(x => x.Attributes.Any());
         }
 
         public static string PrimaryEntityType(this ObservableCollection<ITreeNode<IBaseSymbolWrapper>> entityTree)

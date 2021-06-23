@@ -67,6 +67,7 @@
         RegisterUnitOfWorkRepositories,
         Void,
         Builder,
-        ContainerBuilder
+        ContainerBuilder,
+        Load
     }
 }

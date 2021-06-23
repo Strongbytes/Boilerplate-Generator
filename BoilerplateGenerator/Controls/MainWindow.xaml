@@ -102,7 +102,7 @@
                                 <CheckBox.Content>
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock>
-                                                <Run Text="{Binding Current.Name}" /><Run Text=" (Type: " /><Run Text="{Binding Current.Type}" /><Run Text=")" />
+                                            <Run Text="{Binding Current.Name}" /><Run Text=" (Type: " /><Run Text="{Binding Current.Type}" /><Run Text=")" />
                                         </TextBlock>
                                         <TextBlock Text=" [Primary Key]"
                                                    FontWeight="Bold"
