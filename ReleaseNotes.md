@@ -2,6 +2,9 @@
 
 ### [Download from Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=Strongbytes.boilerplate-code-generator)
 
+## Release 1.7
+* Register UnitOfWork and Repository to Dependency Container (Autofac is used as the IoC Container)
+
 ## Release 1.6
 * Generate Unit of Work and Repository;
 * Add a new DbSet for the selected entity to the existing application DbContext (if not already present);
