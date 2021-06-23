@@ -10,6 +10,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Infrastructure
 {
     public class DependencyContainerRegistrationGeneratorModel : BaseGenericGeneratorModel
     {
+        private readonly IViewModelBase _viewModelBase;
         private readonly IMetadataGenerationService _metadataGenerationService;
 
         public DependencyContainerRegistrationGeneratorModel
@@ -19,10 +20,13 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Infrastructure
         )
             : base(viewModelBase, metadataGenerationService)
         {
+            _viewModelBase = viewModelBase;
             _metadataGenerationService = metadataGenerationService;
         }
 
         public override bool MergeWithExistingAsset => true;
+
+        public override bool CanBeCreated => _viewModelBase.UseUnitOfWork;
 
         public override AssetKind Kind => AssetKind.DependencyContainerRegistration;
 
