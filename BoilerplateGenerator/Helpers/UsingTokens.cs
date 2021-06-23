@@ -12,5 +12,6 @@
         public const string MicrosoftAspNetCoreMvc = "Microsoft.AspNetCore.Mvc";
         public const string MediatR = "MediatR";
         public const string AutoMapper = "AutoMapper";
+        public const string Autofac = "Autofac";
     }
 }

@@ -62,6 +62,11 @@
         BaseUnitOfWork,
         IServiceProvider,
         ServiceProvider,
-        DbSet
+        DbSet,
+        Module,
+        RegisterUnitOfWorkRepositories,
+        Void,
+        Builder,
+        ContainerBuilder
     }
 }

@@ -25,5 +25,6 @@
         EntityRepositoryInterface,
         EntityRepositoryImplementation,
         DbContext,
+        DependencyContainerRegistration,
     }
 }

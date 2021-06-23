@@ -34,23 +34,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
 
         protected virtual IEnumerable<string> UsingsBuilder => new string[] { UsingTokens.System };
 
-        private IEnumerable<PropertyDefinitionModel> _availablePropertiesBuilder;
-        protected virtual IEnumerable<PropertyDefinitionModel> AvailablePropertiesBuilder
-        {
-            get
-            {
-                lock (_locker)
-                {
-                    if (_availablePropertiesBuilder != null)
-                    {
-                        return _availablePropertiesBuilder;
-                    }
-
-                    _availablePropertiesBuilder = _viewModelBase.EntityTree.First().FilterTreeProperties();
-                    return _availablePropertiesBuilder;
-                }
-            }
-        }
+        protected virtual IEnumerable<PropertyDefinitionModel> AvailablePropertiesBuilder { get; } = Enumerable.Empty<PropertyDefinitionModel>();
 
         protected virtual IEnumerable<ParameterDefinitionModel> InjectedDependenciesBuilder { get; } = Enumerable.Empty<ParameterDefinitionModel>();
 

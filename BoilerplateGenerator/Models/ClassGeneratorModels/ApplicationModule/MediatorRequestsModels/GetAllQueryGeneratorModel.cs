@@ -38,7 +38,5 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
                 $"{CommonTokens.IRequest}<{CommonTokens.IEnumerable}<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.ResponseDomainEntity]}>>"
             }
         };
-
-        protected override IEnumerable<PropertyDefinitionModel> AvailablePropertiesBuilder => new PropertyDefinitionModel[] { };
     }
 }

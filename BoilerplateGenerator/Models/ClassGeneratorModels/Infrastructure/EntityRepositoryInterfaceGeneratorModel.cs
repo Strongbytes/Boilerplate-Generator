@@ -48,7 +48,5 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Infrastructure
                 $"{CommonTokens.IBaseRepository}<{_viewModelBase.EntityTree.PrimaryEntityType()}>"
             }
         };
-
-        protected override IEnumerable<PropertyDefinitionModel> AvailablePropertiesBuilder => Enumerable.Empty<PropertyDefinitionModel>();
     }
 }

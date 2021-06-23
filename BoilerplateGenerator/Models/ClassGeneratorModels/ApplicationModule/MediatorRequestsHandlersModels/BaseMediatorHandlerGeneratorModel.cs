@@ -86,8 +86,6 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
             }
         };
 
-        protected override IEnumerable<PropertyDefinitionModel> AvailablePropertiesBuilder => new PropertyDefinitionModel[] { };
-
         protected override IEnumerable<MethodDefinitionModel> AvailableMethodsBuilder
         {
             get

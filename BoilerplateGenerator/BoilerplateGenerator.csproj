@@ -83,6 +83,7 @@
     <Compile Include="Models\ClassGeneratorModels\DomainEntity\ResponseDomainEntityGeneratorModel.cs" />
     <Compile Include="Contracts\RoslynWrappers\IProjectWrapper.cs" />
     <Compile Include="Contracts\RoslynWrappers\ISolutionWrapper.cs" />
+    <Compile Include="Models\ClassGeneratorModels\Infrastructure\DependencyContainerRegistrationGeneratorModel.cs" />
     <Compile Include="Models\ClassGeneratorModels\Infrastructure\DbContextGeneratorModel.cs" />
     <Compile Include="Models\ClassGeneratorModels\Infrastructure\EntityRepositoryImplementationGeneratorModel.cs" />
     <Compile Include="Models\ClassGeneratorModels\Infrastructure\UnitOfWorkImplementationGeneralModel.cs" />

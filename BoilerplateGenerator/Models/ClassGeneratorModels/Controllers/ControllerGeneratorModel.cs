@@ -44,8 +44,6 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
 
         protected override IProjectWrapper TargetModule => _viewModelBase.SelectedControllersProject;
 
-        protected override IEnumerable<PropertyDefinitionModel> AvailablePropertiesBuilder => new PropertyDefinitionModel[] { };
-
         public override AssetKind Kind => AssetKind.Controller;
 
         public override CompilationUnitDefinitionModel CompilationUnitDefinition => new CompilationUnitDefinitionModel
@@ -74,168 +72,162 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
             }
         };
 
-        protected override IEnumerable<MethodDefinitionModel> AvailableMethodsBuilder
+        protected override IEnumerable<MethodDefinitionModel> AvailableMethodsBuilder => new MethodDefinitionModel[]
         {
-            get
+            new MethodDefinitionModel
             {
-                return new MethodDefinitionModel[]
+                Name = $"{CommonTokens.GetAll}",
+                IsEnabled = _viewModelBase.GetAllQueryIsEnabled,
+                Attributes = new List<AttributeDefinitionModel>
                 {
-                    new MethodDefinitionModel
+                    new AttributeDefinitionModel($"{CommonTokens.HttpGet}"),
+                    new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
                     {
-                        Name = $"{CommonTokens.GetAll}",
-                        IsEnabled = _viewModelBase.GetAllQueryIsEnabled,
-                        Attributes = new List<AttributeDefinitionModel>
-                        {
-                            new AttributeDefinitionModel($"{CommonTokens.HttpGet}"),
-                            new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
-                            {
-                                Values = new string[] { $"typeof({CommonTokens.IEnumerable}<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.ResponseDomainEntity]}>)", StatusCodeTokens.Status200OK }
-                            }
-                        },
-                        Body = GetAllQueryBody
-                    },
-                    new MethodDefinitionModel
-                    {
-                        Name = $"{CommonTokens.GetPaginated}",
-                        IsEnabled = _viewModelBase.GetPaginatedQueryIsEnabled,
-                        Attributes = new List<AttributeDefinitionModel>
-                        {
-                            new AttributeDefinitionModel($"{CommonTokens.HttpGet}"),
-                            new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
-                            {
-                                Values = new string[]
-                                {
-                                    $"typeof({CommonTokens.IPaginatedDataResponse}<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.ResponseDomainEntity]}>)", StatusCodeTokens.Status200OK 
-                                }
-                            }
-                        },
-                        Parameters = new ParameterDefinitionModel[]
-                        {
-                            new ParameterDefinitionModel
-                            {
-                                ReturnType = _paginationRequirements.PaginatedDataQueryClass.Name,
-                                Name = _paginationRequirements.PaginatedDataQueryClass.Name.ToLowerCamelCase()
-                            }
-                        },
-                        Body = GetPaginatedQueryBody
-                    },
-                    new MethodDefinitionModel
-                    {
-                        Name = $"{CommonTokens.GetById}",
-                        IsEnabled = _viewModelBase.GetByIdQueryIsEnabled,
-                        Attributes = new List<AttributeDefinitionModel>
-                        {
-                            new AttributeDefinitionModel($"{CommonTokens.HttpGet}")
-                            {
-                                Values = new string[] { $"\"{{{BaseEntityPrimaryKey.Name.ToLowerCamelCase()}}}\"" }
-                            },
-                            new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
-                            {
-                                Values = new string[] { StatusCodeTokens.Status404NotFound }
-                            },
-                            new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
-                            {
-                                Values = new string[] { $"typeof({_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.ResponseDomainEntity]})", StatusCodeTokens.Status200OK }
-                            }
-                        },
-                        Parameters = new ParameterDefinitionModel[]
-                        {
-                            new ParameterDefinitionModel
-                            {
-                                ReturnType = $"{BaseEntityPrimaryKey.ReturnType}",
-                                Name = $"{BaseEntityPrimaryKey.Name.ToLowerCamelCase()}"
-                            }
-                        },
-                        Body = GetByIdQueryBody
-                    },
-                    new MethodDefinitionModel
-                    {
-                        Name = $"{CommonTokens.Create}",
-                        IsEnabled = _viewModelBase.CreateCommandIsEnabled,
-                        Attributes = new List<AttributeDefinitionModel>
-                        {
-                            new AttributeDefinitionModel($"{CommonTokens.HttpPost}"),
-                            new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
-                            {
-                                Values = new string[] { StatusCodeTokens.Status400BadRequest }
-                            },
-                            new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
-                            {
-                                Values = new string[] { $"typeof({_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.ResponseDomainEntity]})", StatusCodeTokens.Status201Created }
-                            }
-                        },
-                        Parameters = new ParameterDefinitionModel[]
-                        {
-                            new ParameterDefinitionModel
-                            {
-                                ReturnType = _metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.CreateRequestDomainEntity],
-                                Name = $"{nameof(CommonTokens.Model).ToLowerCamelCase()}"
-                            }
-                        },
-                        Body = CreateCommandBody
-                    },
-                    new MethodDefinitionModel
-                    {
-                        Name = $"{CommonTokens.Update}",
-                        IsEnabled = _viewModelBase.UpdateCommandIsEnabled,
-                        Attributes = new List<AttributeDefinitionModel>
-                        {
-                            new AttributeDefinitionModel($"{CommonTokens.HttpPut}")
-                            {
-                                Values = new string[] { $"\"{{{BaseEntityPrimaryKey.Name.ToLowerCamelCase()}}}\"" }
-                            },
-                            new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
-                            {
-                                Values = new string[] { StatusCodeTokens.Status404NotFound }
-                            },
-                            new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
-                            {
-                                Values = new string[] { $"typeof({_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.ResponseDomainEntity]})", StatusCodeTokens.Status200OK }
-                            }
-                        },
-                        Parameters = new ParameterDefinitionModel[]
-                        {
-                            new ParameterDefinitionModel
-                            {
-                                ReturnType = $"{BaseEntityPrimaryKey.ReturnType}",
-                                Name = $"{BaseEntityPrimaryKey.Name.ToLowerCamelCase()}"
-                            },
-                            new ParameterDefinitionModel
-                            {
-                                ReturnType = _metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.UpdateRequestDomainEntity],
-                                Name = $"{nameof(CommonTokens.Model).ToLowerCamelCase()}"
-                            },
-                        },
-                        Body = UpdateCommandBody
-                    },
-                    new MethodDefinitionModel
-                    {
-                        Name = $"{CommonTokens.Delete}",
-                        IsEnabled = _viewModelBase.DeleteCommandIsEnabled,
-                        Attributes = new List<AttributeDefinitionModel>
-                        {
-                            new AttributeDefinitionModel($"{CommonTokens.HttpDelete}")
-                            {
-                                Values = new string[] { $"\"{{{BaseEntityPrimaryKey.Name.ToLowerCamelCase()}}}\"" }
-                            },
-                            new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
-                            {
-                                Values = new string[] { StatusCodeTokens.Status204NoContent }
-                            }
-                        },
-                        Parameters = new ParameterDefinitionModel[]
-                        {
-                            new ParameterDefinitionModel
-                            {
-                                ReturnType = $"{BaseEntityPrimaryKey.ReturnType}",
-                                Name = $"{BaseEntityPrimaryKey.Name.ToLowerCamelCase()}"
-                            },
-                        },
-                        Body = DeleteCommandBody
+                        Values = new string[] { $"typeof({CommonTokens.IEnumerable}<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.ResponseDomainEntity]}>)", StatusCodeTokens.Status200OK }
                     }
-                };
+                },
+                Body = GetAllQueryBody
+            },
+            new MethodDefinitionModel
+            {
+                Name = $"{CommonTokens.GetPaginated}",
+                IsEnabled = _viewModelBase.GetPaginatedQueryIsEnabled,
+                Attributes = new List<AttributeDefinitionModel>
+                {
+                    new AttributeDefinitionModel($"{CommonTokens.HttpGet}"),
+                    new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
+                    {
+                        Values = new string[]
+                        {
+                            $"typeof({CommonTokens.IPaginatedDataResponse}<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.ResponseDomainEntity]}>)", StatusCodeTokens.Status200OK
+                        }
+                    }
+                },
+                Parameters = new ParameterDefinitionModel[]
+                {
+                    new ParameterDefinitionModel
+                    {
+                        ReturnType = _paginationRequirements.PaginatedDataQueryClass.Name,
+                        Name = _paginationRequirements.PaginatedDataQueryClass.Name.ToLowerCamelCase()
+                    }
+                },
+                Body = GetPaginatedQueryBody
+            },
+            new MethodDefinitionModel
+            {
+                Name = $"{CommonTokens.GetById}",
+                IsEnabled = _viewModelBase.GetByIdQueryIsEnabled,
+                Attributes = new List<AttributeDefinitionModel>
+                {
+                    new AttributeDefinitionModel($"{CommonTokens.HttpGet}")
+                    {
+                        Values = new string[] { $"\"{{{BaseEntityPrimaryKey.Name.ToLowerCamelCase()}}}\"" }
+                    },
+                    new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
+                    {
+                        Values = new string[] { StatusCodeTokens.Status404NotFound }
+                    },
+                    new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
+                    {
+                        Values = new string[] { $"typeof({_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.ResponseDomainEntity]})", StatusCodeTokens.Status200OK }
+                    }
+                },
+                Parameters = new ParameterDefinitionModel[]
+                {
+                    new ParameterDefinitionModel
+                    {
+                        ReturnType = $"{BaseEntityPrimaryKey.ReturnType}",
+                        Name = $"{BaseEntityPrimaryKey.Name.ToLowerCamelCase()}"
+                    }
+                },
+                Body = GetByIdQueryBody
+            },
+            new MethodDefinitionModel
+            {
+                Name = $"{CommonTokens.Create}",
+                IsEnabled = _viewModelBase.CreateCommandIsEnabled,
+                Attributes = new List<AttributeDefinitionModel>
+                {
+                    new AttributeDefinitionModel($"{CommonTokens.HttpPost}"),
+                    new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
+                    {
+                        Values = new string[] { StatusCodeTokens.Status400BadRequest }
+                    },
+                    new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
+                    {
+                        Values = new string[] { $"typeof({_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.ResponseDomainEntity]})", StatusCodeTokens.Status201Created }
+                    }
+                },
+                Parameters = new ParameterDefinitionModel[]
+                {
+                    new ParameterDefinitionModel
+                    {
+                        ReturnType = _metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.CreateRequestDomainEntity],
+                        Name = $"{nameof(CommonTokens.Model).ToLowerCamelCase()}"
+                    }
+                },
+                Body = CreateCommandBody
+            },
+            new MethodDefinitionModel
+            {
+                Name = $"{CommonTokens.Update}",
+                IsEnabled = _viewModelBase.UpdateCommandIsEnabled,
+                Attributes = new List<AttributeDefinitionModel>
+                {
+                    new AttributeDefinitionModel($"{CommonTokens.HttpPut}")
+                    {
+                        Values = new string[] { $"\"{{{BaseEntityPrimaryKey.Name.ToLowerCamelCase()}}}\"" }
+                    },
+                    new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
+                    {
+                        Values = new string[] { StatusCodeTokens.Status404NotFound }
+                    },
+                    new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
+                    {
+                        Values = new string[] { $"typeof({_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.ResponseDomainEntity]})", StatusCodeTokens.Status200OK }
+                    }
+                },
+                Parameters = new ParameterDefinitionModel[]
+                {
+                    new ParameterDefinitionModel
+                    {
+                        ReturnType = $"{BaseEntityPrimaryKey.ReturnType}",
+                        Name = $"{BaseEntityPrimaryKey.Name.ToLowerCamelCase()}"
+                    },
+                    new ParameterDefinitionModel
+                    {
+                        ReturnType = _metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.UpdateRequestDomainEntity],
+                        Name = $"{nameof(CommonTokens.Model).ToLowerCamelCase()}"
+                    },
+                },
+                Body = UpdateCommandBody
+            },
+            new MethodDefinitionModel
+            {
+                Name = $"{CommonTokens.Delete}",
+                IsEnabled = _viewModelBase.DeleteCommandIsEnabled,
+                Attributes = new List<AttributeDefinitionModel>
+                {
+                    new AttributeDefinitionModel($"{CommonTokens.HttpDelete}")
+                    {
+                        Values = new string[] { $"\"{{{BaseEntityPrimaryKey.Name.ToLowerCamelCase()}}}\"" }
+                    },
+                    new AttributeDefinitionModel($"{CommonTokens.ProducesResponseType}")
+                    {
+                        Values = new string[] { StatusCodeTokens.Status204NoContent }
+                    }
+                },
+                Parameters = new ParameterDefinitionModel[]
+                {
+                    new ParameterDefinitionModel
+                    {
+                        ReturnType = $"{BaseEntityPrimaryKey.ReturnType}",
+                        Name = $"{BaseEntityPrimaryKey.Name.ToLowerCamelCase()}"
+                    },
+                },
+                Body = DeleteCommandBody
             }
-        }
+        };
 
         private IEnumerable<string> GetAllQueryBody
         {

@@ -53,8 +53,6 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Infrastructure
             }
         };
 
-        protected override IEnumerable<PropertyDefinitionModel> AvailablePropertiesBuilder => Enumerable.Empty<PropertyDefinitionModel>();
-
         protected override IEnumerable<ConstructorDefinitionModel> ConstructorsBuilder
         {
             get

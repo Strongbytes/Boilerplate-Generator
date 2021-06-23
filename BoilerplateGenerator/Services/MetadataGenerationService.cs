@@ -18,6 +18,8 @@ namespace BoilerplateGenerator.Services
         private readonly IViewModelBase _viewModelBase;
         private readonly IUnitOfWorkRequirements _unitOfWorkRequirements;
 
+        private string TargetModuleShortName => _viewModelBase.SelectedTargetModuleProject.Name.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries).Last();
+
         private string _baseEntityPluralizedName;
         public string PrimaryEntityPluralizedName
         {
@@ -98,12 +100,13 @@ namespace BoilerplateGenerator.Services
             { AssetKind.CreateCommandHandler, $"{CommonTokens.Create}{BaseEntity.Name}{CommonTokens.CommandHandler}" },
             { AssetKind.UpdateCommandHandler, $"{CommonTokens.Update}{BaseEntity.Name}{CommonTokens.CommandHandler}" },
             { AssetKind.DeleteCommandHandler, $"{CommonTokens.Delete}{BaseEntity.Name}{CommonTokens.CommandHandler}" },
-            { AssetKind.ProfileMapper, $"{_viewModelBase.SelectedTargetModuleProject.Name.Split(new char[] {'.' }, StringSplitOptions.RemoveEmptyEntries).Last()}{CommonTokens.Mapper}" },
+            { AssetKind.ProfileMapper, $"{TargetModuleShortName}{CommonTokens.Mapper}" },
             { AssetKind.EntityRepositoryInterface, $"{CommonTokens.I}{PrimaryEntityPluralizedName}{CommonTokens.Repository}" },
             { AssetKind.EntityRepositoryImplementation, $"{PrimaryEntityPluralizedName}{CommonTokens.Repository}" },
             { AssetKind.UnitOfWorkInterface, $"{CommonTokens.I}{CommonTokens.UnitOfWork}" },
             { AssetKind.UnitOfWorkImplementation, $"{CommonTokens.UnitOfWork}" },
             { AssetKind.DbContext, _unitOfWorkRequirements.DbContextClass.Name },
+            { AssetKind.DependencyContainerRegistration, $"{TargetModuleShortName}{CommonTokens.Module}" },
         };
 
         private IDictionary<AssetKind, NamespaceDefinitionModel> AssetToNamespaceMapping => new Dictionary<AssetKind, NamespaceDefinitionModel>
@@ -276,6 +279,13 @@ namespace BoilerplateGenerator.Services
             {
                 AssetKind.DbContext,
                 new NamespaceDefinitionModel()
+            },
+            {
+                AssetKind.DependencyContainerRegistration,
+                new NamespaceDefinitionModel
+                {
+                    IsEnabled = _viewModelBase.UseUnitOfWork
+                }
             },
         };
 
