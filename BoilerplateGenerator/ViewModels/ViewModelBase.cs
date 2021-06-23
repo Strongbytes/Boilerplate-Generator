@@ -27,8 +27,8 @@ namespace BoilerplateGenerator.ViewModels
 
         public ViewModelBase
         (
-            IEntityManagerService fileManagerService, 
-            IGeneratorModelsManagerService generatorModelsManagerService, 
+            IEntityManagerService fileManagerService,
+            IGeneratorModelsManagerService generatorModelsManagerService,
             IPaginationRequirements paginationRequirements,
             IUnitOfWorkRequirements unitOfWorkRequirements
         )
@@ -97,7 +97,7 @@ namespace BoilerplateGenerator.ViewModels
         {
             get
             {
-                
+
                 return _getPaginatedQueryIsEnabled && _paginationRequirements.FeatureIsAvailable.HasValue;
             }
 

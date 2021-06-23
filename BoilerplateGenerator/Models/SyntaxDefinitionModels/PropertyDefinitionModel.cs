@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace BoilerplateGenerator.Models.SyntaxDefinitionModels
 {
-    public class PropertyDefinitionModel
+    public partial class PropertyDefinitionModel
     {
         private readonly IDictionary<string, string> _lookupAttributes = new Dictionary<string, string>
         {
@@ -16,13 +16,25 @@ namespace BoilerplateGenerator.Models.SyntaxDefinitionModels
 
         public string Name { get; set; }
 
-        public ICollection<AttributeDefinitionModel> Attributes { get; set; } = new List<AttributeDefinitionModel>();
+        public ICollection<AttributeDefinitionModel> Attributes { get; } = new List<AttributeDefinitionModel>();
 
         public string ReturnType { get; set; }
 
         public bool IsPrimaryKey { get; set; }
 
-        public SyntaxKind[] Modifiers { get; set; } = new SyntaxKind[] { SyntaxKind.PublicKeyword };
+        public IEnumerable<SyntaxKind> Modifiers { get; set; } = new SyntaxKind[] { SyntaxKind.PublicKeyword };
+
+        public IEnumerable<PropertyAccessorDefinitionModel> Accessors { get; set; } = new PropertyAccessorDefinitionModel[]
+        {
+            new PropertyAccessorDefinitionModel
+            {
+                AccessorType = SyntaxKind.GetAccessorDeclaration,
+            },
+            new PropertyAccessorDefinitionModel
+            {
+                AccessorType = SyntaxKind.SetAccessorDeclaration,
+            }
+        };
 
         public PropertyDefinitionModel()
         {

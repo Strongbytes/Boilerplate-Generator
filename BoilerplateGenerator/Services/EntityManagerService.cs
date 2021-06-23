@@ -61,7 +61,6 @@ namespace BoilerplateGenerator.Services
         public IEnumerable<IProjectWrapper> RetrieveAllModules()
         {
             return from project in _visualStudioWorkspace.CurrentSolution.Projects
-                   where !project.Name.Equals(_parentProjectName)
                    select new ProjectWrapper(project);
         }
 

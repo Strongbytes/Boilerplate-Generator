@@ -1,4 +1,5 @@
 ﻿using BoilerplateGenerator.Contracts.Services;
+using BoilerplateGenerator.ExtraFeatures.UnitOfWork;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.RoslynWrappers;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
@@ -15,8 +16,22 @@ namespace BoilerplateGenerator.Services
         private readonly object _locker = new object();
 
         private readonly IViewModelBase _viewModelBase;
+        private readonly IUnitOfWorkRequirements _unitOfWorkRequirements;
 
-        private string BaseEntityPluralizedName => new Pluralizer().Pluralize(BaseEntity.Name);
+        private string _baseEntityPluralizedName;
+        public string PrimaryEntityPluralizedName
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(_baseEntityPluralizedName))
+                {
+                    return _baseEntityPluralizedName;
+                }
+
+                _baseEntityPluralizedName = new Pluralizer().Pluralize(BaseEntity.Name);
+                return _baseEntityPluralizedName;
+            }
+        }
 
         private EntityClassWrapper _baseEntity;
         private EntityClassWrapper BaseEntity
@@ -36,9 +51,10 @@ namespace BoilerplateGenerator.Services
             }
         }
 
-        public MetadataGenerationService(IViewModelBase viewModelBase)
+        public MetadataGenerationService(IViewModelBase viewModelBase, IUnitOfWorkRequirements unitOfWorkRequirements)
         {
             _viewModelBase = viewModelBase;
+            _unitOfWorkRequirements = unitOfWorkRequirements;
         }
 
         public string NamespaceByAssetKind(AssetKind referencedAsset)
@@ -67,24 +83,27 @@ namespace BoilerplateGenerator.Services
         public IDictionary<AssetKind, string> AssetToCompilationUnitNameMapping => new Dictionary<AssetKind, string>
         {
             { AssetKind.ResponseDomainEntity, $"{BaseEntity.Name}{CommonTokens.DomainModel}" },
-            { AssetKind.Controller, $"{BaseEntityPluralizedName}{CommonTokens.Controller}" },
+            { AssetKind.Controller, $"{PrimaryEntityPluralizedName}{CommonTokens.Controller}" },
             { AssetKind.CreateRequestDomainEntity, $"{CommonTokens.Create}{BaseEntity.Name}{CommonTokens.RequestModel}" },
             { AssetKind.UpdateRequestDomainEntity, $"{CommonTokens.Update}{BaseEntity.Name}{CommonTokens.RequestModel}" },
-            { AssetKind.GetAllQuery, $"{CommonTokens.GetAll}{BaseEntityPluralizedName}{CommonTokens.Query}" },
-            { AssetKind.GetPaginatedQuery, $"{CommonTokens.GetPaginated}{BaseEntityPluralizedName}{CommonTokens.Query}" },
+            { AssetKind.GetAllQuery, $"{CommonTokens.GetAll}{PrimaryEntityPluralizedName}{CommonTokens.Query}" },
+            { AssetKind.GetPaginatedQuery, $"{CommonTokens.GetPaginated}{PrimaryEntityPluralizedName}{CommonTokens.Query}" },
             { AssetKind.GetByIdQuery, $"{CommonTokens.Get}{BaseEntity.Name}{CommonTokens.ByIdQuery}" },
             { AssetKind.CreateCommand, $"{CommonTokens.Create}{BaseEntity.Name}{CommonTokens.Command}" },
             { AssetKind.UpdateCommand, $"{CommonTokens.Update}{BaseEntity.Name}{CommonTokens.Command}" },
             { AssetKind.DeleteCommand, $"{CommonTokens.Delete}{BaseEntity.Name}{CommonTokens.Command}" },
-            { AssetKind.GetAllQueryHandler, $"{CommonTokens.GetAll}{BaseEntityPluralizedName}{CommonTokens.QueryHandler}" },
-            { AssetKind.GetPaginatedQueryHandler, $"{CommonTokens.GetPaginated}{BaseEntityPluralizedName}{CommonTokens.QueryHandler}" },
+            { AssetKind.GetAllQueryHandler, $"{CommonTokens.GetAll}{PrimaryEntityPluralizedName}{CommonTokens.QueryHandler}" },
+            { AssetKind.GetPaginatedQueryHandler, $"{CommonTokens.GetPaginated}{PrimaryEntityPluralizedName}{CommonTokens.QueryHandler}" },
             { AssetKind.GetByIdQueryHandler, $"{CommonTokens.Get}{BaseEntity.Name}{CommonTokens.ByIdQueryHandler}" },
             { AssetKind.CreateCommandHandler, $"{CommonTokens.Create}{BaseEntity.Name}{CommonTokens.CommandHandler}" },
             { AssetKind.UpdateCommandHandler, $"{CommonTokens.Update}{BaseEntity.Name}{CommonTokens.CommandHandler}" },
             { AssetKind.DeleteCommandHandler, $"{CommonTokens.Delete}{BaseEntity.Name}{CommonTokens.CommandHandler}" },
             { AssetKind.ProfileMapper, $"{_viewModelBase.SelectedTargetModuleProject.Name.Split(new char[] {'.' }, StringSplitOptions.RemoveEmptyEntries).Last()}{CommonTokens.Mapper}" },
-            { AssetKind.EntityRepositoryInterface, $"{CommonTokens.I}{BaseEntityPluralizedName}{CommonTokens.Repository}" },
-            { AssetKind.EntityRepositoryImplementation, $"{BaseEntityPluralizedName}{CommonTokens.Repository}" },
+            { AssetKind.EntityRepositoryInterface, $"{CommonTokens.I}{PrimaryEntityPluralizedName}{CommonTokens.Repository}" },
+            { AssetKind.EntityRepositoryImplementation, $"{PrimaryEntityPluralizedName}{CommonTokens.Repository}" },
+            { AssetKind.UnitOfWorkInterface, $"{CommonTokens.I}{CommonTokens.UnitOfWork}" },
+            { AssetKind.UnitOfWorkImplementation, $"{CommonTokens.UnitOfWork}" },
+            { AssetKind.DbContext, _unitOfWorkRequirements.DbContextClass.Name },
         };
 
         private IDictionary<AssetKind, NamespaceDefinitionModel> AssetToNamespaceMapping => new Dictionary<AssetKind, NamespaceDefinitionModel>
@@ -107,7 +126,7 @@ namespace BoilerplateGenerator.Services
                 AssetKind.CreateRequestDomainEntity,
                 new NamespaceDefinitionModel
                 {
-                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Create}.{NamespaceTokens.Models}",
+                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{PrimaryEntityPluralizedName}.{CommonTokens.Create}.{NamespaceTokens.Models}",
                     IsEnabled = _viewModelBase.CreateCommandIsEnabled
                 }
             },
@@ -115,7 +134,7 @@ namespace BoilerplateGenerator.Services
                 AssetKind.UpdateRequestDomainEntity,
                 new NamespaceDefinitionModel
                 {
-                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Update}.{NamespaceTokens.Models}",
+                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{PrimaryEntityPluralizedName}.{CommonTokens.Update}.{NamespaceTokens.Models}",
                     IsEnabled = _viewModelBase.UpdateCommandIsEnabled
                 }
             },
@@ -123,7 +142,7 @@ namespace BoilerplateGenerator.Services
                 AssetKind.GetAllQuery,
                 new NamespaceDefinitionModel
                 {
-                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Queries}.{CommonTokens.GetAll}{BaseEntityPluralizedName}",
+                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Queries}.{CommonTokens.GetAll}{PrimaryEntityPluralizedName}",
                     IsEnabled = _viewModelBase.GetAllQueryIsEnabled
                 }
             },
@@ -131,7 +150,7 @@ namespace BoilerplateGenerator.Services
                 AssetKind.GetPaginatedQuery,
                 new NamespaceDefinitionModel
                 {
-                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Queries}.{CommonTokens.GetPaginated}{BaseEntityPluralizedName}",
+                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Queries}.{CommonTokens.GetPaginated}{PrimaryEntityPluralizedName}",
                     IsEnabled = _viewModelBase.GetPaginatedQueryIsEnabled
                 }
             },
@@ -147,7 +166,7 @@ namespace BoilerplateGenerator.Services
                 AssetKind.CreateCommand,
                 new NamespaceDefinitionModel
                 {
-                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Create}",
+                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{PrimaryEntityPluralizedName}.{CommonTokens.Create}",
                     IsEnabled = _viewModelBase.CreateCommandIsEnabled
                 }
             },
@@ -155,7 +174,7 @@ namespace BoilerplateGenerator.Services
                 AssetKind.UpdateCommand,
                 new NamespaceDefinitionModel
                 {
-                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Update}",
+                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{PrimaryEntityPluralizedName}.{CommonTokens.Update}",
                     IsEnabled = _viewModelBase.UpdateCommandIsEnabled
                 }
             },
@@ -163,7 +182,7 @@ namespace BoilerplateGenerator.Services
                 AssetKind.DeleteCommand,
                 new NamespaceDefinitionModel
                 {
-                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Delete}",
+                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{PrimaryEntityPluralizedName}.{CommonTokens.Delete}",
                     IsEnabled = _viewModelBase.DeleteCommandIsEnabled
                 }
             },
@@ -171,7 +190,7 @@ namespace BoilerplateGenerator.Services
                 AssetKind.GetAllQueryHandler,
                 new NamespaceDefinitionModel
                 {
-                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Queries}.{CommonTokens.GetAll}{BaseEntityPluralizedName}",
+                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Queries}.{CommonTokens.GetAll}{PrimaryEntityPluralizedName}",
                     IsEnabled = _viewModelBase.GetAllQueryIsEnabled
                 }
             },
@@ -179,7 +198,7 @@ namespace BoilerplateGenerator.Services
                 AssetKind.GetPaginatedQueryHandler,
                 new NamespaceDefinitionModel
                 {
-                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Queries}.{CommonTokens.GetPaginated}{BaseEntityPluralizedName}",
+                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Queries}.{CommonTokens.GetPaginated}{PrimaryEntityPluralizedName}",
                     IsEnabled = _viewModelBase.GetPaginatedQueryIsEnabled
                 }
             },
@@ -195,7 +214,7 @@ namespace BoilerplateGenerator.Services
                 AssetKind.CreateCommandHandler,
                 new NamespaceDefinitionModel
                 {
-                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Create}",
+                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{PrimaryEntityPluralizedName}.{CommonTokens.Create}",
                     IsEnabled = _viewModelBase.CreateCommandIsEnabled
                 }
             },
@@ -203,7 +222,7 @@ namespace BoilerplateGenerator.Services
                 AssetKind.UpdateCommandHandler,
                 new NamespaceDefinitionModel
                 {
-                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Update}",
+                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{PrimaryEntityPluralizedName}.{CommonTokens.Update}",
                     IsEnabled = _viewModelBase.UpdateCommandIsEnabled
                 }
             },
@@ -211,7 +230,7 @@ namespace BoilerplateGenerator.Services
                 AssetKind.DeleteCommandHandler,
                 new NamespaceDefinitionModel
                 {
-                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{BaseEntityPluralizedName}.{CommonTokens.Delete}",
+                    Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{PrimaryEntityPluralizedName}.{CommonTokens.Delete}",
                     IsEnabled = _viewModelBase.UpdateCommandIsEnabled
                 }
             },
@@ -220,14 +239,6 @@ namespace BoilerplateGenerator.Services
                 new NamespaceDefinitionModel
                 {
                     IsEnabled = _viewModelBase.GenerateAutoMapperProfile
-                }
-            },
-            {
-                AssetKind.IUnitOfWork,
-                new NamespaceDefinitionModel
-                {
-                    Content = $"{NamespaceTokens.Domain}",
-                    IsEnabled = _viewModelBase.UseUnitOfWork
                 }
             },
             {
@@ -246,6 +257,26 @@ namespace BoilerplateGenerator.Services
                     IsEnabled = _viewModelBase.UseUnitOfWork
                 }
             },
+            {
+                AssetKind.UnitOfWorkInterface,
+                new NamespaceDefinitionModel
+                {
+                    Content = $"{NamespaceTokens.Domain}",
+                    IsEnabled = _viewModelBase.UseUnitOfWork
+                }
+            },
+            {
+                AssetKind.UnitOfWorkImplementation,
+                new NamespaceDefinitionModel
+                {
+                    Content = $"{NamespaceTokens.Infrastructure}",
+                    IsEnabled = _viewModelBase.UseUnitOfWork
+                }
+            },
+            {
+                AssetKind.DbContext,
+                new NamespaceDefinitionModel()
+            },
         };
 
         private string RetrieveBaseNamespace(AssetKind referencedAsset)
@@ -254,6 +285,9 @@ namespace BoilerplateGenerator.Services
             {
                 case AssetKind.Controller:
                     return _viewModelBase.SelectedControllersProject.Namespace;
+
+                case AssetKind.DbContext:
+                    return _unitOfWorkRequirements.DbContextClass.Namespace;
 
                 default:
                     return _viewModelBase.SelectedTargetModuleProject.Namespace;

@@ -43,7 +43,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
            UsingTokens.SystemThreadingTasks,
            UsingTokens.SystemCollectionsGeneric,
            _metadataGenerationService.NamespaceByAssetKind(AssetKind.ResponseDomainEntity),
-           _metadataGenerationService.NamespaceByAssetKind(AssetKind.IUnitOfWork),
+           _metadataGenerationService.NamespaceByAssetKind(AssetKind.UnitOfWorkInterface),
         }.Union(base.UsingsBuilder);
 
         public override CompilationUnitDefinitionModel CompilationUnitDefinition => new CompilationUnitDefinitionModel
@@ -59,7 +59,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
         {
             new ParameterDefinitionModel
             {
-                ReturnType = $"{CommonTokens.IUnitOfWork}",
+                ReturnType = $"{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.UnitOfWorkInterface]}",
                 Name = $"{nameof(CommonTokens.UnitOfWork).ToLowerCamelCase()}",
                 IsEnabled = _viewModelBase.UseUnitOfWork
             },

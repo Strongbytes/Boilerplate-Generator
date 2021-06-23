@@ -52,6 +52,7 @@
     <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="EqualityComparers\NamedTypeSymbolComparer.cs" />
     <Compile Include="EqualityComparers\BaseTypeSyntaxComparer.cs" />
+    <Compile Include="EqualityComparers\PropertyDeclarationSyntaxComparer.cs" />
     <Compile Include="EqualityComparers\StatementSyntaxComparer.cs" />
     <Compile Include="EqualityComparers\ParameterDefinitionModelComparer.cs" />
     <Compile Include="ExtraFeatures\IBaseFeatureRequirements.cs" />
@@ -82,7 +83,10 @@
     <Compile Include="Models\ClassGeneratorModels\DomainEntity\ResponseDomainEntityGeneratorModel.cs" />
     <Compile Include="Contracts\RoslynWrappers\IProjectWrapper.cs" />
     <Compile Include="Contracts\RoslynWrappers\ISolutionWrapper.cs" />
+    <Compile Include="Models\ClassGeneratorModels\Infrastructure\DbContextGeneratorModel.cs" />
     <Compile Include="Models\ClassGeneratorModels\Infrastructure\EntityRepositoryImplementationGeneratorModel.cs" />
+    <Compile Include="Models\ClassGeneratorModels\Infrastructure\UnitOfWorkImplementationGeneralModel.cs" />
+    <Compile Include="Models\ClassGeneratorModels\Infrastructure\UnitOfWorkInterfaceGeneralModel.cs" />
     <Compile Include="Models\ClassGeneratorModels\Infrastructure\EntityRepositoryInterfaceGeneratorModel.cs" />
     <Compile Include="Models\Enums\MemberConflictResolutionKind.cs" />
     <Compile Include="Models\Enums\NamespaceTokens.cs" />
@@ -93,6 +97,7 @@
     <Compile Include="Models\SyntaxDefinitionModels\CompilationUnitDefinitionModel.cs" />
     <Compile Include="Models\SyntaxDefinitionModels\ConstructorDefinitionModel.cs" />
     <Compile Include="Models\SyntaxDefinitionModels\NamespaceDefinitionModel.cs" />
+    <Compile Include="Models\SyntaxDefinitionModels\PropertyAccessorDefinitionModel.cs" />
     <Compile Include="Models\TreeView\GeneratedDirectory.cs" />
     <Compile Include="Models\TreeView\GeneratedCompilationUnit.cs" />
     <Compile Include="Contracts\Services\IMetadataGenerationService.cs" />

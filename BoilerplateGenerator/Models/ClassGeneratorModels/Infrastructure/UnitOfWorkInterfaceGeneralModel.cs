@@ -1,6 +1,5 @@
 ﻿using BoilerplateGenerator.Contracts.Services;
 using BoilerplateGenerator.ExtraFeatures.UnitOfWork;
-using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using BoilerplateGenerator.ViewModels;
@@ -10,20 +9,22 @@ using System.Linq;
 
 namespace BoilerplateGenerator.Models.ClassGeneratorModels.Infrastructure
 {
-    public class EntityRepositoryInterfaceGeneratorModel : BaseGenericGeneratorModel
+    public class UnitOfWorkInterfaceGeneralModel : BaseGenericGeneratorModel
     {
         private readonly IViewModelBase _viewModelBase;
+        private readonly IMetadataGenerationService _metadataGenerationService;
         private readonly IUnitOfWorkRequirements _unitOfWorkRequirements;
 
-        public EntityRepositoryInterfaceGeneratorModel
+        public UnitOfWorkInterfaceGeneralModel
         (
-            IViewModelBase viewModelBase, 
+            IViewModelBase viewModelBase,
             IMetadataGenerationService metadataGenerationService,
             IUnitOfWorkRequirements unitOfWorkRequirements
         )
             : base(viewModelBase, metadataGenerationService)
         {
             _viewModelBase = viewModelBase;
+            _metadataGenerationService = metadataGenerationService;
             _unitOfWorkRequirements = unitOfWorkRequirements;
         }
 
@@ -31,12 +32,12 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Infrastructure
 
         public override bool MergeWithExistingAsset => true;
 
-        public override AssetKind Kind => AssetKind.EntityRepositoryInterface;
+        public override AssetKind Kind => AssetKind.UnitOfWorkInterface;
 
         protected override IEnumerable<string> UsingsBuilder => new string[]
         {
-           _unitOfWorkRequirements.BaseRepositoryInterface.Namespace,
-           $"{_viewModelBase.EntityTree.PrimaryEntityNamespace()}"
+           _unitOfWorkRequirements.BaseUnitOfWorkInterface.Namespace,
+           _metadataGenerationService.NamespaceByAssetKind(AssetKind.EntityRepositoryInterface)
         };
 
         public override CompilationUnitDefinitionModel CompilationUnitDefinition => new CompilationUnitDefinitionModel
@@ -45,10 +46,25 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Infrastructure
             AccessModifier = SyntaxKind.InternalKeyword,
             DefinedInheritanceTypes = new string[]
             {
-                $"{CommonTokens.IBaseRepository}<{_viewModelBase.EntityTree.PrimaryEntityType()}>"
+                $"{CommonTokens.IBaseUnitOfWork}"
             }
         };
 
-        protected override IEnumerable<PropertyDefinitionModel> AvailablePropertiesBuilder => Enumerable.Empty<PropertyDefinitionModel>();
+        protected override IEnumerable<PropertyDefinitionModel> AvailablePropertiesBuilder => new PropertyDefinitionModel[]
+        {
+            new PropertyDefinitionModel
+            {
+                Modifiers = Enumerable.Empty<SyntaxKind>(),
+                Accessors = new PropertyAccessorDefinitionModel[] 
+                {
+                    new PropertyAccessorDefinitionModel
+                    {
+                        AccessorType = SyntaxKind.GetAccessorDeclaration
+                    }
+                },
+                Name = _metadataGenerationService.PrimaryEntityPluralizedName,
+                ReturnType = _metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.EntityRepositoryInterface]
+            }
+        };
     }
 }

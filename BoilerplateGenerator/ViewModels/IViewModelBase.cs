@@ -30,6 +30,8 @@ namespace BoilerplateGenerator.ViewModels
 
         ObservableCollection<ITreeNode<IBaseSymbolWrapper>> EntityTree { get; set; }
 
+        ObservableCollection<IProjectWrapper> AvailableModules { get; }
+
         Task PopulateUiData();
     }
 }

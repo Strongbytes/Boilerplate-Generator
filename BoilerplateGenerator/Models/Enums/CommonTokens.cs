@@ -24,7 +24,6 @@
         ControllerBase,
         IMediator,
         Mediator,
-        IUnitOfWork,
         UnitOfWork,
         IMapper,
         Mapper,
@@ -59,6 +58,10 @@
         BaseRepository,
         IBaseUnitOfWork,
         DbContext,
-        DbContextOptions
+        DbContextOptions,
+        BaseUnitOfWork,
+        IServiceProvider,
+        ServiceProvider,
+        DbSet
     }
 }

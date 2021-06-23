@@ -30,7 +30,7 @@ namespace BoilerplateGenerator.Services
 
         private async Task<CompilationUnitSyntax> RetrieveCompilationUnit()
         {
-            if (_genericGeneratorModel.MergeWithExistingAsset)
+            if (_genericGeneratorModel.MergeWithExistingAsset && _genericGeneratorModel.FileExistsInProject)
             {
                 return await _genericGeneratorModel.LoadExistingAssetFromFile().ConfigureAwait(false);
             }
@@ -45,6 +45,7 @@ namespace BoilerplateGenerator.Services
             string generatedCode = await Task.Run(() => _compilationUnit.WithUsings(GenerateUsings())
                                                                         .WithMembers(GenerateCompilationUnitWithNamespace())
                                                                         .NormalizeWhitespace()
+                                                                        .W‌​ithAdditionalAnnotat‌​ions(Formatter.Annot‌​ation)
                                                                         .ToFullString()).ConfigureAwait(false);
 
             return new GeneratedCompilationUnit(_genericGeneratorModel, generatedCode);
@@ -54,7 +55,7 @@ namespace BoilerplateGenerator.Services
         {
             return SyntaxFactory.List((from usingDirective in _genericGeneratorModel.Usings
                                        select SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(usingDirective)))
-                                .Union(_compilationUnit.Usings)
+                                .Union(_compilationUnit.Usings.ToArray() ?? Enumerable.Empty<UsingDirectiveSyntax>())
                                 .DistinctBy(x => x.Name.ToFullString()));
         }
 
@@ -92,7 +93,7 @@ namespace BoilerplateGenerator.Services
             ConstructorDeclarationSyntax newConstructor = existingConstructor
                 ?? SyntaxFactory.ConstructorDeclaration(_genericGeneratorModel.Name)
                                 .WithInitializer
-                                (constructorDeclaration.CallBaseConstructor ? 
+                                (constructorDeclaration.CallBaseConstructor ?
                                     SyntaxFactory.ConstructorInitializer(SyntaxKind.BaseConstructorInitializer)
                                                  .AddArgumentListArguments(GenerateArguments(constructorDeclaration.Parameters)) : default
                                 )
@@ -141,7 +142,7 @@ namespace BoilerplateGenerator.Services
             return SyntaxFactory.ConstructorDeclaration(_genericGeneratorModel.Name)
                                 .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
                                 .AddParameterListParameters(GenerateParameters(_genericGeneratorModel.InjectedDependencies))
-                                .WithBody(GenerateMethodBody(_genericGeneratorModel.InjectedDependencies));
+                                .WithBody(GenerateParametersAssignmentMethodBody(_genericGeneratorModel.InjectedDependencies));
         }
 
         private MethodDeclarationSyntax[] GenerateMethods()
@@ -152,10 +153,11 @@ namespace BoilerplateGenerator.Services
                                         .AddAttributeLists(GenerateAttributeList(methodDeclaration.Attributes))
                                         .AddModifiers(GenerateModifiers(methodDeclaration.Modifiers))
                                         .AddParameterListParameters(GenerateParameters(methodDeclaration.Parameters))
-                                        .WithBody(GenerateMethodBody(GenerateBodyStatements(methodDeclaration.Body)))).ToArray();
+                                        .WithBody(GenerateMethodBody(GenerateBodyStatements(methodDeclaration.Body))))
+                                        .ToArray();
         }
 
-        private SyntaxToken[] GenerateModifiers(SyntaxKind[] modifiers)
+        private SyntaxToken[] GenerateModifiers(IEnumerable<SyntaxKind> modifiers)
         {
             return (from modifier in modifiers
                     select SyntaxFactory.Token(modifier)).ToArray();
@@ -224,21 +226,17 @@ namespace BoilerplateGenerator.Services
                     )).ToArray();
         }
 
-        private BlockSyntax GenerateMethodBody(IEnumerable<ParameterDefinitionModel> parameters)
+        private BlockSyntax GenerateParametersAssignmentMethodBody(IEnumerable<ParameterDefinitionModel> parameters)
         {
-            var assignments = (from parameter in parameters
-                               where parameter.IsEnabled
-                               select SyntaxFactory.ExpressionStatement
-                               (
-                                   SyntaxFactory.AssignmentExpression
-                                   (
-                                       SyntaxKind.SimpleAssignmentExpression,
-                                       SyntaxFactory.IdentifierName(parameter.MapToClassProperty ? $"{parameter.Name.ToUpperCamelCase()}" : $"_{parameter.Name}"),
-                                       SyntaxFactory.IdentifierName(parameter.Name)
-                                    )
-                                )).ToArray();
-
-            return SyntaxFactory.Block(assignments);
+            return SyntaxFactory.Block(from parameter in parameters
+                                       where parameter.IsEnabled
+                                       let leftAssignment = parameter.MapToClassProperty 
+                                           ? $"{parameter.Name.ToUpperCamelCase()}" 
+                                           : $"_{parameter.Name}"
+                                       let rightAssignment = parameter.ThrowExceptionWhenNull 
+                                            ? $"{parameter.Name} ?? throw new ArgumentNullException(nameof({parameter.Name}))" 
+                                            : parameter.Name
+                                       select SyntaxFactory.ParseStatement($"{leftAssignment} = {rightAssignment};"));
         }
 
         private BlockSyntax GenerateMethodBody(IEnumerable<StatementSyntax> bodyStatements)
@@ -282,7 +280,7 @@ namespace BoilerplateGenerator.Services
 
             if (_genericGeneratorModel.DefinedProperties != null && _genericGeneratorModel.DefinedProperties.Any())
             {
-                typeDeclarationSyntax = (T)typeDeclarationSyntax.AddMembers(GenerateProperties());
+                typeDeclarationSyntax = (T)typeDeclarationSyntax.AddMembers(GenerateProperties(typeDeclarationSyntax));
             }
 
             if (_genericGeneratorModel.InjectedDependencies != null && _genericGeneratorModel.InjectedDependencies.Any())
@@ -304,9 +302,9 @@ namespace BoilerplateGenerator.Services
             return SyntaxFactory.List(new MemberDeclarationSyntax[] { typeDeclarationSyntax });
         }
 
-        private BaseListSyntax GenerateBaseTypes(TypeDeclarationSyntax TypeDeclarationSyntax)
+        private BaseListSyntax GenerateBaseTypes(TypeDeclarationSyntax typeDeclarationSyntax)
         {
-            BaseListSyntax baseList = TypeDeclarationSyntax.BaseList ?? SyntaxFactory.BaseList();
+            BaseListSyntax baseList = typeDeclarationSyntax.BaseList ?? SyntaxFactory.BaseList();
 
             return baseList.WithTypes
             (
@@ -320,19 +318,34 @@ namespace BoilerplateGenerator.Services
             );
         }
 
-        private PropertyDeclarationSyntax[] GenerateProperties()
+        private PropertyDeclarationSyntax[] GenerateProperties(TypeDeclarationSyntax typeDeclarationSyntax)
         {
             return (from propertyDefinition in _genericGeneratorModel.DefinedProperties
                     select SyntaxFactory.PropertyDeclaration(SyntaxFactory.ParseTypeName(propertyDefinition.ReturnType), propertyDefinition.Name)
                                         .AddModifiers(GenerateModifiers(propertyDefinition.Modifiers))
                                         .AddAttributeLists(GenerateAttributeList(propertyDefinition.Attributes))
-                                        .AddAccessorListAccessors
-                                        (
-                                            SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
-                                                         .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
-                                            SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
-                                                         .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken))
-                                        )).ToArray();
+                                        .AddAccessorListAccessors(GeneratePropertyAccessors(propertyDefinition.Accessors)))
+                                        .Except(typeDeclarationSyntax.Members.OfType<PropertyDeclarationSyntax>(), new PropertyDeclarationSyntaxComparer())
+                                        .ToArray();
+        }
+
+        private AccessorDeclarationSyntax[] GeneratePropertyAccessors(IEnumerable<PropertyAccessorDefinitionModel> accessorsDefinition)
+        {
+            return (from accessorDefinition in accessorsDefinition
+                    select SyntaxFactory.AccessorDeclaration(accessorDefinition.AccessorType)
+                                        .AddModifiers(GenerateAccessorModifier(accessorDefinition.AccessorModifier))
+                                        .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)))
+                                        .ToArray();
+        }
+
+        private static SyntaxToken[] GenerateAccessorModifier(SyntaxKind accessorModifier)
+        {
+            if (accessorModifier == SyntaxKind.None || accessorModifier == SyntaxKind.PublicKeyword)
+            {
+                return new SyntaxToken[] { };
+            }
+
+            return new SyntaxToken[] { SyntaxFactory.Token(accessorModifier) };
         }
     }
 }

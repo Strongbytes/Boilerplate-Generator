@@ -40,10 +40,14 @@ namespace BoilerplateGenerator.Models.RoslynWrappers
 
         public virtual bool IsEnabled { get; }
 
+        public string ContainingModuleName { get; }
+
         public BaseSymbolWrapper(T symbol)
         {
             Name = symbol?.Name;
             Namespace = symbol?.ContainingNamespace.ToString();
+            ContainingModuleName = symbol?.ContainingAssembly?.MetadataName;
+
             IsChecked = true;
             IsEnabled = true;
         }

@@ -10,15 +10,15 @@ using System.Linq;
 
 namespace BoilerplateGenerator.Models.ClassGeneratorModels.Infrastructure
 {
-    public class EntityRepositoryImplementationGeneratorModel : BaseGenericGeneratorModel
+    public class UnitOfWorkImplementationGeneralModel : BaseGenericGeneratorModel
     {
         private readonly IViewModelBase _viewModelBase;
         private readonly IMetadataGenerationService _metadataGenerationService;
         private readonly IUnitOfWorkRequirements _unitOfWorkRequirements;
 
-        public EntityRepositoryImplementationGeneratorModel
+        public UnitOfWorkImplementationGeneralModel
         (
-            IViewModelBase viewModelBase, 
+            IViewModelBase viewModelBase,
             IMetadataGenerationService metadataGenerationService,
             IUnitOfWorkRequirements unitOfWorkRequirements
         )
@@ -33,27 +33,47 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Infrastructure
 
         public override bool MergeWithExistingAsset => true;
 
-        public override AssetKind Kind => AssetKind.EntityRepositoryImplementation;
+        public override AssetKind Kind => AssetKind.UnitOfWorkImplementation;
 
         protected override IEnumerable<string> UsingsBuilder => new string[]
         {
-           $"{_metadataGenerationService.NamespaceByAssetKind(AssetKind.EntityRepositoryInterface)}",
-           $"{_viewModelBase.EntityTree.PrimaryEntityNamespace()}",
-           _unitOfWorkRequirements.BaseRepositoryClass.Namespace,
-           _unitOfWorkRequirements.DbContextClass.Namespace
-        };
+           _unitOfWorkRequirements.BaseUnitOfWorkClass.Namespace,
+           _unitOfWorkRequirements.DbContextClass.Namespace,
+           _metadataGenerationService.NamespaceByAssetKind(AssetKind.UnitOfWorkInterface),
+           _metadataGenerationService.NamespaceByAssetKind(AssetKind.EntityRepositoryInterface),
+        }.Union(base.UsingsBuilder);
 
         public override CompilationUnitDefinitionModel CompilationUnitDefinition => new CompilationUnitDefinitionModel
         {
+            Type = SyntaxKind.ClassDeclaration,
             AccessModifier = SyntaxKind.InternalKeyword,
             DefinedInheritanceTypes = new string[]
             {
-                $"{CommonTokens.BaseRepository}<{_viewModelBase.EntityTree.PrimaryEntityType()}>",
-                $"{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.EntityRepositoryInterface]}",
+                $"{CommonTokens.BaseUnitOfWork}",
+                $"{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.UnitOfWorkInterface]}"
             }
         };
 
-        protected override IEnumerable<PropertyDefinitionModel> AvailablePropertiesBuilder => Enumerable.Empty<PropertyDefinitionModel>();
+        protected override IEnumerable<PropertyDefinitionModel> AvailablePropertiesBuilder => new PropertyDefinitionModel[]
+        {
+            new PropertyDefinitionModel
+            {
+                Accessors = new PropertyAccessorDefinitionModel[] 
+                {
+                    new PropertyAccessorDefinitionModel
+                    {
+                        AccessorType = SyntaxKind.GetAccessorDeclaration
+                    },
+                    new PropertyAccessorDefinitionModel
+                    {
+                        AccessorType = SyntaxKind.SetAccessorDeclaration,
+                        AccessorModifier = SyntaxKind.InternalKeyword
+                    }
+                },
+                Name = _metadataGenerationService.PrimaryEntityPluralizedName,
+                ReturnType = _metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.EntityRepositoryInterface]
+            }
+        };
 
         protected override IEnumerable<ConstructorDefinitionModel> ConstructorsBuilder
         {
@@ -70,6 +90,11 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Infrastructure
                             {
                                 ReturnType = _unitOfWorkRequirements.DbContextClass.Name,
                                 Name = $"{nameof(CommonTokens.Context).ToLowerCamelCase()}"
+                            },
+                            new ParameterDefinitionModel
+                            {
+                                ReturnType = $"{CommonTokens.IServiceProvider}",
+                                Name = $"{nameof(CommonTokens.ServiceProvider).ToLowerCamelCase()}"
                             }
                         },
                     }

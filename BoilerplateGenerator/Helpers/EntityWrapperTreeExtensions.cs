@@ -102,7 +102,7 @@ namespace BoilerplateGenerator.Helpers
             return propertyDefinitions;
         }
 
-        public static string PrimaryEntityName(this ObservableCollection<ITreeNode<IBaseSymbolWrapper>> entityTree)
+        public static string PrimaryEntityType(this ObservableCollection<ITreeNode<IBaseSymbolWrapper>> entityTree)
         {
             return entityTree.First().Current.Name;
         }

@@ -55,7 +55,14 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
             {
                 ReturnType = _paginationRequirements.PaginatedDataQueryInterface.Name,
                 Name = _paginationRequirements.PaginatedDataQueryClass.Name,
-                Modifiers = new SyntaxKind [] { SyntaxKind.InternalKeyword }
+                Modifiers = new SyntaxKind [] { SyntaxKind.InternalKeyword },
+                Accessors = new PropertyAccessorDefinitionModel[]
+                {
+                    new PropertyAccessorDefinitionModel
+                    {
+                        AccessorType = SyntaxKind.GetAccessorDeclaration
+                    }
+                },
             }
         };
 
@@ -65,7 +72,8 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
             {
                 ReturnType = _paginationRequirements.PaginatedDataQueryInterface.Name,
                 Name = _paginationRequirements.PaginatedDataQueryClass.Name.ToLowerCamelCase(),
-                MapToClassProperty = true
+                MapToClassProperty = true,
+                ThrowExceptionWhenNull = true
             },
         };
     }

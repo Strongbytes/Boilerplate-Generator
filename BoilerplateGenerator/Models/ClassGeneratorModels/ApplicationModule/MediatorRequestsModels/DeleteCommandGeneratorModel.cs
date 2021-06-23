@@ -42,7 +42,14 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
             {
                 ReturnType = $"{BaseEntityPrimaryKey.ReturnType}",
                 Name = $"{BaseEntityPrimaryKey.Name}",
-                Modifiers = new SyntaxKind [] { SyntaxKind.InternalKeyword }
+                Modifiers = new SyntaxKind [] { SyntaxKind.InternalKeyword },
+                Accessors = new PropertyAccessorDefinitionModel[]
+                {
+                    new PropertyAccessorDefinitionModel
+                    {
+                        AccessorType = SyntaxKind.GetAccessorDeclaration
+                    }
+                },
             }
         };
 

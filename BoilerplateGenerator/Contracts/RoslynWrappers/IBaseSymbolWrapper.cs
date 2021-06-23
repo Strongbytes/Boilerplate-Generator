@@ -13,5 +13,7 @@ namespace BoilerplateGenerator.Contracts.RoslynWrappers
         bool IsPropertyChanging { get; set; }
 
         bool IsEnabled { get; }
+
+        string ContainingModuleName { get; }
     }
 }

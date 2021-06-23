@@ -5,6 +5,8 @@ namespace BoilerplateGenerator.Contracts.Services
 {
     public interface IMetadataGenerationService
     {
+        string PrimaryEntityPluralizedName { get; }
+
         IDictionary<AssetKind, string> AssetToCompilationUnitNameMapping { get; }
 
         string NamespaceByAssetKind(AssetKind referencedAsset);

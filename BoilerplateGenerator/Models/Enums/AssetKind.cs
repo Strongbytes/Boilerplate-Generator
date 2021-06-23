@@ -20,8 +20,10 @@
         UpdateCommandHandler,
         DeleteCommandHandler,
         ProfileMapper,
-        IUnitOfWork,
+        UnitOfWorkInterface,
+        UnitOfWorkImplementation,
         EntityRepositoryInterface,
         EntityRepositoryImplementation,
+        DbContext,
     }
 }

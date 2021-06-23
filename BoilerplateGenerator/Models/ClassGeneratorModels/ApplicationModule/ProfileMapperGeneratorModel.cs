@@ -34,6 +34,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule
         protected override IEnumerable<string> UsingsBuilder => new string[]
         {
            UsingTokens.AutoMapper,
+           $"{_viewModelBase.EntityTree.PrimaryEntityNamespace()}",
            _metadataGenerationService.NamespaceByAssetKind(AssetKind.ResponseDomainEntity),
            _metadataGenerationService.NamespaceByAssetKind(AssetKind.CreateRequestDomainEntity),
            _metadataGenerationService.NamespaceByAssetKind(AssetKind.UpdateRequestDomainEntity),
@@ -60,21 +61,21 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule
         {
             get
             {
-                string referencedEntityName = _viewModelBase.EntityTree.PrimaryEntityName();
+                string referencedEntityType = _viewModelBase.EntityTree.PrimaryEntityType();
 
                 ICollection<string> statements = new List<string>
                 {
-                    $"{CommonTokens.CreateMap}<{referencedEntityName}, {_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.ResponseDomainEntity]}>();",
+                    $"{CommonTokens.CreateMap}<{referencedEntityType}, {_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.ResponseDomainEntity]}>();",
                 };
 
                 if (_viewModelBase.CreateCommandIsEnabled)
                 {
-                    statements.Add($"{CommonTokens.CreateMap}<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.CreateRequestDomainEntity]}, {referencedEntityName}>();");
+                    statements.Add($"{CommonTokens.CreateMap}<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.CreateRequestDomainEntity]}, {referencedEntityType}>();");
                 }
 
                 if (_viewModelBase.UpdateCommandIsEnabled)
                 {
-                    statements.Add($"{CommonTokens.CreateMap}<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.UpdateRequestDomainEntity]}, {referencedEntityName}>();");
+                    statements.Add($"{CommonTokens.CreateMap}<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.UpdateRequestDomainEntity]}, {referencedEntityType}>();");
                 }
 
                 return statements;

@@ -180,13 +180,13 @@
                     </CheckBox.ToolTip>
                 </CheckBox>
 
-                <CheckBox Content="Generate AutoMapper Mappings"
+                <CheckBox Content="Generate AutoMapper configurations"
                           Margin="5"
                           IsChecked="{Binding GenerateAutoMapperProfile, Mode=TwoWay}"
                           VerticalContentAlignment="Center"
                           HorizontalContentAlignment="Left">
                     <CheckBox.ToolTip>
-                        <ToolTip Content="When this option is enabled AutoMapper mappings will be added to the existing AutoMapper Profile, or, if no AutoMapper Profile is found inside the Target Module, a new Profile is created." />
+                        <ToolTip Content="When this option is enabled AutoMapper mapping configurations will be added to the existing AutoMapper Profile, or, if no AutoMapper Profile is found inside the Target Module, a new Profile is created." />
                     </CheckBox.ToolTip>
                 </CheckBox>
 

@@ -46,7 +46,14 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
             {
                 ReturnType = $"{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.CreateRequestDomainEntity]}",
                 Name = $"{CommonTokens.Model}",
-                Modifiers = new SyntaxKind [] { SyntaxKind.InternalKeyword }
+                Modifiers = new SyntaxKind [] { SyntaxKind.InternalKeyword },
+                Accessors = new PropertyAccessorDefinitionModel[]
+                {
+                    new PropertyAccessorDefinitionModel
+                    {
+                        AccessorType = SyntaxKind.GetAccessorDeclaration
+                    }
+                },
             }
         };
 
@@ -56,7 +63,8 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
             {
                 ReturnType = $"{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.CreateRequestDomainEntity]}",
                 Name = $"{nameof(CommonTokens.Model).ToLowerCamelCase()}",
-                MapToClassProperty = true
+                MapToClassProperty = true,
+                ThrowExceptionWhenNull = true
             }
         };
     }

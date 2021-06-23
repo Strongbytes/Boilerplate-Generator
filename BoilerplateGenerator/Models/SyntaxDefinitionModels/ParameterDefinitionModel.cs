@@ -10,6 +10,8 @@
 
         public bool IsEnabled { get; set; } = true;
 
+        public bool ThrowExceptionWhenNull { get; set; }
+
         public ParameterDefinitionModel()
         {
         }
