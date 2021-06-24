@@ -7,6 +7,7 @@ using BoilerplateGenerator.ExtraFeatures.Pagination;
 using BoilerplateGenerator.ExtraFeatures.UnitOfWork;
 using BoilerplateGenerator.Models.TreeView;
 using BoilerplateGenerator.Services;
+using Microsoft.VisualStudio.LanguageServices;
 using Microsoft.VisualStudio.Shell;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -24,13 +25,15 @@ namespace BoilerplateGenerator.ViewModels
         private readonly IGeneratorModelsManagerService _generatorModelsManagerService;
         private readonly IPaginationRequirements _paginationRequirements;
         private readonly IUnitOfWorkRequirements _unitOfWorkRequirements;
+        private readonly VisualStudioWorkspace _visualStudioWorkspace;
 
         public ViewModelBase
         (
             IEntityManagerService fileManagerService,
             IGeneratorModelsManagerService generatorModelsManagerService,
             IPaginationRequirements paginationRequirements,
-            IUnitOfWorkRequirements unitOfWorkRequirements
+            IUnitOfWorkRequirements unitOfWorkRequirements,
+            VisualStudioWorkspace visualStudioWorkspace
         )
         {
             _fileManagerService = fileManagerService;
@@ -45,6 +48,8 @@ namespace BoilerplateGenerator.ViewModels
                 NotifyPropertyChanged(nameof(UnitOfWorkIsEnabled));
                 NotifyPropertyChanged(nameof(UseUnitOfWork));
             };
+
+            _visualStudioWorkspace = visualStudioWorkspace;
         }
 
         #region Properties
@@ -380,7 +385,7 @@ namespace BoilerplateGenerator.ViewModels
                     {
                         foreach (IGenericGeneratorModel availableModel in await _generatorModelsManagerService.RetrieveAvailableGeneratorModels().ConfigureAwait(false))
                         {
-                            IGeneratedCompilationUnit generatedAsset = await new CompilationUnitGenerationService(availableModel).GetGeneratedCompilationUnit().ConfigureAwait(false);
+                            IGeneratedCompilationUnit generatedAsset = await new CompilationUnitGenerationService(availableModel, _visualStudioWorkspace).GetGeneratedCompilationUnit().ConfigureAwait(false);
                             rootNode.GenerateAssetsDirectoryTree(generatedAsset);
                         }
                     }).ConfigureAwait(false);
@@ -445,10 +450,6 @@ namespace BoilerplateGenerator.ViewModels
         #endregion
 
         #region Event Handlers
-        public void ResetInterface()
-        {
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void NotifyPropertyChanged([CallerMemberName] string propertyName = "")

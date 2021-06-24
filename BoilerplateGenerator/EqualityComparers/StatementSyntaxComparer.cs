@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
 
 namespace BoilerplateGenerator.EqualityComparers
@@ -7,7 +8,15 @@ namespace BoilerplateGenerator.EqualityComparers
     {
         public bool Equals(StatementSyntax x, StatementSyntax y)
         {
-            return x != null && y != null && x.GetText().ToString().Trim() == y.GetText().ToString().Trim();
+            if (x == null || y == null)
+            {
+                return false;
+            }
+
+            var normalizedX = x.NormalizeWhitespace().GetText().ToString().Replace(";", string.Empty);
+            var normalizedY = y.NormalizeWhitespace().GetText().ToString().Replace(";", string.Empty);
+
+            return normalizedX == normalizedY;
         }
 
         public int GetHashCode(StatementSyntax obj)
@@ -17,7 +26,7 @@ namespace BoilerplateGenerator.EqualityComparers
 
             int hash = 17;
 
-            hash = hash * 23 + obj.GetText().ToString().Trim().GetHashCode();
+            hash = hash * 23 + obj.NormalizeWhitespace().GetText().ToString().GetHashCode();
             return hash;
         }
     }

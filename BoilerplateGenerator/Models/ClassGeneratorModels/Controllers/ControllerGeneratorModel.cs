@@ -269,8 +269,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
                 return new string[]
                 {
                     $"{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.ResponseDomainEntity]} newEntity = await _mediator.Send(new {_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.CreateCommand]}({nameof(CommonTokens.Model).ToLowerCamelCase()}));",
-                    $"var routeValue = new {{ {BaseEntityPrimaryKey.Name.ToLowerCamelCase()} = newEntity.{BaseEntityPrimaryKey.Name} }};",
-                    $"return CreatedAtAction(nameof({$"{CommonTokens.GetById}"}), routeValue, newEntity);"
+                    $"return CreatedAtAction(nameof({$"{CommonTokens.GetById}"}), new {{ {BaseEntityPrimaryKey.Name.ToLowerCamelCase()} = newEntity.{BaseEntityPrimaryKey.Name} }}, newEntity);"
                 };
             }
         }

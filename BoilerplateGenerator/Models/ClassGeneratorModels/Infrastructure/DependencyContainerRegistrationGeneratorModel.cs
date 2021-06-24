@@ -4,6 +4,7 @@ using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using BoilerplateGenerator.ViewModels;
 using Microsoft.CodeAnalysis.CSharp;
+using System;
 using System.Collections.Generic;
 
 namespace BoilerplateGenerator.Models.ClassGeneratorModels.Infrastructure
@@ -83,18 +84,19 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Infrastructure
 
         public IEnumerable<string> GetRegisterUnitOfWorkRepositoriesBody => new string[]
         {
-            $@"builder.RegisterType<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.UnitOfWorkImplementation]}>()
-                        .As<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.UnitOfWorkInterface]}>()
-                        .InstancePerLifetimeScope();",
-            $@"builder.RegisterType<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.EntityRepositoryImplementation]}>()
-                        .As<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.EntityRepositoryInterface]}>()
-                        .InstancePerLifetimeScope();",
+            $"builder.RegisterType<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.UnitOfWorkImplementation]}>(){Environment.NewLine}" +
+            $"\t\t.As<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.UnitOfWorkInterface]}>(){Environment.NewLine}" +
+            $"\t\t.InstancePerLifetimeScope();",
+
+            $"builder.RegisterType<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.EntityRepositoryImplementation]}>(){Environment.NewLine}" +
+            $"\t\t.As<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.EntityRepositoryInterface]}>(){Environment.NewLine}" +
+            $"\t\t.InstancePerLifetimeScope();",
         };
 
         public IEnumerable<string> GetLoadBody => new string[]
         {
-            $"base.Load({nameof(CommonTokens.Builder).ToLowerCamelCase()});",
-            $"{CommonTokens.RegisterUnitOfWorkRepositories}({nameof(CommonTokens.Builder).ToLowerCamelCase()});",
+            $"base.Load({nameof(CommonTokens.Builder).ToLowerCamelCase()});{Environment.NewLine}",
+            $"{CommonTokens.RegisterUnitOfWorkRepositories}({nameof(CommonTokens.Builder).ToLowerCamelCase()});{Environment.NewLine}",
         };
     }
 }

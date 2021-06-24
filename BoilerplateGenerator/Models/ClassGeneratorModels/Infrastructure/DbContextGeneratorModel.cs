@@ -5,6 +5,7 @@ using BoilerplateGenerator.ExtraFeatures.UnitOfWork;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using BoilerplateGenerator.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -33,7 +34,8 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Infrastructure
 
         public override AssetKind Kind => AssetKind.DbContext;
 
-        protected override IProjectWrapper TargetModule => _viewModelBase.AvailableModules.First(x => x.Name == _unitOfWorkRequirements.DbContextClass.ContainingModuleName);
+        protected override IProjectWrapper TargetModule => _viewModelBase.AvailableModules.FirstOrDefault(x => x.Name == _unitOfWorkRequirements.DbContextClass.ContainingModuleName) 
+                                                        ?? throw new NullReferenceException("Unable to load DbContext's containing Module. Make sure the Solution has a DbContext and restart extension.");
 
         protected override IEnumerable<string> UsingsBuilder => new string[]
         {

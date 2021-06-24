@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
+using Microsoft.VisualStudio.LanguageServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,14 +19,16 @@ namespace BoilerplateGenerator.Services
     public class CompilationUnitGenerationService : ICompilationUnitGenerationService
     {
         private readonly IGenericGeneratorModel _genericGeneratorModel;
+        private readonly VisualStudioWorkspace _visualStudioWorkspace;
         private CompilationUnitSyntax _compilationUnit;
 
         private BlockSyntax NotImplementedBody => SyntaxFactory.Block(SyntaxFactory.ParseStatement("throw new NotImplementedException();"));
         private BlockSyntax EmptyBody => SyntaxFactory.Block(SyntaxFactory.ParseStatement(string.Empty));
 
-        public CompilationUnitGenerationService(IGenericGeneratorModel genericGeneratorModel)
+        public CompilationUnitGenerationService(IGenericGeneratorModel genericGeneratorModel, VisualStudioWorkspace visualStudioWorkspace)
         {
             _genericGeneratorModel = genericGeneratorModel;
+            _visualStudioWorkspace = visualStudioWorkspace;
         }
 
         private async Task<CompilationUnitSyntax> RetrieveCompilationUnit()
@@ -42,11 +45,15 @@ namespace BoilerplateGenerator.Services
         {
             _compilationUnit = await RetrieveCompilationUnit();
 
-            string generatedCode = await Task.Run(() => _compilationUnit.WithUsings(GenerateUsings())
-                                                                        .WithMembers(GenerateCompilationUnitWithNamespace())
-                                                                        .NormalizeWhitespace()
-                                                                        .W‌​ithAdditionalAnnotat‌​ions(Formatter.Annot‌​ation)
-                                                                        .ToFullString()).ConfigureAwait(false);
+            string generatedCode = await Task.Run
+            (
+                () => Formatter.Format
+                (
+                    _compilationUnit.WithUsings(GenerateUsings())
+                                    .WithMembers(GenerateCompilationUnitWithNamespace()),
+                    _visualStudioWorkspace
+                ).ToFullString()
+            ).ConfigureAwait(false);
 
             return new GeneratedCompilationUnit(_genericGeneratorModel, generatedCode);
         }
@@ -157,9 +164,9 @@ namespace BoilerplateGenerator.Services
 
             return newConstructor.WithBody
             (
-                GenerateMethodBody
+                GenerateBodyBlockSyntax
                 (
-                    GenerateBodyStatements(constructorDeclaration.Body).Union(existingConstructor?.Body?.Statements ?? Enumerable.Empty<StatementSyntax>())
+                    MergeBodyStatements(GenerateBodyStatements(constructorDeclaration.Body), existingConstructor?.Body?.Statements ?? Enumerable.Empty<StatementSyntax>())
                 )
             );
         }
@@ -175,11 +182,27 @@ namespace BoilerplateGenerator.Services
 
             return newMethod.WithBody
             (
-                GenerateMethodBody
+                GenerateBodyBlockSyntax
                 (
-                    GenerateBodyStatements(methodDeclaration.Body).Union(existingMethod?.Body?.Statements ?? Enumerable.Empty<StatementSyntax>())
+                    MergeBodyStatements(GenerateBodyStatements(methodDeclaration.Body), existingMethod?.Body?.Statements ?? Enumerable.Empty<StatementSyntax>())
                 )
             );
+        }
+
+        private IEnumerable<StatementSyntax> MergeBodyStatements(IEnumerable<StatementSyntax> generatedStatements, IEnumerable<StatementSyntax> existingStatements)
+        {
+            if (!existingStatements.Any())
+            {
+                return generatedStatements;
+            }
+
+            List<StatementSyntax> joinedStatements = new List<StatementSyntax>(existingStatements);
+
+            joinedStatements.AddRange(from generatedStatement in generatedStatements
+                                      where !existingStatements.Any(l => l.NormalizeWhitespace().GetText().ToString().Replace(";", string.Empty).Contains(generatedStatement.NormalizeWhitespace().GetText().ToString().Replace(";", string.Empty)))
+                                      select generatedStatement);
+
+            return joinedStatements;
         }
         #endregion
 
@@ -243,20 +266,20 @@ namespace BoilerplateGenerator.Services
                             SyntaxFactory.SeparatedList(new[] { SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier($"_{parameter.Name}")) })
                         )
                     ).AddModifiers(new[] { SyntaxFactory.Token(SyntaxKind.PrivateKeyword), SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword) })
-                     .NormalizeWhitespace())
+                     .NormalizeWhitespace()
+                     .WithTrailingTrivia(SyntaxFactory.LineFeed))
                      .Except(typeDeclarationSyntax.Members.OfType<FieldDeclarationSyntax>(), new FieldDeclarationSyntaxComparer())
                      .ToArray();
         }
 
-        private BlockSyntax GenerateMethodBody(IEnumerable<StatementSyntax> bodyStatements)
+        private BlockSyntax GenerateBodyBlockSyntax(IEnumerable<StatementSyntax> bodyStatements)
         {
             if (!bodyStatements.Any())
             {
                 return NotImplementedBody;
             }
 
-            return SyntaxFactory.Block(bodyStatements.Distinct(new StatementSyntaxComparer()))
-                                .W‌​ithAdditionalAnnotat‌​ions(Formatter.Annot‌​ation);
+            return SyntaxFactory.Block(bodyStatements.Distinct(new StatementSyntaxComparer()));
         }
 
         private IEnumerable<StatementSyntax> GenerateBodyStatements(IEnumerable<string> bodyStatements)
@@ -268,15 +291,15 @@ namespace BoilerplateGenerator.Services
 
             return from statement in bodyStatements
                    select SyntaxFactory.ParseStatement(statement)
-                                       .NormalizeWhitespace();
+                                       .WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed);
         }
 
         private T RetrieveExistingTypeDeclaration<T>() where T : TypeDeclarationSyntax
         {
             return (T)(_compilationUnit.DescendantNodes().OfType<T>().FirstOrDefault()
                 ?? SyntaxFactory.TypeDeclaration(_genericGeneratorModel.CompilationUnitDefinition.Type, _genericGeneratorModel.Name)
-                         .AddModifiers(SyntaxFactory.Token(_genericGeneratorModel.CompilationUnitDefinition.AccessModifier))
-                         .AddAttributeLists(GenerateAttributeList(_genericGeneratorModel.CompilationUnitDefinition.DefinedAttributes)));
+                                .AddModifiers(SyntaxFactory.Token(_genericGeneratorModel.CompilationUnitDefinition.AccessModifier))
+                                .AddAttributeLists(GenerateAttributeList(_genericGeneratorModel.CompilationUnitDefinition.DefinedAttributes)));
         }
 
         private SyntaxList<MemberDeclarationSyntax> GenerateCompilationUnitDeclaration<T>() where T : TypeDeclarationSyntax
@@ -333,7 +356,9 @@ namespace BoilerplateGenerator.Services
                     select SyntaxFactory.PropertyDeclaration(SyntaxFactory.ParseTypeName(propertyDefinition.ReturnType), propertyDefinition.Name)
                                         .AddModifiers(GenerateModifiers(propertyDefinition.Modifiers))
                                         .AddAttributeLists(GenerateAttributeList(propertyDefinition.Attributes))
-                                        .AddAccessorListAccessors(GeneratePropertyAccessors(propertyDefinition.Accessors)))
+                                        .AddAccessorListAccessors(GeneratePropertyAccessors(propertyDefinition.Accessors))
+                                        .NormalizeWhitespace()
+                                        .WithTrailingTrivia(SyntaxFactory.LineFeed))
                                         .Except(typeDeclarationSyntax.Members.OfType<PropertyDeclarationSyntax>(), new PropertyDeclarationSyntaxComparer())
                                         .ToArray();
         }
