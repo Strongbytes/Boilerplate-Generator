@@ -97,14 +97,25 @@ namespace BoilerplateGenerator.Services
 
             IEnumerable<T> availableClassMembers = classDeclarationSyntax.Members.OfType<T>().ToArray();
 
-            foreach (MethodDefinitionModel definedMember in definedMembers)
+            foreach (MethodDefinitionModel definedMember in definedMembers.Where(x => x.IsEnabled))
             {
                 T existingMember = availableClassMembers.RetrieveExistingMember(definedMember);
                 T newMember = (T)GenerateMember(existingMember, definedMember);
 
-                classDeclarationSyntax = existingMember == null
-                    ? classDeclarationSyntax.AddMembers(newMember)
-                    : classDeclarationSyntax.ReplaceNode(existingMember, newMember.WithTriviaFrom(existingMember));
+                if (existingMember != null)
+                {
+                    classDeclarationSyntax = classDeclarationSyntax.WithMembers
+                    (
+                        classDeclarationSyntax.Members.Remove
+                        (
+                            classDeclarationSyntax.Members.FirstOrDefault(x => x.IsEquivalentTo(existingMember))
+                        ).Add(newMember)
+                    );
+                }
+                else
+                {
+                    classDeclarationSyntax = classDeclarationSyntax.AddMembers(newMember);
+                }
             }
 
             return classDeclarationSyntax;
@@ -113,22 +124,22 @@ namespace BoilerplateGenerator.Services
         #region Generate Method or Constructor
         private BaseMethodDeclarationSyntax GenerateMember<T>(T existingMember, MethodDefinitionModel definedMember) where T : BaseMethodDeclarationSyntax
         {
-            switch(existingMember)
+            switch (definedMember)
             {
-                case ConstructorDeclarationSyntax existingConstructor:
-                    return GenerateConstructor(existingConstructor, (ConstructorDefinitionModel)definedMember);
+                case ConstructorDefinitionModel constructorDeclaration:
+                    return GenerateConstructor(existingMember, constructorDeclaration);
 
-                case MethodDeclarationSyntax existingMethod:
-                    return GenerateMethod(existingMethod, definedMember);
+                case MethodDefinitionModel methodDeclaration:
+                    return GenerateMethod(existingMember, methodDeclaration);
 
                 default:
                     throw new NotImplementedException();
             }
         }
 
-        private ConstructorDeclarationSyntax GenerateConstructor(ConstructorDeclarationSyntax existingConstructor, ConstructorDefinitionModel constructorDeclaration)
+        private BaseMethodDeclarationSyntax GenerateConstructor(BaseMethodDeclarationSyntax existingConstructor, ConstructorDefinitionModel constructorDeclaration)
         {
-            ConstructorDeclarationSyntax newConstructor = existingConstructor
+            BaseMethodDeclarationSyntax newConstructor = existingConstructor
                 ?? SyntaxFactory.ConstructorDeclaration(_genericGeneratorModel.Name)
                                 .WithInitializer
                                 (constructorDeclaration.CallBaseConstructor ?
@@ -153,9 +164,9 @@ namespace BoilerplateGenerator.Services
             );
         }
 
-        private MethodDeclarationSyntax GenerateMethod(MethodDeclarationSyntax existingMethod, MethodDefinitionModel methodDeclaration)
+        private BaseMethodDeclarationSyntax GenerateMethod(BaseMethodDeclarationSyntax existingMethod, MethodDefinitionModel methodDeclaration)
         {
-            MethodDeclarationSyntax newMethod = existingMethod
+            BaseMethodDeclarationSyntax newMethod = existingMethod
                 ?? SyntaxFactory.MethodDeclaration(SyntaxFactory.ParseTypeName(methodDeclaration.ReturnType), methodDeclaration.Name)
                                 .AddAttributeLists(GenerateAttributeList(methodDeclaration.Attributes))
                                 .AddModifiers(GenerateModifiers(methodDeclaration.Modifiers))
