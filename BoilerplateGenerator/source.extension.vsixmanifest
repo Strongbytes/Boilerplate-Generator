@@ -1,27 +1,27 @@
 ﻿<?xml version="1.0" ?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
-	<Metadata>
-		<Identity Id="ed96cbaa-c44a-4d0a-9ae4-b08b92bee7a0" Version="1.10" Language="en-US" Publisher="Strongbytes" />
-		<DisplayName>Boilerplate Code Generator</DisplayName>
-		<Description xml:space="preserve">Generate boilerplate code using Roslyn, starting from a model entity</Description>
-		<License>Assets\License.txt</License>
-		<GettingStartedGuide>https://github.com/Strongbytes/Boilerplate-Generator</GettingStartedGuide>
-		<ReleaseNotes>https://github.com/Strongbytes/Boilerplate-Generator/blob/main/ReleaseNotes.md</ReleaseNotes>
-		<Icon>Assets\file-icon.ico</Icon>
-		<PreviewImage>Assets\Screenshot.png</PreviewImage>
-		<Tags>.net-core, .net-5, mediatr, cqrs, roslyn, automapper, unit-of-work, repository, autofac</Tags>
-		<Preview>true</Preview>
-	</Metadata>
-	<Installation>
-		<InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[16.9, 17.0)" />
-	</Installation>
-	<Dependencies>
-		<Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.8,)" />
-	</Dependencies>
-	<Prerequisites>
-		<Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[16.9,17.0)" DisplayName="Visual Studio core editor" />
-	</Prerequisites>
-	<Assets>
-		<Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
-	</Assets>
+    <Metadata>
+        <Identity Id="ed96cbaa-c44a-4d0a-9ae4-b08b92bee7a0" Version="1.10" Language="en-US" Publisher="Strongbytes" />
+        <DisplayName>Boilerplate Code Generator</DisplayName>
+        <Description xml:space="preserve">Generate boilerplate code using Roslyn, starting from a model entity</Description>
+        <License>Assets\License.txt</License>
+        <GettingStartedGuide>https://github.com/Strongbytes/Boilerplate-Generator</GettingStartedGuide>
+        <ReleaseNotes>https://github.com/Strongbytes/Boilerplate-Generator/blob/main/ReleaseNotes.md</ReleaseNotes>
+        <Icon>Assets\file-icon.ico</Icon>
+        <PreviewImage>Assets\Screenshot.png</PreviewImage>
+        <Tags>repository-pattern, autofac-container, net-core, mediator-pattern, unit-of-work-pattern, cqrs-architectural-pattern, automapper-profiles, net-5, roslyn-generator</Tags>
+        <Preview>true</Preview>
+    </Metadata>
+    <Installation>
+        <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[16.9, 17.0)" />
+    </Installation>
+    <Dependencies>
+        <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.8,)" />
+    </Dependencies>
+    <Prerequisites>
+        <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[16.9,17.0)" DisplayName="Visual Studio core editor" />
+    </Prerequisites>
+    <Assets>
+        <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+    </Assets>
 </PackageManifest>
