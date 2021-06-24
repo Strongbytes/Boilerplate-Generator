@@ -1,6 +1,6 @@
 ﻿using BoilerplateGenerator.Contracts.Services;
+using BoilerplateGenerator.Extensions;
 using BoilerplateGenerator.ExtraFeatures.Pagination;
-using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using BoilerplateGenerator.ViewModels;

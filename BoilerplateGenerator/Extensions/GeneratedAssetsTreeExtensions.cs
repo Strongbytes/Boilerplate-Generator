@@ -4,7 +4,7 @@ using BoilerplateGenerator.Models.TreeView;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BoilerplateGenerator.Helpers
+namespace BoilerplateGenerator.Extensions
 {
     public static class GeneratedAssetsTreeExtensions
     {
@@ -18,7 +18,7 @@ namespace BoilerplateGenerator.Helpers
 
             foreach (ITreeNode<IBaseGeneratedAsset> node in treeNode.Children)
             {
-                await ExportGeneratedAssets(node).ConfigureAwait(false);
+                await node.ExportGeneratedAssets().ConfigureAwait(false);
             }
         }
 

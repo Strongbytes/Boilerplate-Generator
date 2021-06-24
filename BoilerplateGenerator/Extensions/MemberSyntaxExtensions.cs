@@ -4,9 +4,9 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BoilerplateGenerator.Helpers
+namespace BoilerplateGenerator.Extensions
 {
-    public static class MemberSyntaxHelper
+    public static class MemberSyntaxExtensions
     {
         public static T RetrieveExistingMember<T>(this IEnumerable<T> classMembers, MethodDefinitionModel methodDefinitionModel) where T : BaseMethodDeclarationSyntax
         {
@@ -24,10 +24,10 @@ namespace BoilerplateGenerator.Helpers
 
                 var differentParameters = methodDefinitionModel.Parameters.Where(y => y.IsEnabled)
                                                                           .Except(classMember.ParameterList.Parameters.Select(x => new ParameterDefinitionModel
-                {
-                    Name = x.Identifier.Text,
-                    ReturnType = x.Type?.ToString()
-                }), new ParameterDefinitionModelComparer());
+                                                                          {
+                                                                              Name = x.Identifier.Text,
+                                                                              ReturnType = x.Type?.ToString()
+                                                                          }), new ParameterDefinitionModelComparer());
 
                 if (differentParameters.Any())
                 {

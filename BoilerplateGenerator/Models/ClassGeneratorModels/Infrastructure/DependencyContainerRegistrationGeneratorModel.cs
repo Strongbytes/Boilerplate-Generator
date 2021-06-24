@@ -1,5 +1,5 @@
 ﻿using BoilerplateGenerator.Contracts.Services;
-using BoilerplateGenerator.Helpers;
+using BoilerplateGenerator.Extensions;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using BoilerplateGenerator.ViewModels;
@@ -83,11 +83,11 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Infrastructure
 
         public IEnumerable<string> GetRegisterUnitOfWorkRepositoriesBody => new string[]
         {
-            $@"builder.RegisterType<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.EntityRepositoryImplementation]}>()
-                        .As<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.EntityRepositoryInterface]}>()
-                        .InstancePerLifetimeScope();",
             $@"builder.RegisterType<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.UnitOfWorkImplementation]}>()
                         .As<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.UnitOfWorkInterface]}>()
+                        .InstancePerLifetimeScope();",
+            $@"builder.RegisterType<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.EntityRepositoryImplementation]}>()
+                        .As<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.EntityRepositoryInterface]}>()
                         .InstancePerLifetimeScope();",
         };
 

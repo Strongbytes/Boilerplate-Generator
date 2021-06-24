@@ -1,8 +1,8 @@
 ﻿using BoilerplateGenerator.Contracts.Services;
 using BoilerplateGenerator.Controls;
+using BoilerplateGenerator.Extensions;
 using BoilerplateGenerator.ExtraFeatures.Pagination;
 using BoilerplateGenerator.ExtraFeatures.UnitOfWork;
-using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Services;
 using BoilerplateGenerator.ViewModels;
 using EnvDTE;

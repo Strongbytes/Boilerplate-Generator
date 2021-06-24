@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.LanguageServices;
 using Microsoft.VisualStudio.Shell;
 
-namespace BoilerplateGenerator.Helpers
+namespace BoilerplateGenerator.Extensions
 {
     public static class AsyncPackageExtensions
     {

@@ -1,4 +1,4 @@
-﻿namespace BoilerplateGenerator.Helpers
+﻿namespace BoilerplateGenerator.Models.Enums
 {
     public static class UsingTokens
     {

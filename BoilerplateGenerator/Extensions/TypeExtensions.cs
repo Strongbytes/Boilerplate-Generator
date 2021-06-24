@@ -2,10 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Linq;
 
-namespace BoilerplateGenerator.Helpers
+namespace BoilerplateGenerator.Extensions
 {
     public static class TypeExtensions
     {

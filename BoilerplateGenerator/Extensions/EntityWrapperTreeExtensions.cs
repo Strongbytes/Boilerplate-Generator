@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace BoilerplateGenerator.Helpers
+namespace BoilerplateGenerator.Extensions
 {
     public static class EntityWrapperTreeExtensions
     {
@@ -21,7 +21,7 @@ namespace BoilerplateGenerator.Helpers
 
                 if (item.Current is BaseSymbolWrapper<INamedTypeSymbol>)
                 {
-                    SetChildrenSelection(item, checkStatus);
+                    item.SetChildrenSelection(checkStatus);
                     SetNodeSelectionStatus(item);
                 }
 
@@ -81,7 +81,7 @@ namespace BoilerplateGenerator.Helpers
                 switch (treeNode.Current.GetType().Name)
                 {
                     case nameof(EntityClassWrapper):
-                        propertyDefinitions.AddRange(FilterTreeProperties(treeNode));
+                        propertyDefinitions.AddRange(treeNode.FilterTreeProperties());
                         break;
 
                     default:

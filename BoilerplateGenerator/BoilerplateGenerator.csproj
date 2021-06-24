@@ -59,11 +59,11 @@
     <Compile Include="ExtraFeatures\IBaseFeatureRequirements.cs" />
     <Compile Include="ExtraFeatures\UnitOfWork\IUnitOfWorkRequirements.cs" />
     <Compile Include="ExtraFeatures\UnitOfWork\UnitOfWorkRequirements.cs" />
-    <Compile Include="Helpers\EntityWrapperTreeExtensions.cs" />
-    <Compile Include="Helpers\GeneratedAssetsTreeExtensions.cs" />
-    <Compile Include="Helpers\MemberSyntaxHelper.cs" />
-    <Compile Include="Helpers\StatusCodeTokens.cs" />
-    <Compile Include="Helpers\UsingTokens.cs" />
+    <Compile Include="Extensions\EntityWrapperTreeExtensions.cs" />
+    <Compile Include="Extensions\GeneratedAssetsTreeExtensions.cs" />
+    <Compile Include="Extensions\MemberSyntaxExtensions.cs" />
+    <Compile Include="Models\Enums\StatusCodeTokens.cs" />
+    <Compile Include="Models\Enums\UsingTokens.cs" />
     <Compile Include="Models\ClassGeneratorModels\ApplicationModule\CommandsInputModels\UpdateRequestDomainEntityGeneratorModel.cs" />
     <Compile Include="Models\ClassGeneratorModels\ApplicationModule\CommandsInputModels\CreateRequestDomainEntityGeneratorModel.cs" />
     <Compile Include="Models\ClassGeneratorModels\ApplicationModule\MediatorRequestsHandlersModels\GetPaginatedQueryHandlerGeneratorModel.cs" />
@@ -124,8 +124,8 @@
     <Compile Include="Contracts\Services\IEntityManagerService.cs" />
     <Compile Include="ViewModels\IViewModelBase.cs" />
     <Compile Include="GenerateCRUD.cs" />
-    <Compile Include="Helpers\AsyncPackageExtensions.cs" />
-    <Compile Include="Helpers\TypeExtensions.cs" />
+    <Compile Include="Extensions\AsyncPackageExtensions.cs" />
+    <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="Contracts\RoslynWrappers\IBaseSymbolWrapper.cs" />
     <Compile Include="Models\RoslynWrappers\BaseSymbolWrapper.cs" />
     <Compile Include="Models\RoslynWrappers\EntityClassWrapper.cs" />

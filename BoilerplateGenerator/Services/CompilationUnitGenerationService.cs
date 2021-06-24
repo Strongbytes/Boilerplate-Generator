@@ -1,7 +1,7 @@
 ﻿using BoilerplateGenerator.Contracts.Generators;
 using BoilerplateGenerator.Contracts.Services;
 using BoilerplateGenerator.EqualityComparers;
-using BoilerplateGenerator.Helpers;
+using BoilerplateGenerator.Extensions;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using BoilerplateGenerator.Models.TreeView;
 using Microsoft.CodeAnalysis;

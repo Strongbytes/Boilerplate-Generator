@@ -2,9 +2,9 @@
 using BoilerplateGenerator.Contracts.Generators;
 using BoilerplateGenerator.Contracts.RoslynWrappers;
 using BoilerplateGenerator.Contracts.Services;
+using BoilerplateGenerator.Extensions;
 using BoilerplateGenerator.ExtraFeatures.Pagination;
 using BoilerplateGenerator.ExtraFeatures.UnitOfWork;
-using BoilerplateGenerator.Helpers;
 using BoilerplateGenerator.Models.TreeView;
 using BoilerplateGenerator.Services;
 using Microsoft.VisualStudio.Shell;

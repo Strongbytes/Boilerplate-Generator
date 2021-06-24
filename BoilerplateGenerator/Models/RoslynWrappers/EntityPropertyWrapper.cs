@@ -1,4 +1,4 @@
-﻿using BoilerplateGenerator.Helpers;
+﻿using BoilerplateGenerator.Extensions;
 using BoilerplateGenerator.Models.Enums;
 using Microsoft.CodeAnalysis;
 using System;
