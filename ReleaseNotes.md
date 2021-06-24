@@ -2,6 +2,9 @@
 
 ### [Download from Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=Strongbytes.boilerplate-code-generator)
 
+## Release 1.9
+* Keep existing code formatting when merging generated classes with existing ones;
+
 ## Release 1.8
 * Enable code merge between existing CQRS classes and generated CQRS classes;
 
