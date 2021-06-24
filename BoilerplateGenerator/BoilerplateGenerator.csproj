@@ -52,6 +52,7 @@
     <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="EqualityComparers\NamedTypeSymbolComparer.cs" />
     <Compile Include="EqualityComparers\BaseTypeSyntaxComparer.cs" />
+    <Compile Include="EqualityComparers\FieldDeclarationSyntaxComparer.cs" />
     <Compile Include="EqualityComparers\PropertyDeclarationSyntaxComparer.cs" />
     <Compile Include="EqualityComparers\StatementSyntaxComparer.cs" />
     <Compile Include="EqualityComparers\ParameterDefinitionModelComparer.cs" />

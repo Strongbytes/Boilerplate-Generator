@@ -17,7 +17,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Infrastructure
 
         public EntityRepositoryImplementationGeneratorModel
         (
-            IViewModelBase viewModelBase, 
+            IViewModelBase viewModelBase,
             IMetadataGenerationService metadataGenerationService,
             IUnitOfWorkRequirements unitOfWorkRequirements
         )
@@ -52,26 +52,20 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Infrastructure
             }
         };
 
-        protected override IEnumerable<ConstructorDefinitionModel> DefinedConstructorsBuilder
+        protected override IEnumerable<ConstructorDefinitionModel> DefinedConstructorsBuilder => new ConstructorDefinitionModel[]
         {
-            get
+            new ConstructorDefinitionModel
             {
-                return new ConstructorDefinitionModel[]
+                CallBaseConstructor = true,
+                Parameters = new ParameterDefinitionModel[]
                 {
-                    new ConstructorDefinitionModel
+                    new ParameterDefinitionModel
                     {
-                        CallBaseConstructor = true,
-                        Parameters = new ParameterDefinitionModel[]
-                        {
-                            new ParameterDefinitionModel
-                            {
-                                ReturnType = _unitOfWorkRequirements.DbContextClass.Name,
-                                Name = $"{nameof(CommonTokens.Context).ToLowerCamelCase()}"
-                            }
-                        },
+                        ReturnType = _unitOfWorkRequirements.DbContextClass.Name,
+                        Name = $"{nameof(CommonTokens.Context).ToLowerCamelCase()}"
                     }
-                };
+                },
             }
-        }
+        };
     }
 }

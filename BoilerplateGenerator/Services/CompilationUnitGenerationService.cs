@@ -88,6 +88,44 @@ namespace BoilerplateGenerator.Services
             }
         }
 
+        private TypeDeclarationSyntax GenerateWithMembers<T>(TypeDeclarationSyntax typeDeclarationSyntax, IEnumerable<MethodDefinitionModel> definedMembers) where T : BaseMethodDeclarationSyntax
+        {
+            if (!(typeDeclarationSyntax is ClassDeclarationSyntax classDeclarationSyntax))
+            {
+                return typeDeclarationSyntax;
+            }
+
+            IEnumerable<T> availableClassMembers = classDeclarationSyntax.Members.OfType<T>().ToArray();
+
+            foreach (MethodDefinitionModel definedMember in definedMembers)
+            {
+                T existingMember = availableClassMembers.RetrieveExistingMember(definedMember);
+                T newMember = (T)GenerateMember(existingMember, definedMember);
+
+                classDeclarationSyntax = existingMember == null
+                    ? classDeclarationSyntax.AddMembers(newMember)
+                    : classDeclarationSyntax.ReplaceNode(existingMember, newMember.WithTriviaFrom(existingMember));
+            }
+
+            return classDeclarationSyntax;
+        }
+
+        #region Generate Method or Constructor
+        private BaseMethodDeclarationSyntax GenerateMember<T>(T existingMember, MethodDefinitionModel definedMember) where T : BaseMethodDeclarationSyntax
+        {
+            switch(existingMember)
+            {
+                case ConstructorDeclarationSyntax existingConstructor:
+                    return GenerateConstructor(existingConstructor, (ConstructorDefinitionModel)definedMember);
+
+                case MethodDeclarationSyntax existingMethod:
+                    return GenerateMethod(existingMethod, definedMember);
+
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
         private ConstructorDeclarationSyntax GenerateConstructor(ConstructorDeclarationSyntax existingConstructor, ConstructorDefinitionModel constructorDeclaration)
         {
             ConstructorDeclarationSyntax newConstructor = existingConstructor
@@ -115,36 +153,6 @@ namespace BoilerplateGenerator.Services
             );
         }
 
-        private TypeDeclarationSyntax GenerateConstructors(TypeDeclarationSyntax typeDeclarationSyntax)
-        {
-            if (!(typeDeclarationSyntax is ClassDeclarationSyntax classDeclarationSyntax))
-            {
-                return typeDeclarationSyntax;
-            }
-
-            IEnumerable<ConstructorDeclarationSyntax> existingConstructors = classDeclarationSyntax.RetrieveClassMembers<ConstructorDeclarationSyntax>(SyntaxKind.ConstructorDeclaration);
-
-            foreach (ConstructorDefinitionModel constructorDeclaration in _genericGeneratorModel.DefinedConstructors)
-            {
-                ConstructorDeclarationSyntax existingConstructor = existingConstructors.RetrieveExistingMember(constructorDeclaration);
-                ConstructorDeclarationSyntax newConstructor = GenerateConstructor(existingConstructor, constructorDeclaration);
-
-                classDeclarationSyntax = existingConstructor == null
-                    ? classDeclarationSyntax.AddMembers(newConstructor)
-                    : classDeclarationSyntax.ReplaceNode(existingConstructor, newConstructor.WithTriviaFrom(existingConstructor));
-            }
-
-            return classDeclarationSyntax;
-        }
-
-        private ConstructorDeclarationSyntax GenerateConstructorWithInjectedDependencies()
-        {
-            return SyntaxFactory.ConstructorDeclaration(_genericGeneratorModel.Name)
-                                .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
-                                .AddParameterListParameters(GenerateParameters(_genericGeneratorModel.InjectedDependencies))
-                                .WithBody(GenerateParametersAssignmentMethodBody(_genericGeneratorModel.InjectedDependencies));
-        }
-
         private MethodDeclarationSyntax GenerateMethod(MethodDeclarationSyntax existingMethod, MethodDefinitionModel methodDeclaration)
         {
             MethodDeclarationSyntax newMethod = existingMethod
@@ -162,28 +170,7 @@ namespace BoilerplateGenerator.Services
                 )
             );
         }
-
-        private TypeDeclarationSyntax GenerateMethods(TypeDeclarationSyntax typeDeclarationSyntax)
-        {
-            if (!(typeDeclarationSyntax is ClassDeclarationSyntax classDeclarationSyntax))
-            {
-                return typeDeclarationSyntax;
-            }
-
-            IEnumerable<MethodDeclarationSyntax> existingMethods = classDeclarationSyntax.RetrieveClassMembers<MethodDeclarationSyntax>(SyntaxKind.MethodDeclaration);
-
-            foreach (MethodDefinitionModel methodDeclaration in _genericGeneratorModel.DefinedMethods.Where(x => x.IsEnabled))
-            {
-                MethodDeclarationSyntax existingMethod = existingMethods.RetrieveExistingMember(methodDeclaration);
-                MethodDeclarationSyntax newMethod = GenerateMethod(existingMethod, methodDeclaration);
-
-                classDeclarationSyntax = existingMethod == null
-                    ? classDeclarationSyntax.AddMembers(newMethod)
-                    : classDeclarationSyntax.ReplaceNode(existingMethod, newMethod.WithTriviaFrom(existingMethod));
-            }
-
-            return classDeclarationSyntax;
-        }
+        #endregion
 
         private SyntaxToken[] GenerateModifiers(IEnumerable<SyntaxKind> modifiers)
         {
@@ -232,9 +219,9 @@ namespace BoilerplateGenerator.Services
                     select SyntaxFactory.Argument(SyntaxFactory.IdentifierName(parameter.Name))).ToArray();
         }
 
-        private FieldDeclarationSyntax[] GenerateFields(IEnumerable<ParameterDefinitionModel> parameters)
+        private FieldDeclarationSyntax[] GenerateFields(TypeDeclarationSyntax typeDeclarationSyntax)
         {
-            return (from parameter in parameters
+            return (from parameter in _genericGeneratorModel.InjectedDependencies
                     where !parameter.MapToClassProperty
                     where parameter.IsEnabled
                     select SyntaxFactory.FieldDeclaration
@@ -242,29 +229,12 @@ namespace BoilerplateGenerator.Services
                         SyntaxFactory.VariableDeclaration
                         (
                             SyntaxFactory.ParseTypeName(parameter.ReturnType),
-                            SyntaxFactory.SeparatedList(new[] { SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier($"_{parameter.Name}")) }
+                            SyntaxFactory.SeparatedList(new[] { SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier($"_{parameter.Name}")) })
                         )
-                    )).AddModifiers
-                    (
-                        new[]
-                        {
-                            SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
-                            SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)
-                        }
-                    )).ToArray();
-        }
-
-        private BlockSyntax GenerateParametersAssignmentMethodBody(IEnumerable<ParameterDefinitionModel> parameters)
-        {
-            return SyntaxFactory.Block(from parameter in parameters
-                                       where parameter.IsEnabled
-                                       let leftAssignment = parameter.MapToClassProperty
-                                           ? $"{parameter.Name.ToUpperCamelCase()}"
-                                           : $"_{parameter.Name}"
-                                       let rightAssignment = parameter.ThrowExceptionWhenNull
-                                            ? $"{parameter.Name} ?? throw new ArgumentNullException(nameof({parameter.Name}))"
-                                            : parameter.Name
-                                       select SyntaxFactory.ParseStatement($"{leftAssignment} = {rightAssignment};"));
+                    ).AddModifiers(new[] { SyntaxFactory.Token(SyntaxKind.PrivateKeyword), SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword) })
+                     .NormalizeWhitespace())
+                     .Except(typeDeclarationSyntax.Members.OfType<FieldDeclarationSyntax>(), new FieldDeclarationSyntaxComparer())
+                     .ToArray();
         }
 
         private BlockSyntax GenerateMethodBody(IEnumerable<StatementSyntax> bodyStatements)
@@ -286,7 +256,8 @@ namespace BoilerplateGenerator.Services
             }
 
             return from statement in bodyStatements
-                   select SyntaxFactory.ParseStatement(statement);
+                   select SyntaxFactory.ParseStatement(statement)
+                                       .NormalizeWhitespace();
         }
 
         private T RetrieveExistingTypeDeclaration<T>() where T : TypeDeclarationSyntax
@@ -299,7 +270,7 @@ namespace BoilerplateGenerator.Services
 
         private SyntaxList<MemberDeclarationSyntax> GenerateCompilationUnitDeclaration<T>() where T : TypeDeclarationSyntax
         {
-            T typeDeclarationSyntax = RetrieveExistingTypeDeclaration<T>();
+            TypeDeclarationSyntax typeDeclarationSyntax = RetrieveExistingTypeDeclaration<T>();
 
             if (_genericGeneratorModel.CompilationUnitDefinition.DefinedInheritanceTypes != null && _genericGeneratorModel.CompilationUnitDefinition.DefinedInheritanceTypes.Any())
             {
@@ -313,18 +284,17 @@ namespace BoilerplateGenerator.Services
 
             if (_genericGeneratorModel.InjectedDependencies != null && _genericGeneratorModel.InjectedDependencies.Any())
             {
-                typeDeclarationSyntax = (T)typeDeclarationSyntax.AddMembers(GenerateFields(_genericGeneratorModel.InjectedDependencies))
-                                                                .AddMembers(GenerateConstructorWithInjectedDependencies());
+                typeDeclarationSyntax = (T)typeDeclarationSyntax.AddMembers(GenerateFields(typeDeclarationSyntax));
             }
 
             if (_genericGeneratorModel.DefinedConstructors != null && _genericGeneratorModel.DefinedConstructors.Any())
             {
-                typeDeclarationSyntax = (T)GenerateConstructors(typeDeclarationSyntax);
+                typeDeclarationSyntax = GenerateWithMembers<ConstructorDeclarationSyntax>(typeDeclarationSyntax, _genericGeneratorModel.DefinedConstructors);
             }
 
             if (_genericGeneratorModel.DefinedMethods != null && _genericGeneratorModel.DefinedMethods.Any(x => x.IsEnabled))
             {
-                typeDeclarationSyntax = (T)GenerateMethods(typeDeclarationSyntax);
+                typeDeclarationSyntax = GenerateWithMembers<MethodDeclarationSyntax>(typeDeclarationSyntax, _genericGeneratorModel.DefinedMethods);
             }
 
             return SyntaxFactory.List(new MemberDeclarationSyntax[] { typeDeclarationSyntax });

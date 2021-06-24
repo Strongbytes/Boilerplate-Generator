@@ -135,6 +135,12 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
                     return _definedConstructors;
                 }
 
+                if (InjectedDependencies.Any(x => x.IsEnabled))
+                {
+                    _definedConstructors = DefinedConstructorsBuilder.Union(new ConstructorDefinitionModel[] { ConstructorBasedOnInjectedDependencies }).ToArray();
+                    return _definedConstructors;
+                }
+                
                 _definedConstructors = DefinedConstructorsBuilder.ToArray();
                 return _definedConstructors;
             }
@@ -204,6 +210,20 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
                 $"{_metadataGenerationService.AssetToCompilationUnitNameMapping[Kind]}"
             );
         }
+
+        private ConstructorDefinitionModel ConstructorBasedOnInjectedDependencies => new ConstructorDefinitionModel
+        {
+            Parameters = InjectedDependenciesBuilder,
+            Body = (from parameter in InjectedDependencies
+                    where parameter.IsEnabled
+                    let leftAssignment = parameter.MapToClassProperty
+                        ? $"{parameter.Name.ToUpperCamelCase()}"
+                        : $"_{parameter.Name}"
+                    let rightAssignment = parameter.ThrowExceptionWhenNull
+                         ? $"{parameter.Name} ?? throw new ArgumentNullException(nameof({parameter.Name}))"
+                         : parameter.Name
+                    select $"{leftAssignment} = {rightAssignment};").ToArray()
+        };
         #endregion
     }
 }

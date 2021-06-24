@@ -29,6 +29,8 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
             _unitOfWorkRequirements = unitOfWorkRequirements;
         }
 
+        public override bool MergeWithExistingAsset => true;
+
         private string RequestHandlerClassName => _metadataGenerationService.AssetToCompilationUnitNameMapping[AssetToMediatorRequestKind[Kind]];
 
         protected IDictionary<AssetKind, AssetKind> AssetToMediatorRequestKind => new Dictionary<AssetKind, AssetKind>
