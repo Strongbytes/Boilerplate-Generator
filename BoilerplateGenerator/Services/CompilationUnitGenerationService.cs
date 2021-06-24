@@ -43,7 +43,7 @@ namespace BoilerplateGenerator.Services
 
         public async Task<IGeneratedCompilationUnit> GetGeneratedCompilationUnit()
         {
-            _compilationUnit = await RetrieveCompilationUnit();
+            _compilationUnit = await RetrieveCompilationUnit().ConfigureAwait(false);
 
             string generatedCode = await Task.Run
             (
@@ -91,7 +91,7 @@ namespace BoilerplateGenerator.Services
                     return GenerateCompilationUnitDeclaration<InterfaceDeclarationSyntax>();
 
                 default:
-                    throw new Exception("Not a valid Compilation Unit Type");
+                    throw new NotImplementedException("Not a valid Compilation Unit Type");
             }
         }
 
@@ -109,20 +109,12 @@ namespace BoilerplateGenerator.Services
                 T existingMember = availableClassMembers.RetrieveExistingMember(definedMember);
                 T newMember = (T)GenerateMember(existingMember, definedMember);
 
-                if (existingMember != null)
-                {
-                    classDeclarationSyntax = classDeclarationSyntax.WithMembers
+                classDeclarationSyntax = existingMember != null
+                    ? classDeclarationSyntax.WithMembers
                     (
-                        classDeclarationSyntax.Members.Remove
-                        (
-                            classDeclarationSyntax.Members.FirstOrDefault(x => x.IsEquivalentTo(existingMember))
-                        ).Add(newMember)
-                    );
-                }
-                else
-                {
-                    classDeclarationSyntax = classDeclarationSyntax.AddMembers(newMember);
-                }
+                        classDeclarationSyntax.Members.Replace(classDeclarationSyntax.Members.FirstOrDefault(x => x.IsEquivalentTo(existingMember)), newMember)
+                    )
+                    : classDeclarationSyntax.AddMembers(newMember);
             }
 
             return classDeclarationSyntax;
@@ -274,24 +266,16 @@ namespace BoilerplateGenerator.Services
 
         private BlockSyntax GenerateBodyBlockSyntax(IEnumerable<StatementSyntax> bodyStatements)
         {
-            if (!bodyStatements.Any())
-            {
-                return NotImplementedBody;
-            }
-
-            return SyntaxFactory.Block(bodyStatements.Distinct(new StatementSyntaxComparer()));
+            return !bodyStatements.Any() ? NotImplementedBody : SyntaxFactory.Block(bodyStatements.Distinct(new StatementSyntaxComparer()));
         }
 
         private IEnumerable<StatementSyntax> GenerateBodyStatements(IEnumerable<string> bodyStatements)
         {
-            if (bodyStatements == null || !bodyStatements.Any())
-            {
-                return Enumerable.Empty<StatementSyntax>();
-            }
-
-            return from statement in bodyStatements
+            return bodyStatements == null || !bodyStatements.Any()
+                ? Enumerable.Empty<StatementSyntax>()
+                : (from statement in bodyStatements
                    select SyntaxFactory.ParseStatement(statement)
-                                       .WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed);
+                                       .WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed));
         }
 
         private T RetrieveExistingTypeDeclaration<T>() where T : TypeDeclarationSyntax
@@ -357,8 +341,8 @@ namespace BoilerplateGenerator.Services
                                         .AddModifiers(GenerateModifiers(propertyDefinition.Modifiers))
                                         .AddAttributeLists(GenerateAttributeList(propertyDefinition.Attributes))
                                         .AddAccessorListAccessors(GeneratePropertyAccessors(propertyDefinition.Accessors))
-                                        .NormalizeWhitespace()
-                                        .WithTrailingTrivia(SyntaxFactory.LineFeed))
+                                        .WithTrailingTrivia(SyntaxFactory.LineFeed)
+                                        .WithLeadingTrivia(SyntaxFactory.LineFeed))
                                         .Except(typeDeclarationSyntax.Members.OfType<PropertyDeclarationSyntax>(), new PropertyDeclarationSyntaxComparer())
                                         .ToArray();
         }

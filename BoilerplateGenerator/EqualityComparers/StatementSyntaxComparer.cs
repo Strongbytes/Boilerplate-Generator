@@ -13,8 +13,8 @@ namespace BoilerplateGenerator.EqualityComparers
                 return false;
             }
 
-            var normalizedX = x.NormalizeWhitespace().GetText().ToString().Replace(";", string.Empty);
-            var normalizedY = y.NormalizeWhitespace().GetText().ToString().Replace(";", string.Empty);
+            string normalizedX = x.NormalizeWhitespace().GetText().ToString().Replace(";", string.Empty);
+            string normalizedY = y.NormalizeWhitespace().GetText().ToString().Replace(";", string.Empty);
 
             return normalizedX == normalizedY;
         }
