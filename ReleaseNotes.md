@@ -2,8 +2,11 @@
 
 ### [Download from Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=Strongbytes.boilerplate-code-generator)
 
+## Release 1.8
+* Enable code merge between existing CQRS classes and generated CQRS classes;
+
 ## Release 1.7
-* Register UnitOfWork and Repository to Dependency Container (Autofac is used as the IoC Container)
+* Register UnitOfWork and Repository to Dependency Container (Autofac is used as the IoC Container);
 
 ## Release 1.6
 * Generate Unit of Work and Repository;
