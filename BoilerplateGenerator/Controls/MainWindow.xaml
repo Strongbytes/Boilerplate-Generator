@@ -521,7 +521,7 @@
                 </controls:BindableTextEditor>
 
                 <StackPanel Grid.Row="1"
-                            Visibility="{Binding ElementName=TreeDirectory, Path=SelectedItem.Current.EnableOptionsPanel, Converter={StaticResource BoolToVisibilityConverter}}"
+                            Visibility="{Binding ElementName=TreeDirectory, Path=SelectedItem.Current.EnableOptionsPanel, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}"
                             Background="#FFEEF5FD"
                             Orientation="Vertical">
 
@@ -536,7 +536,7 @@
                            HorizontalContentAlignment="Left" />
 
                     <StackPanel Orientation="Vertical"
-                                Visibility="{Binding ElementName=TreeDirectory, Path=SelectedItem.Current.EnableBaseClassChanging, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}"
+                                Visibility="{Binding ElementName=TreeDirectory, Path=SelectedItem.Current.EnableBaseClassChanging, Converter={StaticResource BoolToVisibilityConverter}}"
                                 Margin="0,0,0,10">
                         <Label Content="Extend Base Type"
                                Target="{Binding ElementName=ComboBaseType}"
