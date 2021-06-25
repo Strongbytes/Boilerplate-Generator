@@ -2,6 +2,9 @@
 
 ### [Download from Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=Strongbytes.boilerplate-code-generator)
 
+## Release 1.10
+* Normalize white space for class members;
+
 ## Release 1.9
 * Keep existing code formatting when merging generated classes with existing ones;
 
