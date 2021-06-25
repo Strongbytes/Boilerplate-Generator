@@ -1,6 +1,7 @@
 ﻿using BoilerplateGenerator.Contracts.Services;
 using BoilerplateGenerator.Extensions;
 using BoilerplateGenerator.Models.Enums;
+using BoilerplateGenerator.Models.RoslynWrappers;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using BoilerplateGenerator.ViewModels;
 using Microsoft.CodeAnalysis.CSharp;
@@ -42,9 +43,9 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Infrastructure
 
         public override CompilationUnitDefinitionModel CompilationUnitDefinition => new CompilationUnitDefinitionModel
         {
-            DefinedInheritanceTypes = new string[]
+            DefinedInheritanceTypes = new EntityClassWrapper[]
             {
-                "Autofac.Module"
+                new EntityClassWrapper($"{CommonTokens.Autofac}.{CommonTokens.Module}")
             }
         };
 

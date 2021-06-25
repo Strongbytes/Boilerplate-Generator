@@ -5,8 +5,11 @@ using BoilerplateGenerator.Contracts.Services;
 using BoilerplateGenerator.Extensions;
 using BoilerplateGenerator.ExtraFeatures.Pagination;
 using BoilerplateGenerator.ExtraFeatures.UnitOfWork;
+using BoilerplateGenerator.Models.Enums;
+using BoilerplateGenerator.Models.RoslynWrappers;
 using BoilerplateGenerator.Models.TreeView;
 using BoilerplateGenerator.Services;
+using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.LanguageServices;
 using Microsoft.VisualStudio.Shell;
 using System.Collections.ObjectModel;
@@ -325,6 +328,14 @@ namespace BoilerplateGenerator.ViewModels
         public ObservableCollection<IProjectWrapper> AvailableModules { get; set; } = new ObservableCollection<IProjectWrapper>();
 
         public ObservableCollection<ITreeNode<IBaseGeneratedAsset>> DirectoriesTree { get; set; } = new ObservableCollection<ITreeNode<IBaseGeneratedAsset>>();
+
+        public ObservableCollection<EntityClassWrapper> AvailableBaseClasses { get; set; } = new ObservableCollection<EntityClassWrapper>
+        {
+            new EntityClassWrapper(string.Empty)
+            {
+                Namespace = nameof(CommonTokens.None)
+            }
+        };
         #endregion
 
         #region Commands
@@ -441,6 +452,11 @@ namespace BoilerplateGenerator.ViewModels
             foreach (IProjectWrapper item in _fileManagerService.RetrieveAllModules())
             {
                 AvailableModules.Add(item);
+            }
+
+            foreach (EntityClassWrapper abstractClass in await _fileManagerService.RetrieveAbstractClasses().ConfigureAwait(true))
+            {
+                AvailableBaseClasses.Add(abstractClass);
             }
 
             await _paginationRequirements.RetrieveFeatureRequirements().ConfigureAwait(false);

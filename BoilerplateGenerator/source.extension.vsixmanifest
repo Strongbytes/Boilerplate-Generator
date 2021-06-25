@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" ?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="ed96cbaa-c44a-4d0a-9ae4-b08b92bee7a0" Version="1.10" Language="en-US" Publisher="Strongbytes" />
+        <Identity Id="ed96cbaa-c44a-4d0a-9ae4-b08b92bee7a0" Version="1.11" Language="en-US" Publisher="Strongbytes" />
         <DisplayName>Boilerplate Code Generator</DisplayName>
         <Description xml:space="preserve">Generate boilerplate code using Roslyn, starting from a model entity</Description>
         <License>Assets\License.txt</License>
@@ -10,7 +10,6 @@
         <Icon>Assets\file-icon.ico</Icon>
         <PreviewImage>Assets\Screenshot.png</PreviewImage>
         <Tags>repository-pattern, autofac-container, net-core, mediator-pattern, unit-of-work-pattern, cqrs-architectural-pattern, automapper-profiles, net-5, roslyn-generator</Tags>
-        <Preview>true</Preview>
     </Metadata>
     <Installation>
         <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[16.9, 17.0)" />

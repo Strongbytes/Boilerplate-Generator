@@ -10,5 +10,9 @@ namespace BoilerplateGenerator.Models.RoslynWrappers
         {
             IsBaseTypeInheritance = isBaseTypeInheritance;
         }
+
+        public EntityClassWrapper(string name) : base(name)
+        {
+        }
     }
 }

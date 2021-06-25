@@ -2,6 +2,7 @@
 using BoilerplateGenerator.Extensions;
 using BoilerplateGenerator.ExtraFeatures.UnitOfWork;
 using BoilerplateGenerator.Models.Enums;
+using BoilerplateGenerator.Models.RoslynWrappers;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using BoilerplateGenerator.ViewModels;
 using Microsoft.CodeAnalysis.CSharp;
@@ -61,9 +62,9 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
         public override CompilationUnitDefinitionModel CompilationUnitDefinition => new CompilationUnitDefinitionModel
         {
             AccessModifier = SyntaxKind.InternalKeyword,
-            DefinedInheritanceTypes = new string[]
+            DefinedInheritanceTypes = new EntityClassWrapper[]
             {
-                $"{CommonTokens.IRequestHandler}<{RequestHandlerClassName}, {HandlerResponseType}>"
+                new EntityClassWrapper($"{CommonTokens.IRequestHandler}<{RequestHandlerClassName}, {HandlerResponseType}>")
             }
         };
 

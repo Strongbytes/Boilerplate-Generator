@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.CodeAnalysis;
+using System.ComponentModel;
 
 namespace BoilerplateGenerator.Contracts.RoslynWrappers
 {
@@ -6,14 +7,14 @@ namespace BoilerplateGenerator.Contracts.RoslynWrappers
     {
         string Name { get; set; }
 
-        string Namespace { get; }
+        string Namespace { get; set; }
 
         bool? IsChecked { get; set; }
 
         bool IsPropertyChanging { get; set; }
 
-        bool IsEnabled { get; }
+        bool SymbolWasFound { get; set; }
 
-        string ContainingModuleName { get; }
+        bool IsEnabled { get; }
     }
 }

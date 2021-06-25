@@ -1,5 +1,6 @@
 ﻿using BoilerplateGenerator.Collections;
 using BoilerplateGenerator.Contracts.RoslynWrappers;
+using BoilerplateGenerator.Models.RoslynWrappers;
 using Microsoft.CodeAnalysis;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -21,5 +22,7 @@ namespace BoilerplateGenerator.Contracts.Services
         Task<ITreeNode<IBaseSymbolWrapper>> PopulateClassHierarchy();
 
         Task<INamedTypeSymbol[]> RetrieveAllAvailableProjectTypes();
+
+        Task<IEnumerable<EntityClassWrapper>> RetrieveAbstractClasses();
     }
 }

@@ -3,7 +3,7 @@
 dotnet_diagnostic.VSTHRD100.severity = none
 
 # VSTHRD200: Use "Async" suffix for async methods
-dotnet_diagnostic.VSTHRD200.severity = none
+dotnet_diagnostic.VSTHRD200.severity =suggestion
 
 # S112: General exceptions should never be thrown
 dotnet_diagnostic.S112.severity = none
@@ -12,7 +12,7 @@ dotnet_diagnostic.S112.severity = none
 dotnet_diagnostic.S3168.severity = none
 
 # VSTHRD101: Avoid unsupported async delegates
-dotnet_diagnostic.VSTHRD101.severity = none
+dotnet_diagnostic.VSTHRD101.severity = silent
 
 dotnet_naming_rule.private_members_with_underscore.symbols  = private_fields
 dotnet_naming_rule.private_members_with_underscore.style    = prefix_underscore
@@ -23,3 +23,4 @@ dotnet_naming_symbols.private_fields.applicable_accessibilities = private
 
 dotnet_naming_style.prefix_underscore.capitalization = camel_case
 dotnet_naming_style.prefix_underscore.required_prefix = _
+dotnet_diagnostic.VSTHRD111.severity=suggestion

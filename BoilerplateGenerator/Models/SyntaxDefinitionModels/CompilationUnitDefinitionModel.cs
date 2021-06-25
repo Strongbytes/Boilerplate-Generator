@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis.CSharp;
+﻿using BoilerplateGenerator.Models.RoslynWrappers;
+using Microsoft.CodeAnalysis.CSharp;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,7 +11,7 @@ namespace BoilerplateGenerator.Models.SyntaxDefinitionModels
 
         public SyntaxKind Type { get; set; } = SyntaxKind.ClassDeclaration;
 
-        public IEnumerable<string> DefinedInheritanceTypes { get; set; } = Enumerable.Empty<string>();
+        public IEnumerable<EntityClassWrapper> DefinedInheritanceTypes { get; set; } = Enumerable.Empty<EntityClassWrapper>();
 
         public IEnumerable<AttributeDefinitionModel> DefinedAttributes { get; set; } = Enumerable.Empty<AttributeDefinitionModel>();
     }

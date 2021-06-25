@@ -6,5 +6,7 @@ namespace BoilerplateGenerator.Contracts.Services
     public interface ICompilationUnitGenerationService
     {
         Task<IGeneratedCompilationUnit> GetGeneratedCompilationUnit();
+
+        Task<string> GetGeneratedCode();
     }
 }

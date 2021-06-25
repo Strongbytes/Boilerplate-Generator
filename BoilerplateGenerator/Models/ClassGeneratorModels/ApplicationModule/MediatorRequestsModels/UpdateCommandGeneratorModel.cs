@@ -1,6 +1,7 @@
 ﻿using BoilerplateGenerator.Contracts.Services;
 using BoilerplateGenerator.Extensions;
 using BoilerplateGenerator.Models.Enums;
+using BoilerplateGenerator.Models.RoslynWrappers;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using BoilerplateGenerator.ViewModels;
 using Microsoft.CodeAnalysis.CSharp;
@@ -34,9 +35,9 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule.Med
 
         public override CompilationUnitDefinitionModel CompilationUnitDefinition => new CompilationUnitDefinitionModel
         {
-            DefinedInheritanceTypes = new string[]
+            DefinedInheritanceTypes = new EntityClassWrapper[]
             {
-                $"{CommonTokens.IRequest}<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.ResponseDomainEntity]}>"
+                new EntityClassWrapper($"{CommonTokens.IRequest}<{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.ResponseDomainEntity]}>")
             }
         };
 

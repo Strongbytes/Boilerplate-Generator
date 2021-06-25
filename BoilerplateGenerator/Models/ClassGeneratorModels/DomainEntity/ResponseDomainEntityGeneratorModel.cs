@@ -25,6 +25,8 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.DomainEntity
 
         public override AssetKind Kind => AssetKind.ResponseDomainEntity;
 
+        public override bool EnableBaseClassChanging => true;
+
         protected override IEnumerable<PropertyDefinitionModel> DefinedPropertiesBuilder => _viewModelBase.EntityTree.First()
                                                                                                                      .FilterTreeProperties();
     }

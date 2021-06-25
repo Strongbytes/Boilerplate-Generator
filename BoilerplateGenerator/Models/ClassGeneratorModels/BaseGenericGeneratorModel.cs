@@ -24,13 +24,14 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
             _metadataGenerationService = metadataGenerationService;
         }
 
-
         #region Model Builder
         public abstract AssetKind Kind { get; }
 
         public virtual bool CanBeCreated => true;
 
         public virtual bool MergeWithExistingAsset => false;
+
+        public virtual bool EnableBaseClassChanging => false;
 
         protected virtual IEnumerable<string> UsingsBuilder => new string[] { UsingTokens.System };
 
@@ -140,7 +141,7 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels
                     _definedConstructors = DefinedConstructorsBuilder.Union(new ConstructorDefinitionModel[] { ConstructorBasedOnInjectedDependencies }).ToArray();
                     return _definedConstructors;
                 }
-                
+
                 _definedConstructors = DefinedConstructorsBuilder.ToArray();
                 return _definedConstructors;
             }

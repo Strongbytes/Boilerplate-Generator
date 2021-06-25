@@ -2,6 +2,7 @@
 using BoilerplateGenerator.Extensions;
 using BoilerplateGenerator.ExtraFeatures.UnitOfWork;
 using BoilerplateGenerator.Models.Enums;
+using BoilerplateGenerator.Models.RoslynWrappers;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using BoilerplateGenerator.ViewModels;
 using Microsoft.CodeAnalysis.CSharp;
@@ -47,10 +48,10 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Infrastructure
         {
             Type = SyntaxKind.ClassDeclaration,
             AccessModifier = SyntaxKind.InternalKeyword,
-            DefinedInheritanceTypes = new string[]
+            DefinedInheritanceTypes = new EntityClassWrapper[]
             {
-                $"{CommonTokens.BaseUnitOfWork}",
-                $"{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.UnitOfWorkInterface]}"
+                new EntityClassWrapper($"{CommonTokens.BaseUnitOfWork}"),
+                new EntityClassWrapper($"{_metadataGenerationService.AssetToCompilationUnitNameMapping[AssetKind.UnitOfWorkInterface]}")
             }
         };
 

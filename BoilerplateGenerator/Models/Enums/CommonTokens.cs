@@ -68,6 +68,8 @@
         Void,
         Builder,
         ContainerBuilder,
-        Load
+        Load,
+        Autofac,
+        None
     }
 }

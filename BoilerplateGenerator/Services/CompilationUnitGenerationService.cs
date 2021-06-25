@@ -43,9 +43,16 @@ namespace BoilerplateGenerator.Services
 
         public async Task<IGeneratedCompilationUnit> GetGeneratedCompilationUnit()
         {
+            string generatedCode = await GetGeneratedCode().ConfigureAwait(false);
+
+            return new GeneratedCompilationUnit(_genericGeneratorModel, _visualStudioWorkspace, generatedCode);
+        }
+
+        public async Task<string> GetGeneratedCode()
+        {
             _compilationUnit = await RetrieveCompilationUnit().ConfigureAwait(false);
 
-            string generatedCode = await Task.Run
+            return await Task.Run
             (
                 () => Formatter.Format
                 (
@@ -54,13 +61,18 @@ namespace BoilerplateGenerator.Services
                     _visualStudioWorkspace
                 ).ToFullString()
             ).ConfigureAwait(false);
-
-            return new GeneratedCompilationUnit(_genericGeneratorModel, generatedCode);
         }
 
         private SyntaxList<UsingDirectiveSyntax> GenerateUsings()
         {
-            return SyntaxFactory.List((from usingDirective in _genericGeneratorModel.Usings
+            HashSet<string> existingnamespacesInBaseTypes = (from baseDeclaration in _genericGeneratorModel.CompilationUnitDefinition.DefinedInheritanceTypes
+                                                             where baseDeclaration.SymbolWasFound
+                                                             select baseDeclaration.ReferencedSymbol.GetMembers().OfType<IPropertySymbol>())
+                                                            .SelectMany(x => x)
+                                                            .Select(x => x.ContainingNamespace.ToString())
+                                                            .ToHashSet();
+
+            return SyntaxFactory.List((from usingDirective in _genericGeneratorModel.Usings.Union(existingnamespacesInBaseTypes)
                                        select SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(usingDirective)))
                                 .Union(_compilationUnit.Usings.ToArray() ?? Enumerable.Empty<UsingDirectiveSyntax>())
                                 .DistinctBy(x => x.Name.ToFullString()));
@@ -327,7 +339,7 @@ namespace BoilerplateGenerator.Services
                 baseList.Types.AddRange
                 (
                     from baseType in _genericGeneratorModel.CompilationUnitDefinition.DefinedInheritanceTypes
-                    let newNode = SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(baseType))
+                    let newNode = SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(baseType.Name))
                     where !baseList.Types.Contains(newNode, new BaseTypeSyntaxComparer())
                     select newNode
                 )
@@ -336,7 +348,15 @@ namespace BoilerplateGenerator.Services
 
         private PropertyDeclarationSyntax[] GenerateProperties(TypeDeclarationSyntax typeDeclarationSyntax)
         {
+            HashSet<string> existingPropertiesInBaseTypes = (from baseDeclaration in _genericGeneratorModel.CompilationUnitDefinition.DefinedInheritanceTypes
+                                                             where baseDeclaration.SymbolWasFound
+                                                             select baseDeclaration.ReferencedSymbol.GetMembers().OfType<IPropertySymbol>())
+                                                             .SelectMany(x => x)
+                                                             .Select(x => x.Name)
+                                                             .ToHashSet();
+
             return (from propertyDefinition in _genericGeneratorModel.DefinedProperties
+                    where !existingPropertiesInBaseTypes.Contains(propertyDefinition.Name)
                     select SyntaxFactory.PropertyDeclaration(SyntaxFactory.ParseTypeName(propertyDefinition.ReturnType), propertyDefinition.Name)
                                         .AddModifiers(GenerateModifiers(propertyDefinition.Modifiers))
                                         .AddAttributeLists(GenerateAttributeList(propertyDefinition.Attributes))

@@ -1,6 +1,7 @@
 ﻿using BoilerplateGenerator.Contracts.Services;
 using BoilerplateGenerator.ExtraFeatures.UnitOfWork;
 using BoilerplateGenerator.Models.Enums;
+using BoilerplateGenerator.Models.RoslynWrappers;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using BoilerplateGenerator.ViewModels;
 using Microsoft.CodeAnalysis.CSharp;
@@ -44,9 +45,9 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Infrastructure
         {
             Type = SyntaxKind.InterfaceDeclaration,
             AccessModifier = SyntaxKind.InternalKeyword,
-            DefinedInheritanceTypes = new string[]
+            DefinedInheritanceTypes = new EntityClassWrapper[]
             {
-                $"{CommonTokens.IBaseUnitOfWork}"
+                new EntityClassWrapper($"{CommonTokens.IBaseUnitOfWork}")
             }
         };
 

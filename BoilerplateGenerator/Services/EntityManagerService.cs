@@ -86,6 +86,14 @@ namespace BoilerplateGenerator.Services
             return _availableTypes;
         }
 
+        public async Task<IEnumerable<EntityClassWrapper>> RetrieveAbstractClasses()
+        {
+            return from type in await RetrieveAllAvailableProjectTypes().ConfigureAwait(false)
+                   where type.TypeKind == TypeKind.Class
+                   where type.IsAbstract
+                   select new EntityClassWrapper(type, true);
+        }
+
         public async Task<ISolutionWrapper> RetrieveSolution()
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();

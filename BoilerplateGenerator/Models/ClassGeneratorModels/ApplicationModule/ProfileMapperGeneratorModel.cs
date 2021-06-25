@@ -1,6 +1,7 @@
 ﻿using BoilerplateGenerator.Contracts.Services;
 using BoilerplateGenerator.Extensions;
 using BoilerplateGenerator.Models.Enums;
+using BoilerplateGenerator.Models.RoslynWrappers;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using BoilerplateGenerator.ViewModels;
 using System.Collections.Generic;
@@ -26,7 +27,10 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.ApplicationModule
 
         public override CompilationUnitDefinitionModel CompilationUnitDefinition => new CompilationUnitDefinitionModel
         {
-            DefinedInheritanceTypes = new string[] { nameof(CommonTokens.Profile) }
+            DefinedInheritanceTypes = new EntityClassWrapper[]
+            {
+                new EntityClassWrapper(nameof(CommonTokens.Profile))
+            }
         };
 
         public override AssetKind Kind => AssetKind.ProfileMapper;

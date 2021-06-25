@@ -3,6 +3,7 @@ using BoilerplateGenerator.Contracts.Services;
 using BoilerplateGenerator.Extensions;
 using BoilerplateGenerator.ExtraFeatures.Pagination;
 using BoilerplateGenerator.Models.Enums;
+using BoilerplateGenerator.Models.RoslynWrappers;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using BoilerplateGenerator.ViewModels;
 using System.Collections.Generic;
@@ -48,7 +49,10 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Controllers
 
         public override CompilationUnitDefinitionModel CompilationUnitDefinition => new CompilationUnitDefinitionModel
         {
-            DefinedInheritanceTypes = new string[] { nameof(CommonTokens.ControllerBase) },
+            DefinedInheritanceTypes = new EntityClassWrapper[] 
+            { 
+                new EntityClassWrapper(nameof(CommonTokens.ControllerBase)) 
+            },
             DefinedAttributes = new List<AttributeDefinitionModel>
             {
                 new AttributeDefinitionModel($"{CommonTokens.ApiController}"),

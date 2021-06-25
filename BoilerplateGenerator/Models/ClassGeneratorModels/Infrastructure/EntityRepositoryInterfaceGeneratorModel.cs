@@ -2,6 +2,7 @@
 using BoilerplateGenerator.Extensions;
 using BoilerplateGenerator.ExtraFeatures.UnitOfWork;
 using BoilerplateGenerator.Models.Enums;
+using BoilerplateGenerator.Models.RoslynWrappers;
 using BoilerplateGenerator.Models.SyntaxDefinitionModels;
 using BoilerplateGenerator.ViewModels;
 using Microsoft.CodeAnalysis.CSharp;
@@ -43,9 +44,9 @@ namespace BoilerplateGenerator.Models.ClassGeneratorModels.Infrastructure
         {
             Type = SyntaxKind.InterfaceDeclaration,
             AccessModifier = SyntaxKind.InternalKeyword,
-            DefinedInheritanceTypes = new string[]
+            DefinedInheritanceTypes = new EntityClassWrapper[]
             {
-                $"{CommonTokens.IBaseRepository}<{_viewModelBase.EntityTree.PrimaryEntityType()}>"
+                new EntityClassWrapper($"{CommonTokens.IBaseRepository}<{_viewModelBase.EntityTree.PrimaryEntityType()}>")
             }
         };
     }

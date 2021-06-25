@@ -18,6 +18,8 @@ namespace BoilerplateGenerator.Contracts.Generators
 
         string Namespace { get; }
 
+        bool EnableBaseClassChanging { get; }
+
         bool FileExistsInProject { get; }
 
         bool MergeWithExistingAsset { get; }

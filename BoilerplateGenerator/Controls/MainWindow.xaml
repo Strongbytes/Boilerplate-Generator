@@ -392,102 +392,108 @@
                       ResizeDirection="Columns"
                       HorizontalAlignment="Stretch" />
 
-        <Grid Grid.Column="4">
-            <DockPanel>
-                <ToolBar x:Name="EditorToolBar"
-                         DockPanel.Dock="Top">
-                    <ToolBar.Resources>
-                        <Style TargetType="{x:Type imaging:CrispImage}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type ButtonBase}, AncestorLevel=1}, Path=IsEnabled}"
-                                             Value="False">
-                                    <Setter Property="Opacity"
-                                            Value="0.30" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ToolBar.Resources>
-                    <Button Command="Cut">
-                        <imaging:CrispImage Width="16"
-                                            Height="16"
-                                            Moniker="{x:Static catalog:KnownMonikers.Cut}">
-                            <imaging:CrispImage.ToolTip>
-                                <ToolTip Content="Cut (Ctrl+X)" />
-                            </imaging:CrispImage.ToolTip>
-                        </imaging:CrispImage>
-                    </Button>
-                    <Button Command="Copy">
-                        <imaging:CrispImage Width="16"
-                                            Height="16"
-                                            Moniker="{x:Static catalog:KnownMonikers.Copy}">
-                            <imaging:CrispImage.ToolTip>
-                                <ToolTip Content="Copy (Ctrl+C)" />
-                            </imaging:CrispImage.ToolTip>
-                        </imaging:CrispImage>
-                    </Button>
-                    <Button Command="Paste">
-                        <imaging:CrispImage Width="16"
-                                            Height="16"
-                                            Moniker="{x:Static catalog:KnownMonikers.Paste}">
-                            <imaging:CrispImage.ToolTip>
-                                <ToolTip Content="Paste (Ctrl+V)" />
-                            </imaging:CrispImage.ToolTip>
-                        </imaging:CrispImage>
-                    </Button>
-                    <Button Command="Delete">
-                        <imaging:CrispImage Width="16"
-                                            Height="16"
-                                            Moniker="{x:Static catalog:KnownMonikers.TestCoveredFailing}">
-                            <imaging:CrispImage.ToolTip>
-                                <ToolTip Content="Delete (Del)" />
-                            </imaging:CrispImage.ToolTip>
-                        </imaging:CrispImage>
-                    </Button>
-                    <Separator />
-                    <Button Command="Undo">
-                        <imaging:CrispImage Width="16"
-                                            Height="16"
-                                            Moniker="{x:Static catalog:KnownMonikers.Undo}">
-                            <imaging:CrispImage.ToolTip>
-                                <ToolTip Content="Undo (Ctrl+Z)" />
-                            </imaging:CrispImage.ToolTip>
-                        </imaging:CrispImage>
-                    </Button>
-                    <Button Command="Redo">
-                        <imaging:CrispImage Width="16"
-                                            Height="16"
-                                            Moniker="{x:Static catalog:KnownMonikers.Redo}">
-                            <imaging:CrispImage.ToolTip>
-                                <ToolTip Content="Redo (Ctrl+Y)" />
-                            </imaging:CrispImage.ToolTip>
-                        </imaging:CrispImage>
-                    </Button>
-                    <Separator />
-                    <CheckBox IsChecked="{Binding ElementName=SyntaxHighliter, Path=WordWrap}">
-                        <imaging:CrispImage Width="16"
-                                            Height="16"
-                                            Moniker="{x:Static catalog:KnownMonikers.WordWrap}" />
-                        <CheckBox.ToolTip>
-                            <ToolTip Content="Word Wrap" />
-                        </CheckBox.ToolTip>
-                    </CheckBox>
-                    <CheckBox IsChecked="{Binding ElementName=SyntaxHighliter, Path=ShowLineNumbers}">
-                        <imaging:CrispImage Width="16"
-                                            Height="16"
-                                            Moniker="{x:Static catalog:KnownMonikers.ThisLine}" />
-                        <CheckBox.ToolTip>
-                            <ToolTip Content="Toggle Line Numbers Visibility" />
-                        </CheckBox.ToolTip>
-                    </CheckBox>
-                    <CheckBox IsChecked="{Binding ElementName=SyntaxHighliter, Path=Options.ShowEndOfLine}">
-                        <imaging:CrispImage Width="16"
-                                            Height="16"
-                                            Moniker="{x:Static catalog:KnownMonikers.DocumentOutline}" />
-                        <CheckBox.ToolTip>
-                            <ToolTip Content="Toggle End Of Line Visibility" />
-                        </CheckBox.ToolTip>
-                    </CheckBox>
-                </ToolBar>
+        <DockPanel Grid.Column="4">
+            <ToolBar x:Name="EditorToolBar"
+                     DockPanel.Dock="Top">
+                <ToolBar.Resources>
+                    <Style TargetType="{x:Type imaging:CrispImage}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type ButtonBase}, AncestorLevel=1}, Path=IsEnabled}"
+                                         Value="False">
+                                <Setter Property="Opacity"
+                                        Value="0.30" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ToolBar.Resources>
+                <Button Command="Cut">
+                    <imaging:CrispImage Width="16"
+                                        Height="16"
+                                        Moniker="{x:Static catalog:KnownMonikers.Cut}">
+                        <imaging:CrispImage.ToolTip>
+                            <ToolTip Content="Cut (Ctrl+X)" />
+                        </imaging:CrispImage.ToolTip>
+                    </imaging:CrispImage>
+                </Button>
+                <Button Command="Copy">
+                    <imaging:CrispImage Width="16"
+                                        Height="16"
+                                        Moniker="{x:Static catalog:KnownMonikers.Copy}">
+                        <imaging:CrispImage.ToolTip>
+                            <ToolTip Content="Copy (Ctrl+C)" />
+                        </imaging:CrispImage.ToolTip>
+                    </imaging:CrispImage>
+                </Button>
+                <Button Command="Paste">
+                    <imaging:CrispImage Width="16"
+                                        Height="16"
+                                        Moniker="{x:Static catalog:KnownMonikers.Paste}">
+                        <imaging:CrispImage.ToolTip>
+                            <ToolTip Content="Paste (Ctrl+V)" />
+                        </imaging:CrispImage.ToolTip>
+                    </imaging:CrispImage>
+                </Button>
+                <Button Command="Delete">
+                    <imaging:CrispImage Width="16"
+                                        Height="16"
+                                        Moniker="{x:Static catalog:KnownMonikers.TestCoveredFailing}">
+                        <imaging:CrispImage.ToolTip>
+                            <ToolTip Content="Delete (Del)" />
+                        </imaging:CrispImage.ToolTip>
+                    </imaging:CrispImage>
+                </Button>
+                <Separator />
+                <Button Command="Undo">
+                    <imaging:CrispImage Width="16"
+                                        Height="16"
+                                        Moniker="{x:Static catalog:KnownMonikers.Undo}">
+                        <imaging:CrispImage.ToolTip>
+                            <ToolTip Content="Undo (Ctrl+Z)" />
+                        </imaging:CrispImage.ToolTip>
+                    </imaging:CrispImage>
+                </Button>
+                <Button Command="Redo">
+                    <imaging:CrispImage Width="16"
+                                        Height="16"
+                                        Moniker="{x:Static catalog:KnownMonikers.Redo}">
+                        <imaging:CrispImage.ToolTip>
+                            <ToolTip Content="Redo (Ctrl+Y)" />
+                        </imaging:CrispImage.ToolTip>
+                    </imaging:CrispImage>
+                </Button>
+                <Separator />
+                <CheckBox IsChecked="{Binding ElementName=SyntaxHighliter, Path=WordWrap}">
+                    <imaging:CrispImage Width="16"
+                                        Height="16"
+                                        Moniker="{x:Static catalog:KnownMonikers.WordWrap}" />
+                    <CheckBox.ToolTip>
+                        <ToolTip Content="Word Wrap" />
+                    </CheckBox.ToolTip>
+                </CheckBox>
+                <CheckBox IsChecked="{Binding ElementName=SyntaxHighliter, Path=ShowLineNumbers}">
+                    <imaging:CrispImage Width="16"
+                                        Height="16"
+                                        Moniker="{x:Static catalog:KnownMonikers.ThisLine}" />
+                    <CheckBox.ToolTip>
+                        <ToolTip Content="Toggle Line Numbers Visibility" />
+                    </CheckBox.ToolTip>
+                </CheckBox>
+                <CheckBox IsChecked="{Binding ElementName=SyntaxHighliter, Path=Options.ShowEndOfLine}">
+                    <imaging:CrispImage Width="16"
+                                        Height="16"
+                                        Moniker="{x:Static catalog:KnownMonikers.DocumentOutline}" />
+                    <CheckBox.ToolTip>
+                        <ToolTip Content="Toggle End Of Line Visibility" />
+                    </CheckBox.ToolTip>
+                </CheckBox>
+            </ToolBar>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
                 <controls:BindableTextEditor x:Name="SyntaxHighliter"
                                              Text="{Binding ElementName=TreeDirectory, Path=SelectedItem.Current.Code}"
                                              WordWrap="True"
@@ -513,7 +519,53 @@
                         </ContextMenu>
                     </avalonEdit:TextEditor.ContextMenu>
                 </controls:BindableTextEditor>
-            </DockPanel>
-        </Grid>
+
+                <StackPanel Grid.Row="1"
+                            Visibility="{Binding ElementName=TreeDirectory, Path=SelectedItem.Current.EnableOptionsPanel, Converter={StaticResource BoolToVisibilityConverter}}"
+                            Background="#FFEEF5FD"
+                            Orientation="Vertical">
+
+                    <Separator VerticalAlignment="Top"
+                               Margin="0" />
+
+                    <Label Content="Class Properties"
+                           TextBlock.FontWeight="Bold"
+                           Target="{Binding ElementName=TreeEntity}"
+                           VerticalContentAlignment="Center"
+                           VerticalAlignment="Stretch"
+                           HorizontalContentAlignment="Left" />
+
+                    <StackPanel Orientation="Vertical"
+                                Visibility="{Binding ElementName=TreeDirectory, Path=SelectedItem.Current.EnableBaseClassChanging, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}"
+                                Margin="0,0,0,10">
+                        <Label Content="Extend Base Type"
+                               Target="{Binding ElementName=ComboBaseType}"
+                               VerticalContentAlignment="Center"
+                               HorizontalContentAlignment="Left" />
+
+                        <ComboBox x:Name="ComboBaseType"
+                                  ItemsSource="{Binding AvailableBaseClasses}"
+                                  Margin="5,0">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction x:Name="BaseTypeSelectionCommand"
+                                                           Command="{Binding ElementName=TreeDirectory, Path=SelectedItem.Current.RegenerateCodeCommand}"
+                                                           CommandParameter="{Binding ElementName=ComboBaseType, Path=SelectedItem}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock VerticalAlignment="Center">
+                                        <Run Text="{Binding Name}"
+                                             FontWeight="SemiBold" />
+                                        <Run Text="[" /><Run Text="{Binding Namespace}" /><Run Text="]" />
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </DockPanel>
     </Grid>
 </Window>
