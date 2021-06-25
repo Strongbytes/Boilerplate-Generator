@@ -3,7 +3,7 @@
 ### [Download from Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=Strongbytes.boilerplate-code-generator)
 
 ## Release 1.11
-* Add "Class Properties" Panel, that can be used to change different properties for an already defined model (eg. which Base Class to inherit);
+* Add "Class Properties" Panel, that can be extended to change different properties for an already defined model on the fly (eg. which Base Class to inherit) -- for now, this panel is used for "Response Domain Entity" only.
 
 ## Release 1.10
 * Normalize white space for class members;
