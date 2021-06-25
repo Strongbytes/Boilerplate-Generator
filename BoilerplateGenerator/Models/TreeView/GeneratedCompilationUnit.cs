@@ -1,4 +1,5 @@
 ﻿using BoilerplateGenerator.Contracts.Generators;
+using BoilerplateGenerator.Controls;
 using BoilerplateGenerator.Models.Enums;
 using BoilerplateGenerator.Models.RoslynWrappers;
 using BoilerplateGenerator.Services;

@@ -495,18 +495,11 @@
                 </Grid.RowDefinitions>
 
                 <controls:BindableTextEditor x:Name="SyntaxHighliter"
-                                             Text="{Binding ElementName=TreeDirectory, Path=SelectedItem.Current.Code}"
+                                             Text="{Binding ElementName=TreeDirectory, Path=SelectedItem.Current.Code, Mode=TwoWay}"
                                              WordWrap="True"
                                              ShowLineNumbers="True"
                                              FontFamily="Consolas"
                                              SyntaxHighlighting="C#">
-                    <!--<i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectedItemChanged">
-                                <i:InvokeCommandAction x:Name="SelectionCommand"
-                                                       Command="{Binding ShowCodeFileOnItemSelected}"
-                                                       CommandParameter="{Binding ElementName=TreeDirectory, Path=SelectedItem}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>-->
                     <avalonEdit:TextEditor.ContextMenu>
                         <ContextMenu>
                             <MenuItem Command="Cut" />

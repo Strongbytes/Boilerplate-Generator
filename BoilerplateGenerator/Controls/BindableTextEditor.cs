@@ -9,36 +9,31 @@ namespace BoilerplateGenerator.Controls
     {
         public new string Text
         {
-            get
-            {
-                return base.Text;
-            }
-            set
-            {
-                if (base.Text == value)
-                {
-                    return;
-                }
+            get { return (string)GetValue(TextProperty); }
+            set { SetValue(TextProperty, value); }
+        }
 
-                base.Text = value;
-            }
+        internal string BaseText
+        {
+            get { return base.Text; }
+            set { base.Text = value; }
         }
 
         public static readonly DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(BindableTextEditor), new PropertyMetadata((obj, args) =>
         {
-            var target = (BindableTextEditor)obj;
-            string newValue = (string)args.NewValue;
+            BindableTextEditor target = (BindableTextEditor)obj;
 
-            if (target.Text == newValue)
+            if (target.BaseText == (string)args.NewValue)
             {
                 return;
             }
 
-            target.Text = newValue;
+            target.BaseText = (string)args.NewValue;
         }));
 
         protected override void OnTextChanged(EventArgs e)
         {
+            SetCurrentValue(TextProperty, BaseText);
             RaisePropertyChanged(nameof(Text));
             base.OnTextChanged(e);
         }
