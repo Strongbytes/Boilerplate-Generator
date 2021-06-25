@@ -2,6 +2,9 @@
 
 ### [Download from Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=Strongbytes.boilerplate-code-generator)
 
+## Release 1.11
+* Add "Class Properties" Panel, that can be used to change different properties for an already defined model (eg. which Base Class to inherit);
+
 ## Release 1.10
 * Normalize white space for class members;
 
