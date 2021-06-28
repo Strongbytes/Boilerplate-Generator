@@ -2,7 +2,7 @@
 
 ### [Download from Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=Strongbytes.boilerplate-code-generator)
 
-## Release 1.14
+## Release 1.15
 * Fixes and improvements;
 
 ## Release 1.13
