@@ -1,4 +1,4 @@
-## Generate boilerplate code using Roslyn, starting from a model entity
+## Generate ASP.NET Core boilerplate code using Roslyn, starting from a model entity
 
 ### Latest Release: [Download and Install the Extension from Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=Strongbytes.boilerplate-code-generator)
 ##### NOTE: Compatible with Visual Studio 2019 16.9+
