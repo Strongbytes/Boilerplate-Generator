@@ -234,7 +234,7 @@ namespace BoilerplateGenerator.Services
                 new NamespaceDefinitionModel
                 {
                     Content = $"{NamespaceTokens.Application}.{NamespaceTokens.Commands}.{PrimaryEntityPluralizedName}.{CommonTokens.Delete}",
-                    IsEnabled = _viewModelBase.UpdateCommandIsEnabled
+                    IsEnabled = _viewModelBase.DeleteCommandIsEnabled
                 }
             },
             {
