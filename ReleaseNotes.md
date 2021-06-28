@@ -3,7 +3,7 @@
 ### [Download from Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=Strongbytes.boilerplate-code-generator)
 
 ## Release 1.14
-* Add support for Visual Studio 2022;
+* Fixes and improvements;
 
 ## Release 1.13
 * Keep code changes after manually editing the generated code using included editor;
