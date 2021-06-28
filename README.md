@@ -1,6 +1,8 @@
 # Getting Started
 
 ### Latest Release: [Download and Install the Extension from Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=Strongbytes.boilerplate-code-generator)
+![image](https://user-images.githubusercontent.com/2210051/123601678-a08b1080-d800-11eb-9794-e81e31fc0462.png)
+
 
 ## Prerequisites: [Strongbytes ASP.NET Core modular architecture](https://github.com/Strongbytes/Knowledge-Spread)
 * The extension is created to work together with this modular architecture, that is the base for every Strongbytes new project;
