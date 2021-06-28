@@ -89,10 +89,10 @@
       ```
 4. Override `UsingsBuilder` and include all the required usings;
 5. Override `CompilationUnitDefinition` in order to:
-> Set Compilation Unit Type (choose between `class` or `interface` generation);
-> Set Access Modifier (eg: `public`, `internal`);
-> Set Class Attributes;
-> Set Inheritance Types;
+> #### Set Compilation Unit Type (choose between `class` or `interface` generation);
+> #### Set Access Modifier (eg: `public`, `internal`);
+> #### Set Class Attributes;
+> #### Set Inheritance Types;
 ```
 public override CompilationUnitDefinitionModel CompilationUnitDefinition => new CompilationUnitDefinitionModel
 {
